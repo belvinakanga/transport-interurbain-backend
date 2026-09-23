@@ -7,10 +7,10 @@
         <div class="bg-white rounded-2xl shadow-lg p-8">
 
             <h1 class="text-3xl font-bold text-slate-800 mb-8">
-
                 ➕ Ajouter un utilisateur
-
             </h1>
+
+            {{-- Messages d'erreur --}}
 
             @if ($errors->any())
 
@@ -30,18 +30,18 @@
 
             @endif
 
+
             <form action="{{ route('voyageurs.store') }}" method="POST">
 
                 @csrf
 
-                <!-- Nom -->
+
+                {{-- Nom complet --}}
 
                 <div class="mb-5">
 
                     <label class="block mb-2 font-semibold text-slate-700">
-
                         👤 Nom complet
-
                     </label>
 
                     <input
@@ -54,14 +54,13 @@
 
                 </div>
 
-                <!-- Email -->
+
+                {{-- Email --}}
 
                 <div class="mb-5">
 
                     <label class="block mb-2 font-semibold text-slate-700">
-
                         📧 Adresse email
-
                     </label>
 
                     <input
@@ -74,84 +73,149 @@
 
                 </div>
 
-                <!-- Mot de passe -->
+
+                {{-- Mot de passe --}}
 
                 <div class="mb-5">
 
                     <label class="block mb-2 font-semibold text-slate-700">
-
                         🔒 Mot de passe
-
                     </label>
 
-                    <input
-                        type="password"
-                        name="password"
-                        class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500"
-                        placeholder="********"
-                        required>
+                    <div class="relative">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="w-full border rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-orange-500"
+                            placeholder="********"
+                            required>
+
+                        <button
+                            type="button"
+                            onclick="togglePassword('password', 'eyePassword')"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500">
+
+                            <span id="eyePassword">👁️</span>
+
+                        </button>
+
+                    </div>
 
                 </div>
 
-                <!-- Confirmation -->
+
+                {{-- Confirmation du mot de passe --}}
 
                 <div class="mb-5">
 
                     <label class="block mb-2 font-semibold text-slate-700">
-
                         🔒 Confirmer le mot de passe
-
                     </label>
 
-                    <input
-                        type="password"
-                        name="password_confirmation"
-                        class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500"
-                        placeholder="********"
-                        required>
+                    <div class="relative">
+
+                        <input
+                            type="password"
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            class="w-full border rounded-xl px-4 py-3 pr-12 focus:ring-2 focus:ring-orange-500"
+                            placeholder="********"
+                            required>
+
+                        <button
+                            type="button"
+                            onclick="togglePassword('password_confirmation', 'eyeConfirmation')"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-orange-500">
+
+                            <span id="eyeConfirmation">👁️</span>
+
+                        </button>
+
+                    </div>
 
                 </div>
 
-                <!-- Rôle -->
 
-                <div class="mb-8">
+                {{-- Rôle --}}
+
+                <div class="mb-5">
 
                     <label class="block mb-2 font-semibold text-slate-700">
-
                         🎭 Rôle
-
                     </label>
 
                     <select
                         name="role"
+                        id="role"
                         class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500"
                         required>
 
-                        <option value="">Sélectionner un rôle</option>
+                        <option value="">
+                            Sélectionner un rôle
+                        </option>
 
-                        <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>
-
+                        <option
+                            value="user"
+                            {{ old('role') == 'user' ? 'selected' : '' }}>
                             👤 Utilisateur
-
                         </option>
 
-                        <option value="agence" {{ old('role') == 'agence' ? 'selected' : '' }}>
-
-                            🏢 Agence
-
+                        <option
+                            value="agent"
+                            {{ old('role') == 'agent' ? 'selected' : '' }}>
+                            👨‍💼 Agent
                         </option>
 
-                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>
-
+                        <option
+                            value="admin"
+                            {{ old('role') == 'admin' ? 'selected' : '' }}>
                             👑 Administrateur
-
                         </option>
 
                     </select>
 
                 </div>
 
-                <!-- Boutons -->
+
+                {{-- Agence --}}
+
+                <div
+                    id="agenceContainer"
+                    class="mb-8 {{ old('role') == 'agent' ? '' : 'hidden' }}">
+
+                    <label class="block mb-2 font-semibold text-slate-700">
+                        🏢 Agence
+                    </label>
+
+                    <select
+                        name="agence_id"
+                        id="agence_id"
+                        class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500">
+
+                        <option value="">
+                            Sélectionner une agence
+                        </option>
+
+                        @foreach($agences as $agence)
+
+                            <option
+                                value="{{ $agence->id }}"
+                                {{ old('agence_id') == $agence->id ? 'selected' : '' }}>
+
+                                {{ $agence->nom_agence }}
+
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                {{-- Boutons --}}
 
                 <div class="flex justify-between">
 
@@ -180,5 +244,68 @@
     </div>
 
 </div>
+
+
+{{-- JavaScript --}}
+
+<script>
+
+function togglePassword(inputId, eyeId) {
+
+    const input = document.getElementById(inputId);
+    const eye = document.getElementById(eyeId);
+
+    if (!input || !eye) {
+        return;
+    }
+
+    if (input.type === "password") {
+
+        input.type = "text";
+        eye.textContent = "🙈";
+
+    } else {
+
+        input.type = "password";
+        eye.textContent = "👁️";
+
+    }
+
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const role = document.getElementById('role');
+    const agenceContainer = document.getElementById('agenceContainer');
+    const agence = document.getElementById('agence_id');
+
+    function afficherAgence() {
+
+        if (role.value === 'agent') {
+
+            agenceContainer.classList.remove('hidden');
+
+            agence.required = true;
+
+        } else {
+
+            agenceContainer.classList.add('hidden');
+
+            agence.required = false;
+
+            agence.value = '';
+
+        }
+
+    }
+
+    role.addEventListener('change', afficherAgence);
+
+    afficherAgence();
+
+});
+
+</script>
 
 </x-layouts.admin>

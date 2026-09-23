@@ -15,9 +15,10 @@ class BilletController extends Controller
     public function index()
     {
         $billets = Billet::with([
-            'reservation.user',
-            'reservation.trajet.agence'
-        ])->latest()->get();
+    'voyageur',
+    'reservation.user',
+    'reservation.trajet.agence'
+])->latest()->get();
 
         return response()->json($billets);
     }
@@ -30,9 +31,10 @@ class BilletController extends Controller
     public function mesBillets()
     {
         $billets = Billet::with([
-            'reservation.user',
-            'reservation.trajet.agence'
-        ])
+    'voyageur',
+    'reservation.user',
+    'reservation.trajet.agence'
+])
         ->whereHas('reservation', function ($query) {
             $query->where('user_id', auth()->id());
         })
@@ -54,10 +56,15 @@ class BilletController extends Controller
         ]);
 
         $billet = Billet::create([
-            'reservation_id' => $request->reservation_id,
-            'numero_billet' => 'BIL-' . now()->format('YmdHis'),
-            'qr_code' => 'QR-' . uniqid(),
-        ]);
+    'reservation_id' => $request->reservation_id,
+    'qr_code' => 'QR-' . strtoupper(
+        substr(
+            bin2hex(random_bytes(8)),
+            0,
+            12
+        )
+    ),
+]);
 
         return response()->json([
             'message' => 'Billet créé avec succès',
@@ -73,9 +80,10 @@ class BilletController extends Controller
     public function show($id)
     {
         $billet = Billet::with([
-            'reservation.user',
-            'reservation.trajet.agence'
-        ])->findOrFail($id);
+    'voyageur',
+    'reservation.user',
+    'reservation.trajet.agence'
+])->findOrFail($id);
 
         return view('admin.show-billet', compact('billet'));
     }

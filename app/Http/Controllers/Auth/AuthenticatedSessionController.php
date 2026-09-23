@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Rediriger directement vers l'administration InterGO
+        // Rediriger directement vers l'administration TOKENDE
         return redirect('/admin');
     }
 

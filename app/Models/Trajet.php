@@ -12,9 +12,11 @@ class Trajet extends Model
         'arrivee',
         'date_depart',
         'heure_depart',
+        'duree',
+        'heure_fin',
         'prix',
         'places_totales',
-        'places_disponibles'
+        'places_disponibles',
     ];
 
     public function agence()

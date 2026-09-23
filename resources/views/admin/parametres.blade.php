@@ -13,7 +13,7 @@
         </h2>
 
         <p class="text-gray-600">
-            Cette page permettra de gérer les paramètres généraux de la plateforme InterGO Congo.
+            Cette page permettra de gérer les paramètres généraux de la plateforme TOKENDE.
         </p>
 
     </div>

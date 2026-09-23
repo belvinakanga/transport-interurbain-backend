@@ -197,25 +197,23 @@
 
     <td class="p-4 text-center">
 
-        @if($voyageur->role == 'admin')
+    @if($voyageur->role == 'admin')
+        <span class="px-4 py-2 rounded-full bg-red-100 text-red-700">
+            👑 Administrateur
+        </span>
 
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold text-sm">
+    @elseif($voyageur->role == 'agent')
+        <span class="px-4 py-2 rounded-full bg-blue-100 text-blue-700">
+            👨‍💼 Agent
+        </span>
 
-                👑 Administrateur
+    @else
+        <span class="px-4 py-2 rounded-full bg-green-100 text-green-700">
+            👤 Utilisateur
+        </span>
+    @endif
 
-            </span>
-
-        @else
-
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">
-
-                👤 Utilisateur
-
-            </span>
-
-        @endif
-
-    </td>
+</td>
 
     <!-- Actions -->
 
@@ -234,6 +232,17 @@
                 👁️
 
             </a>
+
+            <!-- MODIFIER -->
+
+<a
+    href="{{ url('/admin/voyageurs/'.$voyageur->id.'/edit') }}"
+    title="Modifier"
+    class="w-10 h-10 flex items-center justify-center rounded-lg bg-orange-500 hover:bg-orange-600 text-white">
+
+    ✏️
+
+</a>
 
             <!-- Supprimer -->
 

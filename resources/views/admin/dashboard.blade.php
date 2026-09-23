@@ -1,763 +1,1287 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Dashboard'">
 
-<div class="min-h-screen bg-gray-100 p-8">
+    @php
 
-    <!-- ================= EN-TÊTE ================= -->
+        /*
+        |--------------------------------------------------------------------------
+        | ABONNEMENTS ACTIFS
+        |--------------------------------------------------------------------------
+        */
 
-    <div class="bg-white rounded-2xl shadow-sm p-8 border-l-4 border-yellow-500 mb-8">
+        $abonnementsActifs =
+            \App\Models\Abonnement::where(
+                'statut',
+                'Actif'
+            )->count();
 
-        <div class="flex flex-col lg:flex-row justify-between items-center">
 
-            <div>
+        /*
+        |--------------------------------------------------------------------------
+        | PAIEMENTS AGENCES EN RETARD
+        |--------------------------------------------------------------------------
+        */
 
-                <h1 class="text-3xl font-bold text-gray-800">
-                    👋 Tableau de bord
-                </h1>
+        $paiementsEnRetard =
+            \App\Models\PaiementAgence::where(
+                'statut',
+                'en attente'
+            )
+            ->whereDate(
+                'date_prevue',
+                '<',
+                today()
+            )
+            ->count();
 
-                <p class="text-gray-500 mt-2">
-                    Bienvenue sur
-                    <span class="font-semibold text-yellow-600">
-                        InterGO Congo
-                    </span>
-                    <br>
-                    Plateforme de gestion du transport interurbain.
+
+        /*
+        |--------------------------------------------------------------------------
+        | DERNIERS PAIEMENTS AGENCES
+        |--------------------------------------------------------------------------
+        */
+
+        $paiementsAgencesRecents =
+            \App\Models\PaiementAgence::with([
+                'agence',
+                'abonnement'
+            ])
+            ->latest('date_prevue')
+            ->take(5)
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DERNIERS AVIS
+        |--------------------------------------------------------------------------
+        */
+
+        $avisRecents = $derniersAvis->take(5);
+
+    @endphp
+
+
+    <div class="w-full max-w-7xl mx-auto space-y-6">
+
+
+        {{-- =========================================================
+     EN-TÊTE
+========================================================== --}}
+
+<div
+    class="
+        bg-white
+        rounded-2xl
+        border
+        border-gray-100
+        shadow-sm
+        px-6
+        py-4
+    "
+    style="border-left:5px solid #FF6B00;"
+>
+
+    <div
+        class="
+            flex
+            flex-col
+            md:flex-row
+            md:items-center
+            md:justify-between
+            gap-4
+        "
+    >
+
+        {{-- TEXTE --}}
+
+        <div>
+
+            <p
+                class="
+                    text-sm
+                    font-bold
+                "
+                style="color:#FF6B00;"
+            >
+                TOKENDE
+            </p>
+
+            <h1
+                class="
+                    text-3xl
+                    font-extrabold
+                    mt-1
+                "
+                style="color:#0A2A66;"
+            >
+                Bonjour {{ auth()->user()->name }} 👋
+            </h1>
+
+            <p
+                class="
+                    text-sm
+                    text-gray-500
+                    mt-1
+                "
+            >
+                Gérez la plateforme, les agences, les abonnements et les règlements.
+            </p>
+
+        </div>
+
+
+        {{-- DATE --}}
+
+        <div
+            class="
+                rounded-xl
+                px-5
+                py-3
+                text-white
+                shadow-sm
+                md:min-w-[155px]
+            "
+            style="background:#FF6B00;"
+        >
+
+            <p
+                class="
+                    text-xs
+                    font-medium
+                    opacity-90
+                "
+            >
+                Aujourd'hui
+            </p>
+
+            <p
+                class="
+                    text-xl
+                    font-extrabold
+                    mt-1
+                "
+            >
+                {{ now()->format('d/m/Y') }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+        {{-- =========================================================
+             STATISTIQUES PRINCIPALES
+        ========================================================== --}}
+
+        <div
+            class="
+                grid
+                grid-cols-2
+                lg:grid-cols-4
+                gap-5
+            "
+        >
+
+
+            {{-- =====================================================
+                 AGENCES
+            ====================================================== --}}
+
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-gray-100
+                    shadow-sm
+                    p-5
+                    min-h-[190px]
+                    flex
+                    flex-col
+                    justify-between
+                "
+                style="border-top:5px solid #FF6B00;"
+            >
+
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                    "
+                >
+
+                    <div>
+
+                        <p
+                            class="
+                                text-base
+                                font-semibold
+                                text-gray-500
+                            "
+                        >
+                            Agences
+                        </p>
+
+                        <p
+                            class="
+                                text-4xl
+                                font-extrabold
+                                mt-3
+                            "
+                            style="color:#0A2A66;"
+                        >
+                            {{ $nombreAgences }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            w-14
+                            h-14
+                            rounded-2xl
+                            flex
+                            items-center
+                            justify-center
+                            text-2xl
+                            flex-shrink-0
+                        "
+                        style="background:#FFF3E8;"
+                    >
+                        🏢
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                        mt-4
+                    "
+                    style="color:#FF6B00;"
+                >
+                    🏢 Agences enregistrées
                 </p>
 
             </div>
 
-            <div class="mt-6 lg:mt-0">
 
-                <div class="bg-yellow-500 text-white px-6 py-4 rounded-xl shadow">
 
-                    <p class="text-sm">
-                        Aujourd'hui
-                    </p>
+            {{-- =====================================================
+                 UTILISATEURS
+            ====================================================== --}}
 
-                    <h2 class="text-2xl font-bold">
-                        {{ now()->format('d/m/Y') }}
-                    </h2>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-gray-100
+                    shadow-sm
+                    p-5
+                    min-h-[190px]
+                    flex
+                    flex-col
+                    justify-between
+                "
+                style="border-top:5px solid #0A2A66;"
+            >
 
-                </div>
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                    "
+                >
 
-            </div>
+                    <div>
 
-        </div>
+                        <p
+                            class="
+                                text-base
+                                font-semibold
+                                text-gray-500
+                            "
+                        >
+                            Utilisateurs
+                        </p>
 
-    </div>
+                        <p
+                            class="
+                                text-4xl
+                                font-extrabold
+                                mt-3
+                            "
+                            style="color:#0A2A66;"
+                        >
+                            {{ $nombreUtilisateurs }}
+                        </p>
 
-    <!-- ================= STATISTIQUES ================= -->
+                    </div>
 
-    <h2 class="text-2xl font-bold text-gray-700 mb-6">
-        📊 Vue d'ensemble
-    </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-
-        <!-- Utilisateurs -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-            <div class="flex justify-between items-center">
-
-                <div>
-
-                    <p class="text-gray-500">
-                        Utilisateurs
-                    </p>
-
-                    <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                        {{ $nombreUtilisateurs }}
-                    </h2>
-
-                </div>
-
-                <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-
-                    👥
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Agences -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-            <div class="flex justify-between items-center">
-
-                <div>
-
-                    <p class="text-gray-500">
-                        Agences
-                    </p>
-
-                    <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                        {{ $nombreAgences }}
-                    </h2>
-
-                </div>
-
-                <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-
-                    🏢
+                    <div
+                        class="
+                            w-14
+                            h-14
+                            rounded-2xl
+                            flex
+                            items-center
+                            justify-center
+                            text-2xl
+                            flex-shrink-0
+                        "
+                        style="background:#EEF4FF;"
+                    >
+                        👥
+                    </div>
 
                 </div>
 
-            </div>
 
-        </div>
-
-        <!-- Trajets -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-            <div class="flex justify-between items-center">
-
-                <div>
-
-                    <p class="text-gray-500">
-                        Trajets
-                    </p>
-
-                    <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                        {{ $nombreTrajets }}
-                    </h2>
-
-                </div>
-
-                <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-
-                    🚌
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Revenu -->
-
-        <div class="bg-gray-800 rounded-2xl shadow-sm p-6 text-white">
-
-            <p class="text-gray-300">
-                Revenu total
-            </p>
-
-            <h2 class="text-3xl font-bold text-yellow-400 mt-3">
-                {{ number_format($revenuTotal,0,',',' ') }} FCFA
-            </h2>
-
-        </div>
-
-    </div>
-        <!-- ================= STATISTIQUES SECONDAIRES ================= -->
-
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
-
-<!-- Réservations -->
-<div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-    <div class="flex justify-between items-center">
-
-        <div>
-
-            <p class="text-gray-500">
-                Réservations
-            </p>
-
-            <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                {{ $nombreReservations }}
-            </h2>
-
-        </div>
-
-        <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-            📋
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Paiements -->
-<div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-    <div class="flex justify-between items-center">
-
-        <div>
-
-            <p class="text-gray-500">
-                Paiements
-            </p>
-
-            <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                {{ $nombrePaiements }}
-            </h2>
-
-        </div>
-
-        <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-            💳
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Billets -->
-<div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-    <div class="flex justify-between items-center">
-
-        <div>
-
-            <p class="text-gray-500">
-                Billets
-            </p>
-
-            <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                {{ $nombreBillets }}
-            </h2>
-
-        </div>
-
-        <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-            🎫
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Avis -->
-<div class="bg-white rounded-2xl shadow-sm p-6 hover:shadow-lg transition">
-
-    <div class="flex justify-between items-center">
-
-        <div>
-
-            <p class="text-gray-500">
-                Avis
-            </p>
-
-            <h2 class="text-4xl font-bold text-gray-800 mt-3">
-                {{ $nombreAvis }}
-            </h2>
-
-        </div>
-
-        <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center text-3xl">
-            ⭐
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-
-<!-- ================= ACTIVITÉ + ACCÈS RAPIDE ================= -->
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-
-<!-- Activité -->
-
-<div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
-
-    <h2 class="text-xl font-bold text-gray-700 mb-6">
-        📅 Activité du jour
-    </h2>
-
-    <div class="space-y-5">
-
-        <div class="flex justify-between items-center border-b pb-4">
-
-            <div>
-
-                <h3 class="font-semibold text-gray-700">
-                    Réservations
-                </h3>
-
-                <p class="text-sm text-gray-500">
-                    Nombre de réservations effectuées aujourd'hui
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                        text-gray-500
+                        mt-4
+                    "
+                >
+                    👥 Comptes de la plateforme
                 </p>
 
             </div>
 
-            <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold">
-                {{ $reservationsAujourdhui }}
-            </span>
 
-        </div>
 
-        <div class="flex justify-between items-center border-b pb-4">
+            {{-- =====================================================
+                 ABONNEMENTS
+            ====================================================== --}}
 
-            <div>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-gray-100
+                    shadow-sm
+                    p-5
+                    min-h-[190px]
+                    flex
+                    flex-col
+                    justify-between
+                "
+                style="border-top:5px solid #FF6B00;"
+            >
 
-                <h3 class="font-semibold text-gray-700">
-                    Paiements
-                </h3>
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                    "
+                >
 
-                <p class="text-sm text-gray-500">
-                    Paiements enregistrés aujourd'hui
+                    <div>
+
+                        <p
+                            class="
+                                text-base
+                                font-semibold
+                                text-gray-500
+                            "
+                        >
+                            Abonnements actifs
+                        </p>
+
+                        <p
+                            class="
+                                text-4xl
+                                font-extrabold
+                                mt-3
+                            "
+                            style="color:#0A2A66;"
+                        >
+                            {{ $abonnementsActifs }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            w-14
+                            h-14
+                            rounded-2xl
+                            flex
+                            items-center
+                            justify-center
+                            text-2xl
+                            flex-shrink-0
+                        "
+                        style="background:#FFF3E8;"
+                    >
+                        📋
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                        mt-4
+                    "
+                    style="color:#FF6B00;"
+                >
+                    📋 Abonnements en cours
                 </p>
 
             </div>
 
-            <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold">
-                {{ $paiementsAujourdhui }}
-            </span>
 
-        </div>
 
-        <div class="flex justify-between items-center">
+            {{-- =====================================================
+                 PAIEMENTS EN RETARD
+            ====================================================== --}}
 
-            <div>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    shadow-sm
+                    p-5
+                    min-h-[190px]
+                    flex
+                    flex-col
+                    justify-between
+                "
+                style="
+                    border-top:5px solid #DC2626;
+                    border-color:#FECACA;
+                "
+            >
 
-                <h3 class="font-semibold text-gray-700">
-                    Billets générés
-                </h3>
+                <div
+                    class="
+                        flex
+                        items-start
+                        justify-between
+                        gap-3
+                    "
+                >
 
-                <p class="text-sm text-gray-500">
-                    Billets créés aujourd'hui
+                    <div>
+
+                        <p
+                            class="
+                                text-base
+                                font-semibold
+                                text-gray-500
+                            "
+                        >
+                            Paiements en retard
+                        </p>
+
+                        <p
+                            class="
+                                text-4xl
+                                font-extrabold
+                                mt-3
+                            "
+                            style="color:#DC2626;"
+                        >
+                            {{ $paiementsEnRetard }}
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            w-14
+                            h-14
+                            rounded-2xl
+                            flex
+                            items-center
+                            justify-center
+                            text-2xl
+                            flex-shrink-0
+                        "
+                        style="background:#FEF2F2;"
+                    >
+                        ⚠️
+                    </div>
+
+                </div>
+
+
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                        mt-4
+                    "
+                    style="color:#DC2626;"
+                >
+                    🔴 Échéances dépassées
                 </p>
 
             </div>
 
-            <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold">
-                {{ $billetsAujourdhui }}
-            </span>
-
         </div>
 
-    </div>
 
-</div>
 
-<!-- Accès rapide -->
+        {{-- =========================================================
+             PAIEMENTS AGENCES + AVIS
+        ========================================================== --}}
 
-<div class="bg-white rounded-2xl shadow-sm p-6">
+        <div
+            class="
+                grid
+                grid-cols-1
+                xl:grid-cols-5
+                gap-5
+            "
+        >
 
-    <h2 class="text-xl font-bold text-gray-700 mb-6">
-        ⚡ Accès rapide
-    </h2>
 
-    <div class="space-y-4">
+            {{-- =====================================================
+                 PAIEMENTS AGENCES
+            ====================================================== --}}
 
-        <a href="{{ url('/admin/agences') }}"
-           class="flex items-center justify-between bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 transition">
-            <span>🏢 Gérer les agences</span>
-            ➜
-        </a>
+            <div
+                class="
+                    xl:col-span-3
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-gray-100
+                    shadow-sm
+                    overflow-hidden
+                "
+            >
 
-        <a href="{{ url('/admin/trajets') }}"
-           class="flex items-center justify-between bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 transition">
-            <span>🚌 Gérer les trajets</span>
-            ➜
-        </a>
+                <div
+                    class="
+                        px-6
+                        py-5
+                        flex
+                        items-center
+                        justify-between
+                        border-b
+                    "
+                    style="background:#F8FAFD;"
+                >
 
-        <a href="{{ url('/admin/reservations') }}"
-           class="flex items-center justify-between bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 transition">
-            <span>📋 Réservations</span>
-            ➜
-        </a>
+                    <div>
 
-        <a href="{{ url('/admin/paiements') }}"
-           class="flex items-center justify-between bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl p-4 transition">
-            <span>💳 Paiements</span>
-            ➜
-        </a>
+                        <h2
+                            class="
+                                text-xl
+                                font-extrabold
+                            "
+                            style="color:#0A2A66;"
+                        >
+                            💰 Paiements agences
+                        </h2>
 
-    </div>
+                        <p
+                            class="
+                                text-sm
+                                text-gray-500
+                                mt-1
+                            "
+                        >
+                            Suivi des règlements des agences vers TOKENDE.
+                        </p>
 
-</div>
+                    </div>
 
-</div>
-    <!-- ========================= -->
-    <!-- RÉSUMÉ + INFORMATIONS -->
-    <!-- ========================= -->
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    @if(Route::has('paiements-agences.index'))
 
-        <!-- Résumé -->
+                        <a
+                            href="{{ route('paiements-agences.index') }}"
+                            class="
+                                px-5
+                                py-2.5
+                                rounded-xl
+                                text-white
+                                text-sm
+                                font-bold
+                                shadow-sm
+                            "
+                            style="background:#FF6B00;"
+                        >
+                            Voir tout
+                        </a>
 
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
-
-            <h2 class="text-xl font-bold text-gray-700 mb-6">
-                📌 Résumé de la plateforme
-            </h2>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-
-                <div class="text-center">
-                    <div class="text-4xl mb-2">🛒</div>
-                    <h3 class="text-gray-500">Achats</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">
-                        {{ $nombreAchats }}
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="text-4xl mb-2">🎫</div>
-                    <h3 class="text-gray-500">Billets</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">
-                        {{ $nombreBillets }}
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="text-4xl mb-2">⭐</div>
-                    <h3 class="text-gray-500">Avis</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">
-                        {{ $nombreAvis }}
-                    </p>
-                </div>
-
-                <div class="text-center">
-                    <div class="text-4xl mb-2">💳</div>
-                    <h3 class="text-gray-500">Paiements</h3>
-                    <p class="text-3xl font-bold text-gray-800 mt-2">
-                        {{ $nombrePaiements }}
-                    </p>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Informations -->
-
-        <div class="bg-gray-800 rounded-2xl shadow-sm p-6 text-white">
-
-            <h2 class="text-xl font-bold mb-6">
-                ℹ️ Informations
-            </h2>
-
-            <div class="space-y-4">
-
-                <div class="flex justify-between">
-                    <span>Application</span>
-                    <strong class="text-yellow-400">InterGO Congo</strong>
-                </div>
-
-                <div class="flex justify-between">
-                    <span>Version</span>
-                    <strong>1.0</strong>
-                </div>
-
-                <div class="flex justify-between">
-                    <span>Statut</span>
-                    <span class="bg-green-500 px-3 py-1 rounded-full text-sm">
-                        En ligne
-                    </span>
-                </div>
-
-                <div class="flex justify-between">
-                    <span>Interface</span>
-                    <strong>Administration</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ========================= -->
-    <!-- GRAPHIQUES -->
-    <!-- ========================= -->
-
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-
-        <!-- Graphique principal -->
-
-        <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm p-6">
-
-            <div class="flex justify-between items-center mb-4">
-
-                <div>
-
-                    <h2 class="text-xl font-bold text-gray-800">
-                        Évolution des réservations
-                    </h2>
-
-                    <p class="text-sm text-gray-500">
-                        Activité de la plateforme
-                    </p>
+                    @endif
 
                 </div>
 
-                <span class="bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-semibold">
-                    Cette année
-                </span>
 
-            </div>
+                <div class="overflow-x-auto">
 
-            <div class="h-72">
-                <canvas id="reservationChart"></canvas>
-            </div>
+                    <table class="w-full">
 
-        </div>
-
-        <!-- Répartition -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-
-            <h2 class="text-xl font-bold text-gray-800 mb-4">
-                Répartition
-            </h2>
-
-            <div class="h-56 flex items-center justify-center">
-
-                <canvas id="repartitionChart"></canvas>
-
-            </div>
-
-            <div class="mt-5 space-y-3">
-
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Billets</span>
-                    <strong>{{ $nombreBillets }}</strong>
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Paiements</span>
-                    <strong>{{ $nombrePaiements }}</strong>
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Avis</span>
-                    <strong>{{ $nombreAvis }}</strong>
-                </div>
-
-                <div class="flex justify-between">
-                    <span class="text-gray-600">Réservations</span>
-                    <strong>{{ $nombreReservations }}</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-        <!-- ========================= -->
-    <!-- TABLEAUX -->
-    <!-- ========================= -->
-
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-
-        <!-- Dernières réservations -->
-
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-
-            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
-
-                <h2 class="text-xl font-bold text-gray-800">
-                    Dernières réservations
-                </h2>
-
-                <a href="{{ url('/admin/reservations') }}"
-                   class="text-yellow-600 hover:text-yellow-700 font-semibold">
-                    Voir tout →
-                </a>
-
-            </div>
-
-            <div class="overflow-x-auto">
-
-                <table class="w-full">
-
-                    <thead class="bg-gray-50">
-
-                        <tr>
-
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Voyageur
-                            </th>
-
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Trajet
-                            </th>
-
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Date
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">
-                                Statut
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody class="divide-y divide-gray-100">
-
-                        @forelse($dernieresReservations as $reservation)
-
-                            <tr class="hover:bg-gray-50">
-
-                                <td class="px-6 py-4">
-                                    {{ $reservation->voyageur->nom ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $reservation->trajet->ville_depart ?? '-' }}
-                                    →
-                                    {{ $reservation->trajet->ville_arrivee ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $reservation->created_at->format('d/m/Y') }}
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-
-                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-
-                                        Confirmée
-
-                                    </span>
-
-                                </td>
-
-                            </tr>
-
-                        @empty
+                        <thead
+                            style="background:#EEF4FF;"
+                        >
 
                             <tr>
 
-                                <td colspan="4" class="text-center py-8 text-gray-500">
-                                    Aucune réservation.
-                                </td>
+                                <th
+                                    class="
+                                        px-6
+                                        py-4
+                                        text-left
+                                        text-sm
+                                        font-extrabold
+                                    "
+                                    style="color:#0A2A66;"
+                                >
+                                    Agence
+                                </th>
+
+                                <th
+                                    class="
+                                        px-6
+                                        py-4
+                                        text-right
+                                        text-sm
+                                        font-extrabold
+                                    "
+                                    style="color:#0A2A66;"
+                                >
+                                    Montant
+                                </th>
+
+                                <th
+                                    class="
+                                        px-6
+                                        py-4
+                                        text-center
+                                        text-sm
+                                        font-extrabold
+                                    "
+                                    style="color:#0A2A66;"
+                                >
+                                    Échéance
+                                </th>
+
+                                <th
+                                    class="
+                                        px-6
+                                        py-4
+                                        text-center
+                                        text-sm
+                                        font-extrabold
+                                    "
+                                    style="color:#0A2A66;"
+                                >
+                                    Statut
+                                </th>
 
                             </tr>
 
-                        @endforelse
+                        </thead>
 
-                    </tbody>
 
-                </table>
+                        <tbody>
+
+                            @forelse(
+                                $paiementsAgencesRecents
+                                as $paiement
+                            )
+
+                                @php
+
+                                    $retard =
+                                        $paiement->statut === 'en attente'
+                                        &&
+                                        $paiement->date_prevue
+                                        &&
+                                        $paiement->date_prevue->isPast();
+
+                                @endphp
+
+
+                                <tr
+                                    class="
+                                        border-t
+                                        border-gray-100
+                                        hover:bg-gray-50
+                                    "
+                                >
+
+                                    <td class="px-6 py-4">
+
+                                        <p
+                                            class="
+                                                text-base
+                                                font-bold
+                                            "
+                                            style="color:#0A2A66;"
+                                        >
+                                            {{
+                                                $paiement->agence->nom_agence
+                                                ?? '-'
+                                            }}
+                                        </p>
+
+                                        @if($paiement->abonnement)
+
+                                            <p
+                                                class="
+                                                    text-sm
+                                                    text-gray-500
+                                                    mt-1
+                                                "
+                                            >
+                                                {{
+                                                    $paiement->abonnement->type
+                                                }}
+                                            </p>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    <td
+                                        class="
+                                            px-6
+                                            py-4
+                                            text-right
+                                            text-base
+                                            font-extrabold
+                                        "
+                                        style="color:#FF6B00;"
+                                    >
+
+                                        {{
+                                            number_format(
+                                                $paiement->montant,
+                                                0,
+                                                ',',
+                                                ' '
+                                            )
+                                        }}
+
+                                        FCFA
+
+                                    </td>
+
+
+                                    <td
+                                        class="
+                                            px-6
+                                            py-4
+                                            text-center
+                                            text-sm
+                                            text-gray-600
+                                        "
+                                    >
+
+                                        {{
+                                            $paiement->date_prevue
+                                                ? $paiement->date_prevue->format('d/m/Y')
+                                                : '-'
+                                        }}
+
+                                    </td>
+
+
+                                    <td
+                                        class="
+                                            px-6
+                                            py-4
+                                            text-center
+                                        "
+                                    >
+
+                                        @if(
+                                            $paiement->statut
+                                            === 'payé'
+                                        )
+
+                                            <span
+                                                class="
+                                                    inline-flex
+                                                    px-3
+                                                    py-1.5
+                                                    rounded-full
+                                                    text-xs
+                                                    font-extrabold
+                                                "
+                                                style="
+                                                    background:#DCFCE7;
+                                                    color:#15803D;
+                                                "
+                                            >
+                                                ✅ Payé
+                                            </span>
+
+                                        @elseif($retard)
+
+                                            <span
+                                                class="
+                                                    inline-flex
+                                                    px-3
+                                                    py-1.5
+                                                    rounded-full
+                                                    text-xs
+                                                    font-extrabold
+                                                "
+                                                style="
+                                                    background:#FEE2E2;
+                                                    color:#DC2626;
+                                                "
+                                            >
+                                                🔴 En retard
+                                            </span>
+
+                                        @else
+
+                                            <span
+                                                class="
+                                                    inline-flex
+                                                    px-3
+                                                    py-1.5
+                                                    rounded-full
+                                                    text-xs
+                                                    font-extrabold
+                                                "
+                                                style="
+                                                    background:#FFF3E8;
+                                                    color:#FF6B00;
+                                                "
+                                            >
+                                                ⏳ En attente
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+                                </tr>
+
+                            @empty
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="
+                                            px-6
+                                            py-12
+                                            text-center
+                                            text-sm
+                                            text-gray-500
+                                        "
+                                    >
+                                        Aucun paiement agence enregistré.
+                                    </td>
+
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            {{-- =====================================================
+                 AVIS RÉCENTS
+            ====================================================== --}}
+
+            <div
+                class="
+                    xl:col-span-2
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-gray-100
+                    shadow-sm
+                    overflow-hidden
+                "
+            >
+
+                <div
+                    class="
+                        px-6
+                        py-5
+                        border-b
+                    "
+                    style="background:#F8FAFD;"
+                >
+
+                    <h2
+                        class="
+                            text-xl
+                            font-extrabold
+                        "
+                        style="color:#0A2A66;"
+                    >
+                        ⭐ Avis récents
+                    </h2>
+
+                    <p
+                        class="
+                            text-sm
+                            text-gray-500
+                            mt-1
+                        "
+                    >
+                        Retours des utilisateurs.
+                    </p>
+
+                </div>
+
+
+                <div class="px-6">
+
+                    @forelse(
+                        $avisRecents
+                        as $avis
+                    )
+
+                        <div
+                            class="
+                                py-5
+                                border-b
+                                border-gray-100
+                            "
+                        >
+
+                            <div
+                                class="
+                                    flex
+                                    items-center
+                                    justify-between
+                                    gap-3
+                                "
+                            >
+
+                                <div>
+
+                                    <p
+                                        class="
+                                            text-base
+                                            font-bold
+                                        "
+                                        style="color:#0A2A66;"
+                                    >
+                                        {{
+                                            $avis->user->name
+                                            ?? 'Utilisateur'
+                                        }}
+                                    </p>
+
+                                    <p
+                                        class="
+                                            text-sm
+                                            text-gray-500
+                                            mt-1
+                                        "
+                                    >
+                                        {{
+                                            $avis->created_at
+                                                ? $avis->created_at->format('d/m/Y')
+                                                : '-'
+                                        }}
+                                    </p>
+
+                                </div>
+
+
+                                <div
+                                    class="
+                                        px-3
+                                        py-1.5
+                                        rounded-xl
+                                        text-sm
+                                        font-extrabold
+                                    "
+                                    style="
+                                        background:#FFF3E8;
+                                        color:#FF6B00;
+                                    "
+                                >
+                                    ⭐ {{ $avis->note ?? '-' }}
+                                </div>
+
+                            </div>
+
+
+                            @if(!empty($avis->commentaire))
+
+                                <p
+                                    class="
+                                        text-sm
+                                        text-gray-600
+                                        mt-3
+                                    "
+                                >
+
+                                    {{
+                                        \Illuminate\Support\Str::limit(
+                                            $avis->commentaire,
+                                            100
+                                        )
+                                    }}
+
+                                </p>
+
+                            @endif
+
+                        </div>
+
+                    @empty
+
+                        <div
+                            class="
+                                py-12
+                                text-center
+                                text-sm
+                                text-gray-500
+                            "
+                        >
+                            Aucun avis récent.
+                        </div>
+
+                    @endforelse
+
+                </div>
+
+
+                <div
+                    class="
+                        px-6
+                        py-5
+                        border-t
+                    "
+                >
+
+                    <a
+                        href="{{ url('/admin/avis') }}"
+                        class="
+                            text-sm
+                            font-bold
+                        "
+                        style="
+                            color:#FF6B00;
+                            text-decoration:none;
+                        "
+                    >
+                        Voir tous les avis →
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
-        <!-- Derniers paiements -->
 
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
 
-            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+        {{-- =========================================================
+             RÉSUMÉ
+        ========================================================== --}}
 
-                <h2 class="text-xl font-bold text-gray-800">
-                    Derniers paiements
-                </h2>
+        <div
+            class="
+                grid
+                grid-cols-1
+                md:grid-cols-3
+                gap-5
+            "
+        >
 
-                <a href="{{ url('/admin/paiements') }}"
-                   class="text-yellow-600 hover:text-yellow-700 font-semibold">
-                    Voir tout →
-                </a>
+            {{-- AVIS --}}
+
+            <div
+                class="
+                    rounded-2xl
+                    p-6
+                    text-white
+                "
+                style="background:#0A2A66;"
+            >
+
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                    "
+                    style="color:#DCE8FF;"
+                >
+                    Avis enregistrés
+                </p>
+
+                <p
+                    class="
+                        text-3xl
+                        font-extrabold
+                        mt-2
+                    "
+                >
+                    {{ $nombreAvis }}
+                </p>
+
+                <p
+                    class="
+                        text-sm
+                        mt-2
+                    "
+                    style="color:#DCE8FF;"
+                >
+                    ⭐ Retours des utilisateurs
+                </p>
 
             </div>
 
-            <div class="overflow-x-auto">
 
-                <table class="w-full">
+            {{-- PAIEMENTS --}}
 
-                    <thead class="bg-gray-50">
+            <div
+                class="
+                    rounded-2xl
+                    p-6
+                    text-white
+                "
+                style="background:#FF6B00;"
+            >
 
-                        <tr>
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                    "
+                    style="color:#FFF3E8;"
+                >
+                    Paiements voyageurs
+                </p>
 
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Client
-                            </th>
+                <p
+                    class="
+                        text-3xl
+                        font-extrabold
+                        mt-2
+                    "
+                >
+                    {{ $nombrePaiements }}
+                </p>
 
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Montant
-                            </th>
+                <p
+                    class="
+                        text-sm
+                        mt-2
+                    "
+                    style="color:#FFF3E8;"
+                >
+                    Suivi global de la plateforme
+                </p>
 
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">
-                                Date
-                            </th>
+            </div>
 
-                            <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">
-                                Statut
-                            </th>
 
-                        </tr>
+            {{-- STATUT --}}
 
-                    </thead>
+            <div
+                class="
+                    rounded-2xl
+                    p-6
+                "
+                style="
+                    background:#FFF3E8;
+                    border:1px solid #FFD7B8;
+                "
+            >
 
-                    <tbody class="divide-y divide-gray-100">
+                <p
+                    class="
+                        text-sm
+                        font-semibold
+                    "
+                    style="color:#9A3412;"
+                >
+                    Statut plateforme
+                </p>
 
-                        @forelse($derniersPaiements as $paiement)
+                <p
+                    class="
+                        text-3xl
+                        font-extrabold
+                        mt-2
+                    "
+                    style="color:#0A2A66;"
+                >
+                    En ligne
+                </p>
 
-                            <tr class="hover:bg-gray-50">
-
-                                <td class="px-6 py-4">
-                                    {{ $paiement->reservation->voyageur->nom ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4 font-semibold text-green-600">
-                                    {{ number_format($paiement->montant,0,',',' ') }} FCFA
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $paiement->created_at->format('d/m/Y') }}
-                                </td>
-
-                                <td class="px-6 py-4 text-center">
-
-                                    <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-
-                                        Payé
-
-                                    </span>
-
-                                </td>
-
-                            </tr>
-
-                        @empty
-
-                            <tr>
-
-                                <td colspan="4" class="text-center py-8 text-gray-500">
-                                    Aucun paiement.
-                                </td>
-
-                            </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
+                <p
+                    class="
+                        text-sm
+                        mt-2
+                    "
+                    style="color:#9A3412;"
+                >
+                    🟠 TOKENDE fonctionne normalement
+                </p>
 
             </div>
 
         </div>
 
+
+
+        {{-- =========================================================
+             FOOTER
+        ========================================================== --}}
+
+        <div
+            class="
+                text-center
+                text-sm
+                text-gray-400
+                pb-3
+            "
+        >
+
+            © {{ date('Y') }}
+
+            <span
+                class="font-bold"
+                style="color:#FF6B00;"
+            >
+                TOKENDE
+            </span>
+
+            — Administration
+
+        </div>
+
     </div>
-
-    <!-- ========================= -->
-    <!-- FOOTER -->
-    <!-- ========================= -->
-
-    <div class="mt-10 text-center text-gray-500 text-sm">
-
-        © {{ date('Y') }}
-
-        <span class="font-semibold text-yellow-600">
-            InterGO Congo
-        </span>
-
-        — Plateforme de gestion du transport interurbain.
-
-    </div>
-
-</div>
 
 </x-layouts.admin>

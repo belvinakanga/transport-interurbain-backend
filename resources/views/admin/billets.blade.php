@@ -124,6 +124,42 @@
 
         </div>
 
+        <!-- Vérification d'un billet -->
+
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+
+    <h2 class="text-xl font-bold text-slate-800 mb-4">
+        🔎 Vérifier un billet
+    </h2>
+
+    <form action="{{ route('admin.billets.verifier') }}" method="POST">
+
+        @csrf
+
+        <div class="flex flex-col md:flex-row gap-3">
+
+            <input
+                type="text"
+                name="numero_billet"
+                placeholder="Exemple : TOK-2026-000157"
+                class="flex-1 border rounded-xl px-4 py-3"
+                required
+            >
+
+            <button
+                type="submit"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl">
+
+                Vérifier le billet
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
         <!-- Tableau -->
 
         <div class="bg-white rounded-xl shadow overflow-hidden">

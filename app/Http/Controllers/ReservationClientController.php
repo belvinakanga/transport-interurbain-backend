@@ -103,4 +103,45 @@ class ReservationClientController extends Controller
             '/paiement/create/' . $reservation->id
         );
     }
+
+    public function destroy($id)
+{
+    $reservation = Reservation::with('sieges')->find($id);
+
+    if (!$reservation) {
+        return response()->json([
+            'message' => 'Réservation introuvable.'
+        ], 404);
+    }
+
+    // Vérifie que la réservation appartient à l'utilisateur connecté
+    if ($reservation->user_id != auth()->id()) {
+        return response()->json([
+            'message' => 'Accès refusé.'
+        ], 403);
+    }
+
+    // On autorise la suppression uniquement si la réservation est annulée
+    if (strtolower($reservation->statut) !== 'annulée') {
+        return response()->json([
+            'message' => 'Seules les réservations annulées peuvent être supprimées.'
+        ], 400);
+    }
+
+    // Libérer les sièges associés
+    foreach ($reservation->sieges as $siege) {
+        $siege->update([
+            'statut' => 'libre',
+            'reservation_id' => null,
+            'voyageur_id' => null,
+        ]);
+    }
+
+    // Supprimer la réservation
+    $reservation->delete();
+
+    return response()->json([
+        'message' => 'Réservation supprimée avec succès.'
+    ], 200);
+}
 }

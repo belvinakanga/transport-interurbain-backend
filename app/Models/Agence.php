@@ -23,4 +23,8 @@ class Agence extends Model
     {
         return $this->hasMany(Trajet::class);
     }
+    public function agents()
+{
+    return $this->hasMany(User::class);
+}
 }

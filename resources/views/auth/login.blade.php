@@ -3,7 +3,7 @@
 <x-guest-layout>
 
 <div class="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
-     style="background-image: url('{{ asset('login-bg.jpg') }}');">
+     style="background-image: url('{{ asset('tokende_bus_login.jpg') }}');">
 
     <!-- Fond sombre -->
     <div class="absolute inset-0 bg-black/60"></div>
@@ -16,7 +16,7 @@
             <div class="hidden lg:block text-white">
 
                 <h1 class="text-7xl font-extrabold drop-shadow-lg">
-                    Inter<span class="text-orange-500">GO</span>
+                    TOK<span class="text-orange-500">ENDE</span>
                 </h1>
 
                 <h2 class="text-2xl tracking-[12px] mt-2 font-light">
@@ -75,7 +75,7 @@
                             </h3>
 
                             <p class="text-gray-200">
-                                Voyagez sereinement avec InterGO.
+                                Voyagez sereinement avec TOKENDE.
                             </p>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                     </h2>
 
                     <p class="text-gray-200 mt-3">
-                        Bienvenue dans votre espace administrateur
+                        Bienvenue dans votre espace Utilisateur
                     </p>
 
                     <div class="w-20 h-1 bg-orange-500 rounded-full mx-auto mt-6"></div>
@@ -205,7 +205,7 @@
 
                 <div class="text-center mt-10 text-gray-200">
 
-                    © {{ date('Y') }} InterGO Congo
+                    © {{ date('Y') }} TOKENDE
 
                 </div>
 

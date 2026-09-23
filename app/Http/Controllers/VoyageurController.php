@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Agence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -49,12 +50,18 @@ class VoyageurController extends Controller
     */
     public function create()
     {
-        // Vérifie que la vue existe
+        // Vérifier que la vue existe
         if (!view()->exists('admin.create-voyageur')) {
             abort(500, 'La vue admin.create-voyageur est introuvable.');
         }
 
-        return view('admin.create-voyageur');
+        // Récupérer les agences
+        $agences = Agence::orderBy('nom_agence')->get();
+
+        return view(
+            'admin.create-voyageur',
+            compact('agences')
+        );
     }
 
     /*
@@ -64,23 +71,35 @@ class VoyageurController extends Controller
     */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
+
             'email' => 'required|email|max:255|unique:users,email',
+
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:admin,agence,user',
+
+            'role' => 'required|in:admin,agent,user',
+
+            // Une agence est obligatoire si le rôle est agent
+            'agence_id' => 'required_if:role,agent|nullable|exists:agences,id',
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'name' => $validated['name'],
+
+            'email' => $validated['email'],
+
+            'password' => Hash::make($validated['password']),
+
+            'role' => $validated['role'],
+
+            // Enregistrer l'agence sélectionnée
+            'agence_id' => $validated['agence_id'] ?? null,
         ]);
 
         return redirect()
             ->route('voyageurs.index')
-            ->with('success', 'Utilisateur ajouté avec succès.');
+            ->with('success', 'Utilisateur créé avec succès.');
     }
 
     /*
@@ -92,7 +111,10 @@ class VoyageurController extends Controller
     {
         $voyageur = User::findOrFail($id);
 
-        return view('admin.show-voyageur', compact('voyageur'));
+        return view(
+            'admin.show-voyageur',
+            compact('voyageur')
+        );
     }
 
     /*
@@ -109,5 +131,68 @@ class VoyageurController extends Controller
         return redirect()
             ->route('voyageurs.index')
             ->with('success', 'Utilisateur supprimé avec succès.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Afficher le formulaire de modification
+    |--------------------------------------------------------------------------
+    */
+    public function edit($id)
+    {
+        $voyageur = User::findOrFail($id);
+
+        // Récupérer les agences
+        $agences = Agence::orderBy('nom_agence')->get();
+
+        return view(
+            'admin.edit-voyageur',
+            compact('voyageur', 'agences')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enregistrer les modifications
+    |--------------------------------------------------------------------------
+    */
+    public function update(Request $request, $id)
+    {
+        $voyageur = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+
+            'email' => 'required|email|max:255|unique:users,email,' . $voyageur->id,
+
+            'role' => 'required|in:admin,agent,user',
+
+            // Une agence est obligatoire si le rôle est agent
+            'agence_id' => 'required_if:role,agent|nullable|exists:agences,id',
+
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $voyageur->name = $validated['name'];
+
+        $voyageur->email = $validated['email'];
+
+        $voyageur->role = $validated['role'];
+
+        // Enregistrer l'agence
+        $voyageur->agence_id = $validated['agence_id'] ?? null;
+
+        // Modifier le mot de passe uniquement s'il est renseigné
+        if (!empty($validated['password'])) {
+            $voyageur->password = Hash::make(
+                $validated['password']
+            );
+        }
+
+        $voyageur->save();
+
+        return redirect()
+            ->route('voyageurs.index')
+            ->with('success', 'Utilisateur modifié avec succès.');
     }
 }

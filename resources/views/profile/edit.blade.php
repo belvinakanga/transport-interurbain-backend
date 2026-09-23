@@ -1,93 +1,340 @@
-<x-layouts.admin>
+@php
+    $user = auth()->user();
 
-<div
-    x-data="{
-        profileModal:false,
-        passwordModal:false,
-        deleteModal:false
-    }"
-    class="p-8">
+    $isAgent = $user->role === 'agent';
 
-    <!-- ===================================== -->
-    <!-- TITRE -->
-    <!-- ===================================== -->
+    $layout = $isAgent
+        ? 'layouts.agent'
+        : 'layouts.admin';
 
-    <div class="mb-6">
+    $roleLabel = match ($user->role) {
+        'admin' => 'Administrateur',
+        'agent' => 'Agent',
+        default => 'Utilisateur',
+    };
 
-        <h1 class="text-4xl font-bold text-gray-800 flex items-center gap-3">
+    $agencyName = $user->agence->nom_agence ?? 'Aucune agence';
+@endphp
 
-            <i class="fas fa-user-circle text-yellow-500"></i>
 
-            Mon Profil
+<x-dynamic-component
+    :component="$layout"
+    :header="'Mon Profil'"
+>
 
-        </h1>
+    <div
+        x-data="{
+            profileModal: false,
+            passwordModal: false,
+            deleteModal: false
+        }"
+        class="space-y-6"
+    >
 
-        <p class="text-gray-500 mt-2">
+        {{-- =========================================================
+             TITRE
+        ========================================================== --}}
 
-            Consultez et gérez votre compte administrateur.
+        <div>
 
-        </p>
+            <h1
+                class="text-3xl md:text-4xl font-bold flex items-center gap-3"
+                style="color:#0A2A66;"
+            >
+                👤 Mon Profil
+            </h1>
 
-    </div>
+            <p class="mt-2 text-gray-500">
+                Consultez et gérez vos informations personnelles.
+            </p>
 
-    <!-- ===================================== -->
-    <!-- BANNIERE -->
-    <!-- ===================================== -->
+        </div>
 
-    <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-black rounded-2xl shadow-sm overflow-hidden mb-6">
 
-        <div class="px-8 py-6">
+        {{-- =========================================================
+             BANNIÈRE PROFIL
+        ========================================================== --}}
 
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div
+            class="rounded-2xl shadow-lg overflow-hidden"
+            style="background:#0A2A66;"
+        >
 
-                <div class="flex items-center gap-6">
+            <div class="px-6 md:px-8 py-7">
 
-                    <!-- Avatar -->
+                <div
+                    class="
+                        flex
+                        flex-col
+                        lg:flex-row
+                        items-center
+                        justify-between
+                        gap-6
+                    "
+                >
 
-                    <div
-                        class="w-20 h-20 rounded-full bg-yellow-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                    {{-- PROFIL --}}
 
-                        {{ strtoupper(substr(Auth::user()->name,0,1)) }}
+                    <div class="flex items-center gap-5">
+
+                        {{-- Avatar --}}
+
+                        <div
+                            class="
+                                w-24
+                                h-24
+                                rounded-full
+                                flex
+                                items-center
+                                justify-center
+                                text-4xl
+                                font-bold
+                                shadow-lg
+                                shrink-0
+                            "
+                            style="
+                                background:#FFFFFF;
+                                color:#0A2A66;
+                                border:4px solid #FF6B00;
+                            "
+                        >
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+
+
+                        {{-- Informations --}}
+
+                        <div class="min-w-0">
+
+                            <h2
+                                class="text-3xl font-bold"
+                                style="color:#FFFFFF;"
+                            >
+                                {{ $user->name }}
+                            </h2>
+
+                            <p
+                                class="mt-2 break-all"
+                                style="color:#DCE8FF;"
+                            >
+                                ✉️ {{ $user->email }}
+                            </p>
+
+
+                            {{-- BADGES --}}
+
+                            <div class="flex flex-wrap gap-3 mt-4">
+
+                                {{-- ROLE --}}
+
+                                <span
+                                    class="
+                                        px-4
+                                        py-2
+                                        rounded-full
+                                        text-sm
+                                        font-bold
+                                    "
+                                    style="
+                                        background:#FF6B00;
+                                        color:#FFFFFF;
+                                    "
+                                >
+
+                                    @if($user->role === 'admin')
+                                        👑
+                                    @elseif($user->role === 'agent')
+                                        👨‍💼
+                                    @else
+                                        👤
+                                    @endif
+
+                                    {{ $roleLabel }}
+
+                                </span>
+
+
+                                {{-- ACTIF --}}
+
+                                <span
+                                    class="
+                                        px-4
+                                        py-2
+                                        rounded-full
+                                        text-sm
+                                        font-bold
+                                    "
+                                    style="
+                                        background:#16A34A;
+                                        color:#FFFFFF;
+                                    "
+                                >
+                                    ✓ Actif
+                                </span>
+
+
+                                {{-- AGENCE --}}
+
+                                @if($isAgent)
+
+                                    <span
+                                        class="
+                                            px-4
+                                            py-2
+                                            rounded-full
+                                            text-sm
+                                            font-semibold
+                                        "
+                                        style="
+                                            background:#163B80;
+                                            color:#FFFFFF;
+                                            border:1px solid #4265A5;
+                                        "
+                                    >
+                                        🏢 {{ $agencyName }}
+                                    </span>
+
+                                @endif
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <!-- Infos -->
 
-                    <div class="text-white">
+                    {{-- BOUTON MODIFIER --}}
 
-                        <h2 class="text-3xl font-bold">
+                    <button
+                        type="button"
+                        @click="profileModal = true"
+                        class="
+                            px-6
+                            py-3
+                            rounded-xl
+                            font-bold
+                            shadow-lg
+                            transition
+                            shrink-0
+                        "
+                        style="
+                            background:#FF6B00;
+                            color:#FFFFFF;
+                        "
+                    >
+                        ✏️ Modifier
+                    </button>
 
-                            {{ Auth::user()->name }}
+                </div>
 
-                        </h2>
+            </div>
 
-                        <p class="text-gray-300 mt-1">
+        </div>
 
-                            <i class="fas fa-envelope mr-2"></i>
 
-                            {{ Auth::user()->email }}
+        {{-- =========================================================
+             INFORMATIONS
+        ========================================================== --}}
 
-                        </p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                        <div class="flex flex-wrap gap-3 mt-4">
 
-                            <span
-                                class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+            {{-- INFORMATIONS PERSONNELLES --}}
 
-                                <i class="fas fa-user-shield mr-2"></i>
+            <div
+                class="
+                    lg:col-span-2
+                    bg-white
+                    rounded-2xl
+                    shadow-sm
+                    border
+                    border-gray-100
+                    overflow-hidden
+                "
+            >
 
-                                Administrateur
+                <div
+                    class="
+                        px-6
+                        py-5
+                        border-b
+                        flex
+                        items-center
+                        justify-between
+                        gap-4
+                    "
+                    style="background:#F6F8FC;"
+                >
 
-                            </span>
+                    <h2
+                        class="text-xl font-bold"
+                        style="color:#0A2A66;"
+                    >
+                        🪪 Informations personnelles
+                    </h2>
 
-                            <span
-                                class="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
+                    <button
+                        type="button"
+                        @click="profileModal = true"
+                        class="
+                            px-4
+                            py-2
+                            rounded-lg
+                            font-semibold
+                        "
+                        style="
+                            background:#FF6B00;
+                            color:#FFFFFF;
+                        "
+                    >
+                        ✏️ Modifier
+                    </button>
 
-                                <i class="fas fa-circle-check mr-2"></i>
+                </div>
 
-                                Actif
 
-                            </span>
+                <div class="p-6">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        {{-- NOM --}}
+
+                        <div
+                            class="rounded-xl p-5"
+                            style="background:#EEF4FF;"
+                        >
+
+                            <p class="text-sm text-gray-500">
+                                Nom
+                            </p>
+
+                            <p
+                                class="mt-2 text-xl font-bold"
+                                style="color:#0A2A66;"
+                            >
+                                {{ $user->name }}
+                            </p>
+
+                        </div>
+
+
+                        {{-- EMAIL --}}
+
+                        <div
+                            class="rounded-xl p-5"
+                            style="background:#FFF3E8;"
+                        >
+
+                            <p class="text-sm text-gray-500">
+                                Adresse e-mail
+                            </p>
+
+                            <p
+                                class="mt-2 text-lg font-bold break-all"
+                                style="color:#0A2A66;"
+                            >
+                                {{ $user->email }}
+                            </p>
 
                         </div>
 
@@ -95,28 +342,155 @@
 
                 </div>
 
-                <!-- Actions -->
+            </div>
 
-                <div class="flex gap-3">
 
-                    <button
-                        @click="profileModal=true"
-                        class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl transition">
+            {{-- INFORMATIONS DU COMPTE --}}
 
-                        <i class="fas fa-pen mr-2"></i>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    shadow-sm
+                    border
+                    border-gray-100
+                    overflow-hidden
+                "
+            >
 
-                        Modifier
+                <div
+                    class="px-6 py-5 border-b"
+                    style="background:#F6F8FC;"
+                >
 
-                    </button>
+                    <h2
+                        class="text-xl font-bold"
+                        style="color:#0A2A66;"
+                    >
+                        ℹ️ Informations du compte
+                    </h2>
 
-                    <button
-                        class="bg-white/10 hover:bg-white/20 text-white px-5 py-3 rounded-xl transition">
+                </div>
 
-                        <i class="fas fa-eye mr-2"></i>
 
-                        Voir
+                <div class="p-6 space-y-4">
 
-                    </button>
+                    {{-- ROLE --}}
+
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                            rounded-xl
+                            px-4
+                            py-3
+                        "
+                        style="background:#FFF3E8;"
+                    >
+
+                        <span class="text-gray-500">
+                            Rôle
+                        </span>
+
+                        <span
+                            class="font-bold"
+                            style="color:#FF6B00;"
+                        >
+                            {{ $roleLabel }}
+                        </span>
+
+                    </div>
+
+
+                    {{-- AGENCE --}}
+
+                    @if($isAgent)
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                justify-between
+                                gap-4
+                                rounded-xl
+                                px-4
+                                py-3
+                            "
+                            style="background:#EEF4FF;"
+                        >
+
+                            <span class="text-gray-500">
+                                Agence
+                            </span>
+
+                            <span
+                                class="
+                                    font-bold
+                                    text-right
+                                "
+                                style="color:#0A2A66;"
+                            >
+                                {{ $agencyName }}
+                            </span>
+
+                        </div>
+
+                    @endif
+
+
+                    {{-- STATUT --}}
+
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                            rounded-xl
+                            px-4
+                            py-3
+                        "
+                        style="background:#F0FDF4;"
+                    >
+
+                        <span class="text-gray-500">
+                            Statut
+                        </span>
+
+                        <span
+                            class="font-bold"
+                            style="color:#16A34A;"
+                        >
+                            ✓ Actif
+                        </span>
+
+                    </div>
+
+
+                    {{-- DATE --}}
+
+                    <div
+                        class="
+                            flex
+                            items-center
+                            justify-between
+                            gap-4
+                            px-4
+                            py-3
+                        "
+                    >
+
+                        <span class="text-gray-500">
+                            Créé le
+                        </span>
+
+                        <span class="font-semibold text-gray-800">
+                            {{ optional($user->created_at)->format('d/m/Y') }}
+                        </span>
+
+                    </div>
 
                 </div>
 
@@ -124,210 +498,113 @@
 
         </div>
 
-    </div>
 
-    <!-- ===================================== -->
-    <!-- CARTES -->
-    <!-- ===================================== -->
+        {{-- =========================================================
+             SÉCURITÉ
+        ========================================================== --}}
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div
+            class="
+                bg-white
+                rounded-2xl
+                shadow-sm
+                border
+                border-gray-100
+                overflow-hidden
+            "
+        >
 
-        <!-- Informations -->
+            <div
+                class="
+                    px-6
+                    py-5
+                    border-b
+                    flex
+                    flex-col
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                    gap-4
+                "
+                style="background:#F6F8FC;"
+            >
 
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm">
-
-            <div class="flex justify-between items-center border-b px-6 py-5">
-
-                <h2 class="text-xl font-bold text-gray-800">
-
-                    <i class="fas fa-id-card text-yellow-500 mr-2"></i>
-
-                    Informations personnelles
-
+                <h2
+                    class="text-xl font-bold"
+                    style="color:#0A2A66;"
+                >
+                    🔐 Sécurité
                 </h2>
 
                 <button
-                    @click="profileModal=true"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
-
-                    <i class="fas fa-pen mr-2"></i>
-
-                    Modifier
-
+                    type="button"
+                    @click="passwordModal = true"
+                    class="
+                        px-4
+                        py-2
+                        rounded-lg
+                        font-semibold
+                    "
+                    style="
+                        background:#FF6B00;
+                        color:#FFFFFF;
+                    "
+                >
+                    🔑 Modifier le mot de passe
                 </button>
 
             </div>
 
+
             <div class="p-6">
 
-                <div class="grid md:grid-cols-2 gap-6">
+                <div
+                    class="
+                        flex
+                        flex-col
+                        sm:flex-row
+                        sm:items-center
+                        sm:justify-between
+                        gap-5
+                    "
+                >
 
                     <div>
 
-                        <p class="text-gray-500 text-sm">
-
-                            Nom
-
+                        <p class="text-sm text-gray-500">
+                            Mot de passe
                         </p>
 
-                        <p class="font-semibold text-lg">
-
-                            {{ Auth::user()->name }}
-
+                        <p
+                            class="
+                                mt-1
+                                text-2xl
+                                tracking-[6px]
+                                font-bold
+                            "
+                            style="color:#0A2A66;"
+                        >
+                            ••••••••••••
                         </p>
 
                     </div>
 
-                    <div>
-
-                        <p class="text-gray-500 text-sm">
-
-                            Adresse e-mail
-
-                        </p>
-
-                        <p class="font-semibold text-lg">
-
-                            {{ Auth::user()->email }}
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Compte -->
-
-        <div class="bg-white rounded-2xl shadow-sm">
-
-            <div class="border-b px-6 py-5">
-
-                <h2 class="text-xl font-bold text-gray-800">
-
-                    <i class="fas fa-circle-info text-yellow-500 mr-2"></i>
-
-                    Informations du compte
-
-                </h2>
-
-            </div>
-
-            <div class="p-6 space-y-5">
-
-                <div class="flex justify-between">
-
-                    <span class="text-gray-500">
-
-                        Rôle
-
-                    </span>
-
-                    <span class="font-semibold">
-
-                        Administrateur
-
-                    </span>
-
-                </div>
-
-                <div class="flex justify-between">
-
-                    <span class="text-gray-500">
-
-                        Statut
-
-                    </span>
-
-                    <span class="text-green-600 font-semibold">
-
-                        Actif
-
-                    </span>
-
-                </div>
-
-                <div class="flex justify-between">
-
-                    <span class="text-gray-500">
-
-                        Créé le
-
-                    </span>
-
-                    <span class="font-semibold">
-
-                        {{ Auth::user()->created_at->format('d/m/Y') }}
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-        <!-- ===================================== -->
-    <!-- SECURITE -->
-    <!-- ===================================== -->
-
-    <div class="bg-white rounded-2xl shadow-sm mb-6">
-
-        <div class="flex justify-between items-center border-b px-6 py-5">
-
-            <h2 class="text-xl font-bold text-gray-800">
-
-                <i class="fas fa-shield-halved text-yellow-500 mr-2"></i>
-
-                Sécurité
-
-            </h2>
-
-            <button
-                @click="passwordModal = true"
-                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
-
-                <i class="fas fa-key mr-2"></i>
-
-                Modifier
-
-            </button>
-
-        </div>
-
-        <div class="p-6">
-
-            <div class="flex items-center justify-between">
-
-                <div>
-
-                    <p class="text-sm text-gray-500">
-
-                        Mot de passe
-
-                    </p>
-
-                    <p class="text-2xl tracking-[8px] font-bold">
-
-                        ••••••••••••
-
-                    </p>
-
-                </div>
-
-                <div>
 
                     <span
-                        class="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
-
-                        <i class="fas fa-lock mr-2"></i>
-
-                        Sécurisé
-
+                        class="
+                            inline-flex
+                            items-center
+                            px-4
+                            py-2
+                            rounded-full
+                            font-semibold
+                        "
+                        style="
+                            background:#DCFCE7;
+                            color:#15803D;
+                        "
+                    >
+                        🔒 Sécurisé
                     </span>
 
                 </div>
@@ -336,190 +613,464 @@
 
         </div>
 
-    </div>
 
-    <!-- ===================================== -->
-    <!-- ZONE DANGEREUSE -->
-    <!-- ===================================== -->
+        {{-- =========================================================
+             ZONE DANGEREUSE
+        ========================================================== --}}
 
-    <div class="bg-white rounded-2xl shadow-sm border-l-4 border-red-500 mb-6">
+        <div
+            class="
+                bg-white
+                rounded-2xl
+                shadow-sm
+                border-l-4
+                border-red-500
+                overflow-hidden
+            "
+        >
 
-        <div class="flex justify-between items-center px-6 py-5 border-b">
+            <div
+                class="
+                    px-6
+                    py-5
+                    border-b
+                    flex
+                    flex-col
+                    sm:flex-row
+                    sm:items-center
+                    sm:justify-between
+                    gap-4
+                "
+            >
 
-            <div>
+                <div>
 
-                <h2 class="text-xl font-bold text-red-600">
+                    <h2 class="text-xl font-bold text-red-600">
+                        ⚠️ Zone dangereuse
+                    </h2>
 
-                    <i class="fas fa-triangle-exclamation mr-2"></i>
+                    <p class="text-sm text-gray-500 mt-1">
+                        La suppression du compte est définitive.
+                    </p>
 
-                    Zone dangereuse
+                </div>
 
-                </h2>
 
-                <p class="text-gray-500 text-sm mt-1">
+                <button
+                    type="button"
+                    @click="deleteModal = true"
+                    class="
+                        bg-red-600
+                        hover:bg-red-700
+                        text-white
+                        px-5
+                        py-2
+                        rounded-lg
+                        font-semibold
+                    "
+                >
+                    🗑️ Supprimer
+                </button>
 
-                    La suppression du compte est définitive.
+            </div>
 
+
+            <div class="p-6">
+
+                <p class="text-gray-600">
+                    Cette action supprimera définitivement votre compte
+                    ainsi que toutes les données associées.
                 </p>
 
             </div>
 
+        </div>
+
+
+       
+{{-- =========================================================
+     MODAL MODIFICATION PROFIL
+========================================================= --}}
+
+<div
+    x-show="profileModal"
+    x-transition.opacity
+    style="
+        display:none;
+        position:fixed;
+        inset:0;
+        z-index:2000;
+        background:rgba(0,0,0,0.60);
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+    "
+>
+
+    <div
+        @click.outside="profileModal = false"
+        style="
+            width:520px;
+            max-width:calc(100vw - 40px);
+            max-height:85vh;
+            background:#FFFFFF;
+            border-radius:18px;
+            box-shadow:0 25px 60px rgba(0,0,0,0.25);
+            overflow:hidden;
+        "
+    >
+
+        {{-- =====================================================
+             HEADER
+        ====================================================== --}}
+
+        <div
+            style="
+                background:#0A2A66;
+                padding:18px 22px;
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+            "
+        >
+
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                "
+            >
+
+                <div
+                    style="
+                        width:38px;
+                        height:38px;
+                        border-radius:50%;
+                        background:#163B80;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:#FFFFFF;
+                        font-size:18px;
+                    "
+                >
+                    👤
+                </div>
+
+                <div>
+
+                    <div
+                        style="
+                            color:#FFFFFF;
+                            font-size:18px;
+                            font-weight:700;
+                        "
+                    >
+                        Modifier mes informations
+                    </div>
+
+                    <div
+                        style="
+                            color:#DCE8FF;
+                            font-size:12px;
+                            margin-top:3px;
+                        "
+                    >
+                        Nom et adresse e-mail
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- FERMER --}}
+
             <button
-                @click="deleteModal = true"
-                class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg transition">
-
-                <i class="fas fa-trash mr-2"></i>
-
-                Supprimer
-
+                type="button"
+                @click="profileModal = false"
+                style="
+                    width:36px;
+                    height:36px;
+                    border:none;
+                    border-radius:50%;
+                    background:#163B80;
+                    color:#FFFFFF;
+                    font-size:20px;
+                    cursor:pointer;
+                "
+            >
+                ✕
             </button>
 
         </div>
 
-        <div class="p-6">
 
-            <p class="text-gray-600">
+        {{-- =====================================================
+             CONTENU
+        ====================================================== --}}
 
-                Cette action supprimera définitivement votre compte
-                ainsi que toutes les données associées.
+        <div
+            style="
+                padding:22px;
+                max-height:calc(85vh - 75px);
+                overflow-y:auto;
+            "
+        >
 
-            </p>
+            {{-- PETITE INFO --}}
+
+            <div
+                style="
+                    background:#EEF4FF;
+                    border-radius:12px;
+                    padding:12px 14px;
+                    margin-bottom:18px;
+                    color:#0A2A66;
+                    font-size:13px;
+                "
+            >
+                ✏️ Modifiez uniquement les informations de votre profil.
+            </div>
+
+
+            {{-- FORMULAIRE EXISTANT --}}
+
+            @include(
+                'profile.partials.update-profile-information-form'
+            )
 
         </div>
 
     </div>
 
-    <!-- ===================================== -->
-    <!-- MODAL PROFIL -->
-    <!-- ===================================== -->
+</div>
+       {{-- =========================================================
+     MODAL MOT DE PASSE
+========================================================= --}}
+
+<div
+    x-show="passwordModal"
+    x-transition.opacity
+    class="
+        fixed
+        inset-0
+        z-[100]
+        flex
+        items-center
+        justify-center
+        bg-black/60
+        p-4
+    "
+    style="display:none;"
+>
 
     <div
-        x-show="profileModal"
-        x-transition
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-        style="display:none;">
+        @click.outside="passwordModal = false"
+        class="
+            bg-white
+            rounded-2xl
+            shadow-2xl
+            w-full
+            max-w-xl
+            max-h-[85vh]
+            overflow-y-auto
+        "
+    >
+
+        {{-- EN-TÊTE --}}
 
         <div
-            @click.outside="profileModal = false"
-            class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden">
+            class="
+                px-6
+                py-4
+                flex
+                items-center
+                justify-between
+                sticky
+                top-0
+                z-10
+            "
+            style="background:#0A2A66;"
+        >
 
-            <div class="bg-gray-900 px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
 
-                <h2 class="text-xl font-bold text-white">
+                <div
+                    class="
+                        w-10
+                        h-10
+                        rounded-full
+                        flex
+                        items-center
+                        justify-center
+                    "
+                    style="
+                        background:#163B80;
+                        color:#FFFFFF;
+                    "
+                >
+                    🔐
+                </div>
 
-                    <i class="fas fa-user-edit text-yellow-500 mr-2"></i>
+                <div>
 
-                    Modifier mes informations
+                    <h2
+                        class="text-lg font-bold"
+                        style="color:#FFFFFF;"
+                    >
+                        Modifier le mot de passe
+                    </h2>
 
-                </h2>
+                    <p
+                        class="text-xs mt-1"
+                        style="color:#DCE8FF;"
+                    >
+                        Sécurisez votre compte
+                    </p>
 
-                <button
-                    @click="profileModal = false"
-                    class="text-white hover:text-red-400 text-xl">
-
-                    <i class="fas fa-times"></i>
-
-                </button>
+                </div>
 
             </div>
 
-            <div class="p-6">
-            @include('profile.partials.update-profile-information-form')
+
+            {{-- FERMER --}}
+
+            <button
+                type="button"
+                @click="passwordModal = false"
+                class="
+                    w-9
+                    h-9
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                    text-xl
+                "
+                style="
+                    background:#163B80;
+                    color:#FFFFFF;
+                "
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        {{-- CONTENU --}}
+
+        <div class="p-6">
+
+            <div
+                class="
+                    rounded-xl
+                    px-4
+                    py-3
+                    mb-5
+                "
+                style="background:#EEF4FF;"
+            >
+
+                <p
+                    class="text-sm"
+                    style="color:#0A2A66;"
+                >
+                    🔒 Choisissez un mot de passe sécurisé d'au moins
+                    8 caractères.
+                </p>
+
+            </div>
+
+
+            {{-- FORMULAIRE EXISTANT --}}
+
+            <div class="text-sm">
+
+                @include(
+                    'profile.partials.update-password-form'
+                )
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-</div>
 
-</div>
+        {{-- =========================================================
+             MODAL SUPPRESSION
+        ========================================================== --}}
 
-<!-- ===================================== -->
-<!-- MODAL MOT DE PASSE -->
-<!-- ===================================== -->
+        <div
+            x-show="deleteModal"
+            x-transition
+            class="
+                fixed
+                inset-0
+                z-[100]
+                flex
+                items-center
+                justify-center
+                bg-black/60
+                p-4
+            "
+            style="display:none;"
+        >
 
-<div
-x-show="passwordModal"
-x-transition
-class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-style="display:none;">
+            <div
+                @click.outside="deleteModal = false"
+                class="
+                    bg-white
+                    rounded-2xl
+                    shadow-2xl
+                    w-full
+                    max-w-2xl
+                    overflow-hidden
+                "
+            >
 
-<div
-@click.outside="passwordModal = false"
-class="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden">
+                <div
+                    class="
+                        px-6
+                        py-5
+                        flex
+                        items-center
+                        justify-between
+                    "
+                    style="background:#DC2626;"
+                >
 
-<div class="bg-gray-900 px-6 py-5 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-white">
+                        ⚠️ Confirmation
+                    </h2>
 
-    <h2 class="text-xl font-bold text-white">
+                    <button
+                        type="button"
+                        @click="deleteModal = false"
+                        class="text-white text-2xl"
+                    >
+                        ✕
+                    </button>
 
-        <i class="fas fa-lock text-yellow-500 mr-2"></i>
+                </div>
 
-        Modifier le mot de passe
+                <div class="p-6">
 
-    </h2>
+                    @include(
+                        'profile.partials.delete-user-form'
+                    )
 
-    <button
-        @click="passwordModal = false"
-        class="text-white hover:text-red-400 text-xl">
+                </div>
 
-        <i class="fas fa-times"></i>
+            </div>
 
-    </button>
+        </div>
 
-</div>
+    </div>
 
-<div class="p-6">
-
-    @include('profile.partials.update-password-form')
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===================================== -->
-<!-- MODAL SUPPRESSION -->
-<!-- ===================================== -->
-
-<div
-x-show="deleteModal"
-x-transition
-class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-style="display:none;">
-
-<div
-@click.outside="deleteModal = false"
-class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
-
-<div class="bg-red-600 px-6 py-5 flex justify-between items-center">
-
-    <h2 class="text-xl font-bold text-white">
-
-        <i class="fas fa-triangle-exclamation mr-2"></i>
-
-        Confirmation
-
-    </h2>
-
-    <button
-        @click="deleteModal = false"
-        class="text-white hover:text-gray-200 text-xl">
-
-        <i class="fas fa-times"></i>
-
-    </button>
-
-</div>
-
-<div class="p-6">
-
-    @include('profile.partials.delete-user-form')
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</x-layouts.admin>
+</x-dynamic-component>

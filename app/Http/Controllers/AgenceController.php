@@ -2,46 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Agence;
+use Illuminate\Http\Request;
 
 class AgenceController extends Controller
 {
-    // AFFICHER toutes les agences
+    /**
+     * ============================================================
+     * LISTE DES AGENCES
+     * ============================================================
+     */
     public function index()
     {
-        return response()->json(Agence::all());
+        $agences = Agence::latest()->get();
+
+        return response()->json($agences);
     }
 
-    // AJOUTER une agence
+
+    /**
+     * ============================================================
+     * CRÉER UNE AGENCE
+     * ============================================================
+     */
     public function store(Request $request)
     {
-        $agence = Agence::create([
-            'nom' => $request->nom,
-            'adresse' => $request->adresse,
-            'telephone' => $request->telephone,
+        $validated = $request->validate([
+            'nom_agence' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'ville' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'adresse' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'telephone' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
         ]);
+
+        $agence = Agence::create($validated);
 
         return response()->json([
-            'message' => 'Agence ajoutée avec succès',
-            'data' => $agence
-        ]);
+            'message' => 'Agence créée avec succès.',
+            'data' => $agence,
+        ], 201);
     }
 
-    // AFFICHER une seule agence
+
+    /**
+     * ============================================================
+     * AFFICHER UNE AGENCE
+     * ============================================================
+     */
     public function show($id)
     {
-        return Agence::findOrFail($id);
+        $agence = Agence::findOrFail($id);
+
+        return response()->json($agence);
     }
 
-    // SUPPRIMER une agence
+
+    /**
+     * ============================================================
+     * SUPPRIMER UNE AGENCE
+     * ============================================================
+     */
     public function destroy($id)
     {
         $agence = Agence::findOrFail($id);
+
         $agence->delete();
 
         return response()->json([
-            'message' => 'Agence supprimée avec succès'
+            'message' => 'Agence supprimée avec succès.',
         ]);
     }
 }
