@@ -55,17 +55,18 @@
     ========================================================== --}}
 
     <aside
-        style="
-            width:285px;
-            height:100vh;
-            background:#FFFFFF;
-            border-right:1px solid #E5E7EB;
-            box-shadow:2px 0 12px rgba(0,0,0,.04);
-            display:flex;
-            flex-direction:column;
-            flex-shrink:0;
-        "
-    >
+    style="
+        width:310px;
+        min-width:310px;
+        height:100vh;
+        background:#FFFFFF;
+        border-right:2px solid #E5E7EB;
+        box-sizing:border-box;
+        display:flex;
+        flex-direction:column;
+        flex-shrink:0;
+    "
+>
 
 
         {{-- =====================================================
@@ -73,11 +74,16 @@
         ====================================================== --}}
 
         <div
-            style="
-                padding:20px;
-                border-bottom:1px solid #E5E7EB;
-            "
-        >
+    style="
+        height:78px;
+        min-height:78px;
+        box-sizing:border-box;
+        padding:15px 20px;
+        border-bottom:1px solid #E5E7EB;
+        display:flex;
+        align-items:center;
+    "
+>
 
             <div
                 style="
@@ -174,7 +180,7 @@
                     margin-bottom:5px;
                     border-radius:11px;
                     text-decoration:none;
-                    font-size:14px;
+                    font-size:20px;
                     font-weight:700;
                     transition:.2s;
 
@@ -215,7 +221,7 @@
                     margin-bottom:5px;
                     border-radius:11px;
                     text-decoration:none;
-                    font-size:14px;
+                    font-size:18px;
                     font-weight:700;
 
                     {{ request()->is('admin/agences*')
@@ -255,7 +261,7 @@
                     margin-bottom:5px;
                     border-radius:11px;
                     text-decoration:none;
-                    font-size:14px;
+                    font-size:18px;
                     font-weight:700;
 
                     {{ request()->is('admin/voyageurs*')
@@ -295,7 +301,7 @@
                     margin-bottom:5px;
                     border-radius:11px;
                     text-decoration:none;
-                    font-size:14px;
+                    font-size:18px;
                     font-weight:700;
 
                     {{ request()->is('admin/abonnements*')
@@ -337,7 +343,7 @@
                         margin-bottom:5px;
                         border-radius:11px;
                         text-decoration:none;
-                        font-size:14px;
+                        font-size:18px;
                         font-weight:700;
 
                         {{ request()->is('paiements-agences*')
@@ -365,6 +371,45 @@
 
             @endif
 
+                        {{-- COMMISSIONS --}}
+
+            <a
+                href="{{ route('admin.commissions') }}"
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:13px;
+                    height:46px;
+                    padding:0 14px;
+                    margin-bottom:5px;
+                    border-radius:11px;
+                    text-decoration:none;
+                    font-size:18px;
+                    font-weight:700;
+
+                    {{ request()->is('admin/commissions*')
+                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
+                        : 'color:#0A2A66;background:transparent;'
+                    }}
+                "
+            >
+
+                <span
+                    style="
+                        width:21px;
+                        text-align:center;
+                        font-size:17px;
+                    "
+                >
+                    💰
+                </span>
+
+                <span>
+                    Commissions
+                </span>
+
+            </a>
+
 
             {{-- AVIS --}}
 
@@ -379,7 +424,7 @@
                     margin-bottom:5px;
                     border-radius:11px;
                     text-decoration:none;
-                    font-size:14px;
+                    font-size:18px;
                     font-weight:700;
 
                     {{ request()->is('admin/avis*')
@@ -426,7 +471,7 @@
                         margin-bottom:5px;
                         border-radius:11px;
                         text-decoration:none;
-                        font-size:14px;
+                        font-size:18px;
                         font-weight:700;
 
                         {{ request()->is('profile*')
@@ -485,7 +530,7 @@
                         border-radius:11px;
                         background:#FF6B00;
                         color:#FFFFFF;
-                        font-size:14px;
+                        font-size:18px;
                         font-weight:700;
                         cursor:pointer;
                         box-shadow:0 4px 10px rgba(255,107,0,.18);
@@ -639,7 +684,7 @@
 
                         <div
                             style="
-                                font-size:14px;
+                                font-size:18px;
                                 font-weight:700;
                                 color:#0A2A66;
                             "

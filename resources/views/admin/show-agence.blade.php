@@ -24,9 +24,22 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <div>
-                        <p class="text-gray-500 text-sm">ID</p>
-                        <p class="text-xl font-bold">{{ $agence->id }}</p>
-                    </div>
+    <p class="text-gray-500 text-sm">Agent(s) de l'agence</p>
+
+    @forelse($agence->agents as $agent)
+
+        <p class="text-xl font-bold">
+            {{ $agent->name }}
+        </p>
+
+    @empty
+
+        <p class="text-gray-400">
+            Aucun agent affecté
+        </p>
+
+    @endforelse
+</div>
 
                     <div>
                         <p class="text-gray-500 text-sm">Nom de l'agence</p>

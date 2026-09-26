@@ -124,7 +124,7 @@
                     mt-1
                 "
             >
-                Gérez la plateforme, les agences, les abonnements et les règlements.
+                Gérez la plateforme, les agences, les abonnements, les commissions et les règlements.
             </p>
 
         </div>

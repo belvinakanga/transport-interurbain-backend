@@ -11,6 +11,7 @@ class Agence extends Model
         'ville',
         'adresse',
         'telephone',
+        'modele_economique',
     ];
 
     /*
@@ -23,8 +24,9 @@ class Agence extends Model
     {
         return $this->hasMany(Trajet::class);
     }
+
     public function agents()
-{
-    return $this->hasMany(User::class);
-}
+    {
+        return $this->hasMany(User::class);
+    }
 }

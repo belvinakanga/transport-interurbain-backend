@@ -211,6 +211,11 @@ Route::get(
         [AdminController::class, 'paiements']
     );
 
+    Route::get(
+    '/admin/commissions',
+    [AdminController::class, 'commissions']
+)->name('admin.commissions');
+
 
     /*
 |--------------------------------------------------------------------------

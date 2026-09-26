@@ -1382,54 +1382,59 @@ class AdminController extends Controller
 
 
     /*
-    |--------------------------------------------------------------------------
-    | ENREGISTRER UNE AGENCE
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| ENREGISTRER UNE AGENCE
+|--------------------------------------------------------------------------
+*/
 
-    public function storeAgence(Request $request)
-    {
-        $request->validate([
-            'nom_agence' =>
-                'required|string|max:255',
+public function storeAgence(Request $request)
+{
+    $request->validate([
+        'nom_agence' =>
+            'required|string|max:255',
 
-            'ville' =>
-                'required|string|max:255',
+        'ville' =>
+            'required|string|max:255',
 
-            'adresse' =>
-                'required|string|max:255',
+        'adresse' =>
+            'required|string|max:255',
 
-            'telephone' =>
-                'required|string|max:50',
-        ]);
+        'telephone' =>
+            'required|string|max:50',
 
-
-        Agence::create([
-
-            'nom_agence' =>
-                $request->nom_agence,
-
-            'ville' =>
-                $request->ville,
-
-            'adresse' =>
-                $request->adresse,
-
-            'telephone' =>
-                $request->telephone,
-
-        ]);
+        'modele_economique' =>
+            'required|in:commission,abonnement',
+    ]);
 
 
-        return redirect(
-            '/admin/agences'
-        )
-        ->with(
-            'success',
-            'Agence ajoutée avec succès.'
-        );
-    }
+    Agence::create([
 
+        'nom_agence' =>
+            $request->nom_agence,
+
+        'ville' =>
+            $request->ville,
+
+        'adresse' =>
+            $request->adresse,
+
+        'telephone' =>
+            $request->telephone,
+
+        'modele_economique' =>
+            $request->modele_economique,
+
+    ]);
+
+
+    return redirect(
+        '/admin/agences'
+    )
+    ->with(
+        'success',
+        'Agence ajoutée avec succès.'
+    );
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -1449,62 +1454,164 @@ class AdminController extends Controller
     }
 
 
+   /*
+|--------------------------------------------------------------------------
+| MISE À JOUR AGENCE
+|--------------------------------------------------------------------------
+*/
+
+public function updateAgence(
+    Request $request,
+    $id
+)
+{
+    $request->validate([
+        'nom_agence' =>
+            'required|string|max:255',
+
+        'ville' =>
+            'required|string|max:255',
+
+        'adresse' =>
+            'required|string|max:255',
+
+        'telephone' =>
+            'required|string|max:50',
+
+        'modele_economique' =>
+            'required|in:commission,abonnement',
+    ]);
+
+
+    $agence =
+        Agence::findOrFail($id);
+
+
     /*
     |--------------------------------------------------------------------------
-    | MISE À JOUR AGENCE
+    | VÉRIFICATION DU CHANGEMENT DE MODÈLE ÉCONOMIQUE
     |--------------------------------------------------------------------------
     */
 
-    public function updateAgence(
-        Request $request,
-        $id
-    )
-    {
-        $request->validate([
-            'nom_agence' =>
-                'required|string|max:255',
+    if (
+        $agence->modele_economique !==
+        $request->modele_economique
+    ) {
 
-            'ville' =>
-                'required|string|max:255',
+        /*
+        |--------------------------------------------------------------------------
+        | ABONNEMENT ACTIF → COMMISSION INTERDITE
+        |--------------------------------------------------------------------------
+        */
 
-            'adresse' =>
-                'required|string|max:255',
+        if (
+            $agence->modele_economique === 'abonnement'
+            &&
+            $request->modele_economique === 'commission'
+        ) {
 
-            'telephone' =>
-                'required|string|max:50',
-        ]);
-
-
-        $agence =
-            Agence::findOrFail($id);
-
-
-        $agence->update([
-
-            'nom_agence' =>
-                $request->nom_agence,
-
-            'ville' =>
-                $request->ville,
-
-            'adresse' =>
-                $request->adresse,
-
-            'telephone' =>
-                $request->telephone,
-
-        ]);
+            $abonnementActif =
+                Abonnement::where(
+                    'agence_id',
+                    $agence->id
+                )
+                ->where(
+                    'statut',
+                    'Actif'
+                )
+                ->exists();
 
 
-        return redirect(
-            '/admin/agences'
-        )
-        ->with(
-            'success',
-            'Agence modifiée avec succès.'
-        );
+            if ($abonnementActif) {
+
+                return back()
+                    ->withInput()
+                    ->with(
+                        'error',
+                        'Impossible de passer cette agence en commission : un abonnement est actuellement actif.'
+                    );
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | COMMISSION AVEC VENTES → ABONNEMENT INTERDIT
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $agence->modele_economique === 'commission'
+            &&
+            $request->modele_economique === 'abonnement'
+        ) {
+
+            $achatsPayes =
+                Achat::whereHas(
+                    'trajet',
+                    function ($query) use ($agence) {
+
+                        $query->where(
+                            'agence_id',
+                            $agence->id
+                        );
+
+                    }
+                )
+                ->where(
+                    'statut',
+                    'payé'
+                )
+                ->exists();
+
+
+            if ($achatsPayes) {
+
+                return back()
+                    ->withInput()
+                    ->with(
+                        'error',
+                        'Impossible de passer cette agence en abonnement : des billets ont déjà été vendus avec le modèle de commission.'
+                    );
+            }
+        }
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | MISE À JOUR
+    |--------------------------------------------------------------------------
+    */
+
+    $agence->update([
+
+        'nom_agence' =>
+            $request->nom_agence,
+
+        'ville' =>
+            $request->ville,
+
+        'adresse' =>
+            $request->adresse,
+
+        'telephone' =>
+            $request->telephone,
+
+        'modele_economique' =>
+            $request->modele_economique,
+
+    ]);
+
+
+    return redirect(
+        '/admin/agences'
+    )
+    ->with(
+        'success',
+        'Agence modifiée avec succès.'
+    );
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -1917,93 +2024,185 @@ return view(
     */
 
     public function abonnements(Request $request)
-    {
-        $recherche = $request->recherche;
+{
+    $recherche = $request->recherche;
 
-        $statut = $request->statut;
+    $statut = $request->statut;
 
-        $parPage = $request->par_page ?? 10;
-
-        $query =
-            Abonnement::with(
-                'agence'
-            );
+    $parPage = $request->par_page ?? 10;
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | RECHERCHE
-        |--------------------------------------------------------------------------
-        */
+    /*
+    |--------------------------------------------------------------------------
+    | AGENCES DU MODÈLE ABONNEMENT
+    |--------------------------------------------------------------------------
+    */
 
-        if ($recherche) {
+    $agencesAbonnement =
+        Agence::where(
+            'modele_economique',
+            'abonnement'
+        )
+        ->when(
+            $recherche,
+            function ($query) use ($recherche) {
 
-            $query->whereHas(
-                'agence',
-                function ($q) use ($recherche) {
+                $query->where(
+                    'nom_agence',
+                    'like',
+                    "%{$recherche}%"
+                );
 
-                    $q->where(
-                        'nom_agence',
-                        'like',
-                        "%{$recherche}%"
-                    );
+            }
+        )
+        ->orderBy(
+            'nom_agence'
+        )
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ABONNEMENTS EXISTANTS
+    |--------------------------------------------------------------------------
+    */
+
+    $abonnementsExistants =
+        Abonnement::with(
+            'agence'
+        )
+        ->when(
+            $recherche,
+            function ($query) use ($recherche) {
+
+                $query->whereHas(
+                    'agence',
+                    function ($q) use ($recherche) {
+
+                        $q->where(
+                            'nom_agence',
+                            'like',
+                            "%{$recherche}%"
+                        );
+
+                    }
+                );
+
+            }
+        )
+        ->when(
+            $statut,
+            function ($query) use ($statut) {
+
+                $query->where(
+                    'statut',
+                    $statut
+                );
+
+            }
+        )
+        ->latest()
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJOUTER LES AGENCES SANS ABONNEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    foreach ($agencesAbonnement as $agence) {
+
+        $aUnAbonnement =
+            $abonnementsExistants->contains(
+                function ($abonnement) use ($agence) {
+
+                    return
+                        $abonnement->agence_id ===
+                        $agence->id;
 
                 }
             );
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATUT
-        |--------------------------------------------------------------------------
-        */
+        if (!$aUnAbonnement) {
 
-        if ($statut) {
+            $abonnementsExistants->push(
+                (object) [
+                    'id' => null,
 
-            $query->where(
-                'statut',
-                $statut
+                    'agence_id' =>
+                        $agence->id,
+
+                    'agence' =>
+                        $agence,
+
+                    'type' =>
+                        'Abonnement mensuel',
+
+                    'montant' =>
+                        null,
+
+                    'date_debut' =>
+                        null,
+
+                    'date_fin' =>
+                        null,
+
+                    'statut' =>
+                        'En attente',
+                ]
             );
+
         }
-
-
-        $abonnements =
-            $query
-            ->latest()
-            ->paginate($parPage)
-            ->withQueryString();
-
-
-        return view(
-            'admin.abonnements',
-            compact('abonnements')
-        );
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | COMMISSIONS
+    | PAGINATION
     |--------------------------------------------------------------------------
     */
 
-    public function commissions()
-    {
-        $paiements =
-            Paiement::with([
-                'reservation.trajet.agence'
-            ])
-            ->latest()
-            ->get();
+    $total =
+        $abonnementsExistants->count();
 
-
-        return view(
-            'admin.commissions',
-            compact('paiements')
+    $page =
+        request()->get(
+            'page',
+            1
         );
-    }
 
+    $items =
+        $abonnementsExistants
+        ->forPage(
+            $page,
+            $parPage
+        )
+        ->values();
+
+
+    $abonnements =
+        new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $total,
+            $parPage,
+            $page,
+            [
+                'path' =>
+                    request()->url(),
+
+                'query' =>
+                    request()->query(),
+            ]
+        );
+
+
+    return view(
+        'admin.abonnements',
+        compact('abonnements')
+    );
+}
 
     /*
     |--------------------------------------------------------------------------
@@ -2026,16 +2225,14 @@ return view(
     */
 
     public function showAgence($id)
-    {
-        $agence =
-            Agence::findOrFail($id);
+{
+    $agence = Agence::with('agents')->findOrFail($id);
 
-
-        return view(
-            'admin.show-agence',
-            compact('agence')
-        );
-    }
+    return view(
+        'admin.show-agence',
+        compact('agence')
+    );
+}
 
 
     /*
@@ -2148,6 +2345,79 @@ public function verifierBillet(Request $request)
     return back()->with(
         'billet_verifie',
         $billet
+    );
+}
+
+public function commissions()
+{
+    // On récupère uniquement les agences
+    // qui ont choisi le modèle COMMISSION
+    $agences = Agence::where(
+        'modele_economique',
+        'commission'
+    )
+    ->orderBy('nom_agence')
+    ->get();
+
+    // On récupère uniquement les achats payés
+    // appartenant à des agences en mode COMMISSION
+    $achats = Achat::with([
+        'trajet.agence',
+        'reservation'
+    ])
+    ->where('statut', 'payé')
+    ->whereHas(
+        'trajet.agence',
+        function ($query) {
+            $query->where(
+                'modele_economique',
+                'commission'
+            );
+        }
+    )
+    ->get()
+    ->groupBy(function ($achat) {
+        return $achat->trajet?->agence_id;
+    });
+
+    // On prépare les données pour la page
+    $commissions = $agences
+        ->map(function ($agence) use ($achats) {
+
+            $achatsAgence = $achats->get(
+                $agence->id,
+                collect()
+            );
+
+            $nombreBillets = $achatsAgence->sum(
+                function ($achat) {
+                    return $achat->reservation?->nombre_places ?? 0;
+                }
+            );
+
+            return [
+                'agence' => $agence,
+
+                'nombre_billets' => $nombreBillets,
+
+                'frais_generes' => $achatsAgence->sum(
+                    'frais_tokende'
+                ),
+
+                'part_tokende' => $achatsAgence->sum(
+                    'commission_tokende'
+                ),
+
+                'part_agence' => $achatsAgence->sum(
+                    'part_agence'
+                ),
+            ];
+        })
+        ->values();
+
+    return view(
+        'admin.commissions',
+        compact('commissions')
     );
 }
 }

@@ -5,15 +5,11 @@
     <div class="bg-white rounded-xl shadow p-8">
 
         <h1 class="text-3xl font-bold mb-8">
-            👤 Détails du voyageur
+            👤 Profil de l'utilisateur
         </h1>
 
         <div class="space-y-6">
 
-            <div>
-                <strong>ID :</strong>
-                {{ $voyageur->id }}
-            </div>
 
             <div>
                 <strong>Nom :</strong>

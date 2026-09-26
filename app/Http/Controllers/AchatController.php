@@ -842,17 +842,20 @@ try {
                     | MONTANT
                     |--------------------------------------------------------------------------
                     */
-                    $prixTrajet =
-                        (float)
-                        $trajet->prix;
+                   $prixBaseParBillet = (float) $trajet->prix;
 
-                    $montant =
-                        $prixTrajet
-                        *
-                        $nombrePlaces;
+$fraisTokendeParBillet = 100;
+$commissionTokendeParBillet = 80;
+$partAgenceParBillet = 20;
 
+$montantBase = $prixBaseParBillet * $nombrePlaces;
 
-                    /*
+$fraisTokende = $fraisTokendeParBillet * $nombrePlaces;
+$commissionTokende = $commissionTokendeParBillet * $nombrePlaces;
+$partAgence = $partAgenceParBillet * $nombrePlaces;
+
+$montant = $montantBase + $fraisTokende;
+/*
 |--------------------------------------------------------------------------
 | RÉFÉRENCE ACHAT
 |--------------------------------------------------------------------------
@@ -900,32 +903,22 @@ $referenceTemporaire =
                         $trajet->arrivee;
 
 
-                    $achat =
-    Achat::create([
-        'user_id' =>
-            Auth::id(),
+                   $achat = Achat::create([
+    'user_id' => Auth::id(),
+    'reservation_id' => $reservation->id,
+    'trajet_id' => $trajet->id,
 
-        'reservation_id' =>
-            $reservation->id,
+    'montant' => $montant,
+    'montant_base' => $montantBase,
+    'frais_tokende' => $fraisTokende,
+    'commission_tokende' => $commissionTokende,
+    'part_agence' => $partAgence,
 
-        'trajet_id' =>
-            $trajet->id,
-
-        'montant' =>
-            $montant,
-
-        'description' =>
-            $description,
-
-        'reference' =>
-          'TMP-' . Str::uuid()->toString(),
-
-        'statut' =>
-            'payé',
-
-        'remboursable' =>
-            $remboursable,
-    ]);
+    'description' => $description,
+    'reference' => 'TMP-' . Str::uuid()->toString(),
+    'statut' => 'payé',
+    'remboursable' => $remboursable,
+]);
 
 
 /*

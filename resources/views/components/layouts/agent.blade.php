@@ -49,7 +49,7 @@
 
     <aside
         style="
-            width:250px;
+            width:350px;
             height:100vh;
             background:#FFFFFF;
             border-right:1px solid #ebe9e5;
@@ -188,16 +188,16 @@
                 {{ auth()->user()->name }}
             </p>
 
-            <p
-                style="
-                    margin:2px 0 0;
-                    font-size:13px;
-                    font-weight:700;
-                    color:#FF6B00;
-                "
-            >
-                Agent
-            </p>
+           <p
+    style="
+        margin:2px 0 0;
+        font-size:16px;
+        font-weight:700;
+        color:#FF6B00;
+    "
+>
+    Agent
+</p>
 
         </div>
 
@@ -249,28 +249,28 @@
         ====================================================== --}}
 
         <nav
-            style="
-                flex:1;
-                padding:14px 10px;
-                overflow-y:auto;
-            "
-        >
+    style="
+        flex:1;
+        padding:30px 20px;
+        overflow-y:auto;
+    "
+>
 
             {{-- TITRE NAVIGATION --}}
 
             <div
-                style="
-                    padding:0 10px;
-                    margin:0 0 8px;
-                    font-size:11px;
-                    font-weight:800;
-                    text-transform:uppercase;
-                    letter-spacing:1.4px;
-                    color:#9CA3AF;
-                "
-            >
-                Navigation
-            </div>
+    style="
+        padding:0 14px;
+        margin:0 0 18px;
+        font-size:12px;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:1.5px;
+        color:#9CA3AF;
+    "
+>
+    Navigation
+</div>
 
 
             {{-- =================================================
@@ -283,10 +283,9 @@
                     display:flex;
                     align-items:center;
                     gap:11px;
-                    min-height:44px;
-                    padding:0 12px;
-                    margin-bottom:4px;
-                    border-radius:11px;
+                    min-height:52px;
+                    padding:0 16px;
+                    margin-bottom:8px; 
                     text-decoration:none;
                     font-size:15px;
                     font-weight:800;

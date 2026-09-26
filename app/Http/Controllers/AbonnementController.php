@@ -17,100 +17,202 @@ class AbonnementController extends Controller
      * ============================================================
      */
     public function index(Request $request)
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | Vérification Admin
-        |--------------------------------------------------------------------------
-        */
+{
+    /* Vérification Admin */
 
-        if (!auth()->check()) {
-            return redirect()
-                ->route('login')
-                ->with(
-                    'error',
-                    'Vous devez être connecté.'
-                );
-        }
-
-        if (auth()->user()->role !== 'admin') {
-            abort(403, 'Accès refusé.');
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Pagination
-        |--------------------------------------------------------------------------
-        */
-
-        $parPage = (int) $request->get('par_page', 10);
-
-        if (!in_array($parPage, [10, 25, 50, 100])) {
-            $parPage = 10;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Requête
-        |--------------------------------------------------------------------------
-        */
-
-        $abonnements = Abonnement::with('agence')
-
-            ->when(
-                $request->filled('recherche'),
-                function ($query) use ($request) {
-
-                    $recherche = $request->recherche;
-
-                    $query->whereHas(
-                        'agence',
-                        function ($q) use ($recherche) {
-
-                            $q->where(
-                                'nom_agence',
-                                'like',
-                                '%' . $recherche . '%'
-                            );
-
-                        }
-                    );
-
-                }
-            )
-
-            ->when(
-                $request->filled('statut'),
-                function ($query) use ($request) {
-
-                    $query->where(
-                        'statut',
-                        $request->statut
-                    );
-
-                }
-            )
-
-            ->orderByDesc('id')
-
-            ->paginate($parPage)
-
-            ->withQueryString();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Vue
-        |--------------------------------------------------------------------------
-        */
-
-        return view(
-            'admin.abonnements',
-            compact('abonnements')
-        );
+    if (!auth()->check()) {
+        return redirect()
+            ->route('login')
+            ->with(
+                'error',
+                'Vous devez être connecté.'
+            );
     }
+
+    if (auth()->user()->role !== 'admin') {
+        abort(403, 'Accès refusé.');
+    }
+
+
+    /* Pagination */
+
+    $parPage = (int) $request->get('par_page', 10);
+
+    if (!in_array($parPage, [10, 25, 50, 100])) {
+        $parPage = 10;
+    }
+
+
+    /* Recherche */
+
+    $recherche = $request->recherche;
+
+    $statut = $request->statut;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AGENCES QUI ONT LE MODÈLE ABONNEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    $agencesAbonnement = Agence::where(
+        'modele_economique',
+        'abonnement'
+    )
+    ->when(
+        $recherche,
+        function ($query) use ($recherche) {
+
+            $query->where(
+                'nom_agence',
+                'like',
+                "%{$recherche}%"
+            );
+
+        }
+    )
+    ->orderBy('nom_agence')
+    ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ABONNEMENTS EXISTANTS
+    |--------------------------------------------------------------------------
+    */
+
+    $abonnementsExistants = Abonnement::with('agence')
+        ->when(
+            $recherche,
+            function ($query) use ($recherche) {
+
+                $query->whereHas(
+                    'agence',
+                    function ($q) use ($recherche) {
+
+                        $q->where(
+                            'nom_agence',
+                            'like',
+                            "%{$recherche}%"
+                        );
+
+                    }
+                );
+
+            }
+        )
+        ->when(
+            $statut,
+            function ($query) use ($statut) {
+
+                $query->where(
+                    'statut',
+                    $statut
+                );
+
+            }
+        )
+        ->latest()
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJOUTER LES AGENCES SANS ABONNEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    foreach ($agencesAbonnement as $agence) {
+
+        $aUnAbonnement = $abonnementsExistants->contains(
+            function ($abonnement) use ($agence) {
+
+                return $abonnement->agence_id === $agence->id;
+
+            }
+        );
+
+
+        if (!$aUnAbonnement) {
+
+            $abonnementsExistants->push(
+                (object) [
+
+                    'id' => null,
+
+                    'agence_id' =>
+                        $agence->id,
+
+                    'agence' =>
+                        $agence,
+
+                    'type' =>
+                        'Abonnement mensuel',
+
+                    'montant' =>
+                        null,
+
+                    'date_debut' =>
+                        null,
+
+                    'date_fin' =>
+                        null,
+
+                    'statut' =>
+                        'En attente',
+                ]
+            );
+
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+    $total =
+        $abonnementsExistants->count();
+
+    $page =
+        $request->get(
+            'page',
+            1
+        );
+
+    $items =
+        $abonnementsExistants
+        ->forPage(
+            $page,
+            $parPage
+        )
+        ->values();
+
+
+    $abonnements =
+        new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $total,
+            $parPage,
+            $page,
+            [
+                'path' =>
+                    $request->url(),
+
+                'query' =>
+                    $request->query(),
+            ]
+        );
+
+
+    return view(
+        'admin.abonnements',
+        compact('abonnements')
+    );
+}
 
 
     /**

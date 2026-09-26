@@ -10,16 +10,20 @@ class Achat extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'trajet_id',
-        'reservation_id',
-        'montant',
-        'reference',
-        'mode_paiement',
-        'statut',
-        'description',
-        'remboursable',
-    ];
+    'user_id',
+    'trajet_id',
+    'reservation_id',
+    'montant',
+    'montant_base',
+    'frais_tokende',
+    'commission_tokende',
+    'part_agence',
+    'reference',
+    'mode_paiement',
+    'statut',
+    'description',
+    'remboursable',
+];
 
     // ==========================
     // Relations

@@ -25,7 +25,7 @@
                         <input
                             type="text"
                             name="nom_agence"
-                            value="{{ $agence->nom_agence }}"
+                            value="{{ old('nom_agence', $agence->nom_agence) }}"
                             required
                             class="w-full border rounded p-3">
 
@@ -40,7 +40,7 @@
                         <input
                             type="text"
                             name="ville"
-                            value="{{ $agence->ville }}"
+                            value="{{ old('ville', $agence->ville) }}"
                             required
                             class="w-full border rounded p-3">
 
@@ -55,7 +55,7 @@
                         <input
                             type="text"
                             name="adresse"
-                            value="{{ $agence->adresse }}"
+                            value="{{ old('adresse', $agence->adresse) }}"
                             required
                             class="w-full border rounded p-3">
 
@@ -70,9 +70,71 @@
                         <input
                             type="text"
                             name="telephone"
-                            value="{{ $agence->telephone }}"
+                            value="{{ old('telephone', $agence->telephone) }}"
                             required
                             class="w-full border rounded p-3">
+
+                    </div>
+
+                    {{-- MODÈLE ÉCONOMIQUE --}}
+
+                    <div class="mb-6">
+
+                        <label class="block font-semibold mb-3">
+                            Modèle économique
+                        </label>
+
+                        <div class="space-y-3">
+
+                            {{-- COMMISSION --}}
+
+                            <label class="flex items-center gap-3 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+
+                                <input
+                                    type="radio"
+                                    name="modele_economique"
+                                    value="commission"
+                                    {{ old('modele_economique', $agence->modele_economique) === 'commission' ? 'checked' : '' }}
+                                    required>
+
+                                <div>
+                                    <div class="font-semibold">
+                                        Commission par billet
+                                    </div>
+
+                                    <div class="text-sm text-gray-600">
+                                        100 FCFA sont ajoutés à chaque billet :
+                                        80 FCFA pour Tokende et 20 FCFA pour l'agence.
+                                    </div>
+                                </div>
+
+                            </label>
+
+                            {{-- ABONNEMENT --}}
+
+                            <label class="flex items-center gap-3 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
+
+                                <input
+                                    type="radio"
+                                    name="modele_economique"
+                                    value="abonnement"
+                                    {{ old('modele_economique', $agence->modele_economique) === 'abonnement' ? 'checked' : '' }}
+                                    required>
+
+                                <div>
+                                    <div class="font-semibold">
+                                        Abonnement mensuel
+                                    </div>
+
+                                    <div class="text-sm text-gray-600">
+                                        Aucun montant supplémentaire n'est ajouté
+                                        aux billets. L'agence paie un abonnement mensuel à Tokende.
+                                    </div>
+                                </div>
+
+                            </label>
+
+                        </div>
 
                     </div>
 
@@ -103,4 +165,5 @@
         </div>
 
     </div>
+
 </x-layouts.admin>

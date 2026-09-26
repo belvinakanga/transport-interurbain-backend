@@ -249,228 +249,284 @@
 
         {{-- Tableau des agences --}}
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+<div class="bg-white rounded-xl shadow overflow-hidden">
 
-            <div class="overflow-x-auto">
+    <div class="overflow-x-auto">
 
-                <table class="min-w-full">
+        <table
+    class="w-full"
+    style="min-width:1350px; width:max-content;"
+>
 
-                    <thead class="bg-slate-100">
+            {{-- Largeur des colonnes --}}
 
-                        <tr>
+            <colgroup>
 
-                            <th class="p-4 text-left">
-                                Agence
-                            </th>
+                <col style="width:220px;">
+                <col style="width:170px;">
+                <col style="width:220px;">
+                <col style="width:220px;">
+                <col style="width:120px;">
+                <col style="width:160px;">
+                <col style="width:150px;">
+                <col style="width:190px;">
 
-                            <th class="p-4 text-left">
-                                Ville
-                            </th>
+            </colgroup>
 
-                            <th class="p-4 text-left">
-                                Adresse
-                            </th>
 
-                            <th class="p-4 text-left">
-                                Téléphone
-                            </th>
+            {{-- EN-TÊTE --}}
 
-                            <th class="p-4 text-center">
-                                Trajets
-                            </th>
+            <thead class="bg-slate-100">
 
-                            <th class="p-4 text-center">
-                                Réservations
-                            </th>
+                <tr>
 
-                            <th class="p-4 text-center">
-                                CA
-                            </th>
+                    <th class="p-4 text-left whitespace-nowrap">
+                        Agence
+                    </th>
 
-                            <th class="p-4 text-center">
-                                Actions
-                            </th>
+                    <th class="p-4 text-left whitespace-nowrap">
+                        Ville
+                    </th>
 
-                        </tr>
+                    <th class="p-4 text-left whitespace-nowrap">
+                        Adresse
+                    </th>
 
-                    </thead>
+                    <th class="p-4 text-left whitespace-nowrap">
+                        Téléphone
+                    </th>
 
+                    <th class="p-4 text-center whitespace-nowrap">
+                        Trajets
+                    </th>
 
-                    <tbody>
+                    <th class="p-4 text-center whitespace-nowrap">
+                        Réservations
+                    </th>
 
-                        @forelse($agences as $agence)
+                    <th class="p-4 text-center whitespace-nowrap">
+                        CA
+                    </th>
 
-                            <tr class="border-t hover:bg-orange-50 transition">
+                    <th class="p-4 text-center whitespace-nowrap">
+                        Actions
+                    </th>
 
+                </tr>
 
-                                {{-- Nom de l'agence --}}
+            </thead>
 
-                                <td class="p-4 font-semibold">
 
-                                    {{ $agence->nom_agence }}
+            {{-- CORPS DU TABLEAU --}}
 
-                                </td>
+            <tbody>
 
+                @forelse($agences as $agence)
 
-                                {{-- Ville --}}
+                    <tr class="border-t hover:bg-orange-50 transition">
 
-                                <td class="p-4">
 
-                                    {{ $agence->ville }}
+                        {{-- AGENCE --}}
 
-                                </td>
+                        <td
+                          class="p-4 font-semibold"
+                          style="white-space:nowrap;"
+                         >
 
+                            {{ $agence->nom_agence }}
 
-                                {{-- Adresse --}}
+                        </td>
 
-                                <td class="p-4">
 
-                                    @if($agence->adresse)
+                        {{-- VILLE --}}
 
-                                        <span class="font-medium text-slate-700">
-                                            📍 {{ $agence->adresse }}
-                                        </span>
+                        <td
+                          class="p-4"
+                          style="white-space:nowrap;"
+                       >
 
-                                    @else
+                            {{ $agence->ville }}
 
-                                        <span class="text-gray-400">
-                                            Non renseignée
-                                        </span>
+                        </td>
 
-                                    @endif
 
-                                </td>
+                        {{-- ADRESSE --}}
 
+                        <td
+                          class="p-4"
+                          style="white-space:nowrap;"
+                          >
 
-                                {{-- Téléphone --}}
+                            @if($agence->adresse)
 
-                                <td class="p-4">
+                                <span class="font-medium text-slate-700 whitespace-nowrap">
 
-                                    {{ $agence->telephone }}
+                                    📍 {{ $agence->adresse }}
 
-                                </td>
+                                </span>
 
+                            @else
 
-                                {{-- Trajets --}}
+                                <span
+    class="font-medium text-slate-700"
+    style="white-space:nowrap;"
+>
 
-                                <td class="p-4 text-center">
+                                    Non renseignée
 
-                                    0
+                                </span>
 
-                                </td>
+                            @endif
 
+                        </td>
 
-                                {{-- Réservations --}}
 
-                                <td class="p-4 text-center">
+                        {{-- TÉLÉPHONE --}}
 
-                                    0
+                        <td
+    class="p-4"
+    style="white-space:nowrap;"
+>
 
-                                </td>
+                            {{ $agence->telephone }}
 
+                        </td>
 
-                                {{-- Chiffre d'affaires --}}
 
-                                <td class="p-4 text-center">
+                        {{-- TRAJETS --}}
 
-                                    0 FCFA
+                        <td class="p-4 text-center whitespace-nowrap">
 
-                                </td>
+                            0
 
+                        </td>
 
-                                {{-- Actions --}}
 
-                                <td class="p-4">
+                        {{-- RÉSERVATIONS --}}
 
-                                    <div class="flex justify-center gap-2">
+                        <td class="p-4 text-center whitespace-nowrap">
 
+                            0
 
-                                        {{-- Voir --}}
+                        </td>
 
-                                        <a
-                                            href="/admin/agences/{{ $agence->id }}"
-                                            title="Voir"
-                                            class="w-10 h-10 flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white rounded-lg">
 
-                                            👁️
+                        {{-- CHIFFRE D'AFFAIRES --}}
 
-                                        </a>
+                        <td class="p-4 text-center whitespace-nowrap">
 
+                            0 FCFA
 
-                                        {{-- Modifier --}}
+                        </td>
 
-                                        <a
-                                            href="/admin/agences/{{ $agence->id }}/edit"
-                                            title="Modifier"
-                                            class="w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
 
-                                            ✏️
+                        {{-- ACTIONS --}}
 
-                                        </a>
+                        <td class="p-4 text-center whitespace-nowrap">
 
+                            <div class="flex justify-center items-center gap-2">
 
-                                        {{-- Supprimer --}}
+                                {{-- VOIR --}}
 
-                                        <form
-                                            action="/admin/agences/{{ $agence->id }}"
-                                            method="POST">
+                                <a
+                                    href="/admin/agences/{{ $agence->id }}"
+                                    title="Voir"
+                                    class="w-10 h-10 flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white rounded-lg"
+                                >
 
-                                            @csrf
+                                    👁️
 
-                                            @method('DELETE')
+                                </a>
 
-                                            <button
-                                                type="submit"
-                                                title="Supprimer"
-                                                onclick="return confirm('Supprimer cette agence ?')"
-                                                class="w-10 h-10 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg">
 
-                                                🗑️
+                                {{-- MODIFIER --}}
 
-                                            </button>
+                                <a
+                                    href="/admin/agences/{{ $agence->id }}/edit"
+                                    title="Modifier"
+                                    class="w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                >
 
-                                        </form>
+                                    ✏️
 
-                                    </div>
+                                </a>
 
-                                </td>
 
-                            </tr>
+                                {{-- SUPPRIMER --}}
 
-                        @empty
+                                <form
+                                    action="/admin/agences/{{ $agence->id }}"
+                                    method="POST"
+                                    class="m-0"
+                                >
 
-                            <tr>
+                                    @csrf
 
-                                <td
-                                    colspan="8"
-                                    class="text-center py-10 text-gray-500">
+                                    @method('DELETE')
 
-                                    Aucune agence trouvée.
+                                    <button
+                                        type="submit"
+                                        title="Supprimer"
+                                        onclick="return confirm('Supprimer cette agence ?')"
+                                        class="w-10 h-10 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                                    >
 
-                                </td>
+                                        🗑️
 
-                            </tr>
+                                    </button>
 
-                        @endforelse
+                                </form>
 
-                    </tbody>
+                            </div>
 
-                </table>
+                        </td>
 
-            </div>
+                    </tr>
 
 
-            {{-- Pagination --}}
+                @empty
 
-            <div class="p-6 border-t">
+                    <tr>
 
-                {{ $agences->links() }}
+                        <td
+                            colspan="8"
+                            class="text-center py-10 text-gray-500"
+                        >
 
-            </div>
+                            Aucune agence trouvée.
 
-        </div>
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
 
     </div>
+
+
+    {{-- PAGINATION --}}
+
+    <div class="p-6 border-t">
+
+        {{ $agences->links() }}
+
+    </div>
+
+    {{-- PAGINATION --}}
+
+    <div class="p-6 border-t">
+
+        {{ $agences->links() }}
+
+    </div>
+
+</div>
+
+</div>
 
 </div>
 
