@@ -94,11 +94,7 @@ class ExpirerReservations extends Command
             |--------------------------------------------------------------------------
             */
 
-            if (
-                $heuresRestantes <= 72
-                &&
-                $heuresRestantes >= 0
-            ) {
+           if ($heuresRestantes <= 72) {
 
                 DB::transaction(function () use (
                     $reservation,

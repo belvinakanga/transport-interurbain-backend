@@ -102,4 +102,18 @@ class BilletController extends Controller
         return redirect('/admin/billets')
             ->with('success', 'Billet supprimé avec succès.');
     }
+
+    public function publicTicket($qr_code)
+{
+    $billet = Billet::with([
+        'voyageur',
+        'reservation.user',
+        'reservation.trajet.agence',
+        'siege'
+    ])
+    ->where('qr_code', $qr_code)
+    ->firstOrFail();
+
+    return view('billets.public', compact('billet'));
+}
 }
