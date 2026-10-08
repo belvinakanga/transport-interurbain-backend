@@ -80,7 +80,10 @@
 
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-max w-full">
+                    <table
+    class="w-max min-w-full"
+    style="table-layout: auto; width: max-content; min-width: 100%; white-space: nowrap; word-break: normal; overflow-wrap: normal;"
+>
 
                         <thead class="bg-[#F8F9FB] border-b">
 
@@ -106,10 +109,13 @@
                                     Siège
                                 </th>
 
-                                <th class="p-4 text-right whitespace-nowrap">
-                                    Montant
-                                </th>
+                                <th class="p-4 text-right whitespace-nowrap min-w-[150px]">
+    Montant payé
+</th>
 
+<th class="p-4 text-right whitespace-nowrap min-w-[140px]">
+    Part agence
+</th>
                                 <th class="p-4 text-left whitespace-nowrap">
                                     Référence billet
                                 </th>
@@ -185,7 +191,7 @@
                                          VOYAGEUR
                                     ================================================== --}}
 
-                                    <td class="p-4 whitespace-nowrap">
+                                    <td class="p-4 whitespace-nowrap min-w-max break-normal">
 
                                         @if($billets->isNotEmpty())
 
@@ -203,13 +209,9 @@
 
                                                     @if($voyageur)
 
-                                                        <div class="font-semibold text-[#0A2A66]">
-
-                                                            {{ $voyageur->prenom }}
-                                                            {{ $voyageur->nom }}
-
+                                                        <div class="font-semibold text-[#0A2A66] whitespace-nowrap">
+                                                         {{ $voyageur->prenom }} {{ $voyageur->nom }}
                                                         </div>
-
 
                                                         @if(!empty($voyageur->email))
 
@@ -224,11 +226,9 @@
 
                                                         @if(!empty($voyageur->telephone))
 
-                                                            <div class="text-sm text-gray-600 mt-1">
-
-                                                                📞 {{ $voyageur->telephone }}
-
-                                                            </div>
+                                                            <div class="text-sm text-gray-600 mt-1 whitespace-nowrap">
+                                                             📞 {{ $voyageur->telephone }}
+                                                           </div>
 
                                                         @endif
 
@@ -276,12 +276,10 @@
                                          AGENCE
                                     ================================================== --}}
 
-                                    <td class="p-4 whitespace-nowrap">
+                                    <td class="p-4 whitespace-nowrap min-w-max break-normal">
 
-                                        <span class="font-medium">
-
-                                            {{ $agence->nom_agence ?? '-' }}
-
+                                        <span class="font-medium whitespace-nowrap">
+                                         {{ $agence->nom_agence ?? '-' }}
                                         </span>
 
                                     </td>
@@ -291,23 +289,21 @@
                                          TRAJET
                                     ================================================== --}}
 
-                                    <td class="p-4 font-medium whitespace-nowrap">
+                                    <td class="p-4 font-medium whitespace-nowrap min-w-max break-normal">
 
-                                        @if($trajet)
+    @if($trajet)
 
-                                            {{ $trajet->depart }}
+        <span class="whitespace-nowrap">
+            {{ $trajet->depart }} → {{ $trajet->arrivee }}
+        </span>
 
-                                            →
+    @else
 
-                                            {{ $trajet->arrivee }}
+        -
 
-                                        @else
+    @endif
 
-                                            -
-
-                                        @endif
-
-                                    </td>
+</td>
 
 
                                     {{-- =================================================
@@ -382,35 +378,49 @@
                                         @endif
 
                                     </td>
+ {{-- =================================================
+     MONTANT PAYÉ
+================================================== --}}
+
+<td class="p-4 text-right whitespace-nowrap min-w-max break-normal">
+
+    <span class="font-bold text-[#FF6B00]">
+        {{ number_format(
+            $achat->montant,
+            0,
+            ',',
+            ' '
+        ) }}
+        FCFA
+    </span>
+
+</td>
 
 
-                                    {{-- =================================================
-                                         MONTANT
-                                    ================================================== --}}
+{{-- =================================================
+     PART AGENCE
+================================================== --}}
 
-                                    <td class="p-4 text-right whitespace-nowrap">
+<td class="p-4 text-right whitespace-nowrap min-w-max break-normal">
 
-                                        <span class="font-bold text-[#FF6B00]">
+    <span class="font-bold text-green-600">
+        {{ number_format(
+            ($achat->montant_base ?? 0) + ($achat->part_agence ?? 0),
+            0,
+            ',',
+            ' '
+        ) }}
+        FCFA
+    </span>
 
-                                            {{ number_format(
-                                                $achat->montant,
-                                                0,
-                                                ',',
-                                                ' '
-                                            ) }}
-
-                                            FCFA
-
-                                        </span>
-
-                                    </td>
+</td>
 
 
                                     {{-- =================================================
                                          RÉFÉRENCE BILLET
                                     ================================================== --}}
 
-                                    <td class="p-4 whitespace-nowrap">
+                                    <td class="p-4 whitespace-nowrap min-w-max">
 
                                         @if($billets->isNotEmpty())
 
@@ -418,11 +428,9 @@
 
                                                 <div class="mb-4 last:mb-0">
 
-                                                    <span class="font-mono font-bold text-blue-700">
-
-                                                        {{ $billet->numero_billet }}
-
-                                                    </span>
+                                                    <span class="font-mono font-bold text-blue-700 whitespace-nowrap">
+                                                    {{ $billet->numero_billet }}
+                                                   </span>
 
                                                 </div>
 
@@ -443,12 +451,10 @@
                                          RÉFÉRENCE ACHAT
                                     ================================================== --}}
 
-                                    <td class="p-4 whitespace-nowrap">
+                                    <td class="p-4 whitespace-nowrap min-w-max">
 
-                                        <span class="font-mono text-sm text-gray-600">
-
-                                            {{ $achat->reference ?? '-' }}
-
+                                        <span class="font-mono text-sm text-gray-600 whitespace-nowrap">
+                                         {{ $achat->reference ?? '-' }}
                                         </span>
 
                                     </td>
@@ -516,7 +522,7 @@
                                 <tr>
 
                                     <td
-                                        colspan="9"
+                                        colspan="10"
                                         class="py-12 text-center text-gray-500"
                                     >
 

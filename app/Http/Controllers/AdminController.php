@@ -970,12 +970,13 @@ class AdminController extends Controller
 
         $parPage = $request->par_page ?? 10;
 
-       $query = Reservation::with([
+      $query = Reservation::with([
     'user',
     'trajet.agence',
     'voyageurs',
     'billets'
-]);
+])
+->where('type', 'reservation');
 
         /*
         |--------------------------------------------------------------------------

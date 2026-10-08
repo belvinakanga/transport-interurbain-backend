@@ -38,20 +38,23 @@ class AchatController extends Controller
         $user = auth()->user();
 
         $query = Achat::with([
-            'user',
+    'user',
 
-            // Achat direct
-            'trajet.agence',
+    // Achat direct
+    'trajet.agence',
 
-            // Réservation
-            'reservation.user',
-            'reservation.trajet.agence',
-            'reservation.voyageurs',
-            'reservation.sieges',
+    // Réservation
+    'reservation.user',
+    'reservation.trajet.agence',
+    'reservation.voyageurs',
+    'reservation.sieges',
 
-            // Billets + voyageur
-            'reservation.billets.voyageur',
-        ]);
+    // Billets + voyageur
+    'reservation.billets.voyageur',
+])
+->whereHas('reservation', function ($q) {
+    $q->where('type', 'achat_direct');
+});
 
         /*
         |--------------------------------------------------------------------------
@@ -662,19 +665,22 @@ try {
                         |
                         */
                         $reservation =
-                            Reservation::create([
-                                'user_id' =>
-                                    Auth::id(),
+    Reservation::create([
+        'user_id' =>
+            Auth::id(),
 
-                                'trajet_id' =>
-                                    $trajet->id,
+        'trajet_id' =>
+            $trajet->id,
 
-                                'nombre_places' =>
-                                    $nombrePlaces,
+        'nombre_places' =>
+            $nombrePlaces,
 
-                                'statut' =>
-                                    'payée',
-                            ]);
+        'statut' =>
+            'payée',
+
+        'type' =>
+            'achat_direct',
+    ]);
 
 
                         /*

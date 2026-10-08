@@ -12,6 +12,7 @@ class Reservation extends Model
         'nombre_places',
         'statut',
         'reference_reservation',
+        'type',
     ];
 
     /**

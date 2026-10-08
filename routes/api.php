@@ -12,6 +12,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SiegeController;
 use App\Http\Controllers\TrajetController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Api\SupportController;
 
 
 /*
@@ -178,6 +179,37 @@ Route::middleware('auth:sanctum')->group(function () {
         [AuthController::class, 'logout']
     );
 
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SUPPORT - CONVERSATIONS
+    |--------------------------------------------------------------------------
+    */
+
+    // Liste des conversations du voyageur connecté
+    Route::get(
+        '/support/conversations',
+        [SupportController::class, 'conversations']
+    );
+
+    // Créer une nouvelle conversation
+    Route::post(
+        '/support/conversations',
+        [SupportController::class, 'storeConversation']
+    );
+
+    // Afficher une conversation et ses messages
+    Route::get(
+        '/support/conversations/{id}',
+        [SupportController::class, 'showConversation']
+    );
+
+    // Envoyer un message dans une conversation
+    Route::post(
+        '/support/conversations/{id}/messages',
+        [SupportController::class, 'sendMessage']
+    );
 
     /*
     |--------------------------------------------------------------------------

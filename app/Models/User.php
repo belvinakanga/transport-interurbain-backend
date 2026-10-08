@@ -64,4 +64,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Achat::class);
     }
+
+    /**
+ * Conversations d'assistance de l'utilisateur.
+ */
+public function conversations()
+{
+    return $this->hasMany(Conversation::class);
+}
+
+/**
+ * Messages envoyés par l'utilisateur.
+ */
+public function messages()
+{
+    return $this->hasMany(Message::class);
+}
 }

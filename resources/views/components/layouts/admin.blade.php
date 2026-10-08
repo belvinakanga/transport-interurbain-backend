@@ -451,6 +451,49 @@
             </a>
 
 
+                        </a>
+
+
+            {{-- CONVERSATIONS --}}
+
+            <a
+                href="{{ route('admin.support.index') }}"
+                style="
+                    display:flex;
+                    align-items:center;
+                    gap:13px;
+                    height:46px;
+                    padding:0 14px;
+                    margin-bottom:5px;
+                    border-radius:11px;
+                    text-decoration:none;
+                    font-size:18px;
+                    font-weight:700;
+
+                    {{ request()->is('admin/support*')
+                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
+                        : 'color:#0A2A66;background:transparent;'
+                    }}
+                "
+            >
+
+                <span
+                    style="
+                        width:21px;
+                        text-align:center;
+                        font-size:17px;
+                    "
+                >
+                    💬
+                </span>
+
+                <span>
+                    Conversations
+                </span>
+
+            </a>
+
+
             {{-- ESPACE --}}
 
             <div style="height:18px;"></div>

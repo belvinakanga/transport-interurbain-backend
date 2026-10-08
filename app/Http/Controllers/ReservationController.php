@@ -33,9 +33,12 @@ class ReservationController extends Controller
     'sieges',
     'user',
     'voyageurs',
+    'billets',
 ])->where('user_id', auth()->id())
+  ->where('type', 'reservation')
   ->latest()
   ->get();
+  
 
     return response()->json([
         'data' => $reservations,
@@ -324,19 +327,22 @@ class ReservationController extends Controller
                     */
 
                     $reservation =
-                        Reservation::create([
-                            'user_id' =>
-                                auth()->id(),
+    Reservation::create([
+        'user_id' =>
+            auth()->id(),
 
-                            'trajet_id' =>
-                                $trajet->id,
+        'trajet_id' =>
+            $trajet->id,
 
-                            'nombre_places' =>
-                                $nombrePlaces,
+        'nombre_places' =>
+            $nombrePlaces,
 
-                            'statut' =>
-                                'en attente',
-                        ]);
+        'statut' =>
+            'en attente',
+
+        'type' =>
+            'reservation',
+    ]);
 
                     /*
                     |--------------------------------------------------------------------------

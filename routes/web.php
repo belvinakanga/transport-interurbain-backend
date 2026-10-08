@@ -21,6 +21,7 @@ use App\Http\Controllers\SiegeController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\PaiementAgenceController;
+use App\Http\Controllers\AdminSupportController;
 
 
 /*
@@ -102,6 +103,39 @@ Route::get(
         '/admin',
         [AdminController::class, 'index']
     );
+
+
+    /*
+|--------------------------------------------------------------------------
+| ADMIN - SUPPORT
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/admin/support',
+    [AdminSupportController::class, 'index']
+)->name('admin.support.index');
+
+Route::get(
+    '/admin/support/{id}',
+    [AdminSupportController::class, 'show']
+)->name('admin.support.show');
+
+Route::post(
+    '/admin/support/{id}/reply',
+    [AdminSupportController::class, 'reply']
+)->name('admin.support.reply');
+
+Route::post(
+    '/admin/support/{id}/close',
+    [AdminSupportController::class, 'close']
+)->name('admin.support.close');
+
+
+Route::post(
+    '/admin/support/{id}/reopen',
+    [AdminSupportController::class, 'reopen']
+)->name('admin.support.reopen');
 
 
     /*
@@ -751,5 +785,7 @@ Route::middleware('auth:sanctum')->group(function () {
 | AUTHENTIFICATION WEB
 |--------------------------------------------------------------------------
 */
+
+
 
 require __DIR__ . '/auth.php';
