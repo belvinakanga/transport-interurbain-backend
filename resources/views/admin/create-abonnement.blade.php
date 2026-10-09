@@ -2,475 +2,346 @@
     :header="'Nouvel abonnement'"
 >
 
-    <div class="max-w-3xl mx-auto">
+<div class="tk-page">
 
-        {{-- =====================================================
-             TITRE
-        ====================================================== --}}
+    {{-- En-tête --}}
 
-        <div class="mb-6">
+    <div class="tk-page-head">
 
-            <h1
-                class="text-3xl md:text-4xl font-bold"
-                style="color:#0A2A66;"
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
             >
-                💼 Nouvel abonnement
-            </h1>
+                <i class="fa-solid fa-clipboard-list"></i>
+            </span>
 
-            <p class="text-gray-500 mt-2">
-                Créez l’abonnement d’une agence TOKENDE.
+            Nouvel abonnement
+
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Créez l’abonnement d’une agence TOKENDE.
+        </p>
+
+    </div>
+
+
+    {{-- Formulaire --}}
+
+    <div class="tk-card overflow-hidden">
+
+        {{-- EN-TÊTE --}}
+
+        <div class="border-b border-slate-200 px-6 py-5">
+
+            <h2 class="flex items-center gap-2.5 text-base font-bold text-navy">
+
+                <i class="fa-solid fa-file-lines text-brand"></i>
+
+                Informations de l’abonnement
+
+            </h2>
+
+            <p class="mt-1 text-xs text-slate-500">
+                Tous les champs sont obligatoires.
             </p>
 
         </div>
 
 
-        {{-- =====================================================
-             ERREURS
-        ====================================================== --}}
+        <form
+            method="POST"
+            action="{{ route('admin.abonnements.store') }}"
+            class="p-6 space-y-6"
+        >
 
-        @if($errors->any())
+            @csrf
 
-            <div
-                class="rounded-xl p-4 mb-6"
-                style="
-                    background:#FEE2E2;
-                    color:#B91C1C;
-                "
-            >
 
-                <p class="font-bold mb-2">
-                    ⚠️ Vérifiez les informations suivantes :
-                </p>
+            {{-- =================================================
+                 AGENCE
+            ================================================== --}}
 
-                <ul class="list-disc ml-5">
+            <div>
 
-                    @foreach($errors->all() as $error)
+                <label
+                    for="agence_id"
+                    class="tk-form-label"
+                >
+                    Agence
+                </label>
 
-                        <li>
-                            {{ $error }}
-                        </li>
+                <select
+                    id="agence_id"
+                    name="agence_id"
+                    required
+                    class="tk-input">
+
+                    <option value="">
+                        -- Sélectionner une agence --
+                    </option>
+
+                    @foreach($agences as $agence)
+
+                        <option
+                            value="{{ $agence->id }}"
+                            {{ old('agence_id') == $agence->id
+                                ? 'selected'
+                                : ''
+                            }}
+                        >
+
+                            {{ $agence->nom_agence }}
+
+                        </option>
 
                     @endforeach
 
-                </ul>
+                </select>
 
             </div>
 
-        @endif
+
+            {{-- =================================================
+                 TYPE
+            ================================================== --}}
+
+            <div>
+
+                <label
+                    for="type"
+                    class="tk-form-label"
+                >
+                    Type d’abonnement
+                </label>
+
+                <select
+                    id="type"
+                    name="type"
+                    required
+                    class="tk-input">
+
+                    <option value="">
+                        -- Sélectionner une formule --
+                    </option>
+
+                    <option
+                        value="Standard"
+                        {{ old('type') === 'Standard'
+                            ? 'selected'
+                            : ''
+                        }}
+                    >
+                        Standard
+                    </option>
+
+                    <option
+                        value="Premium"
+                        {{ old('type') === 'Premium'
+                            ? 'selected'
+                            : ''
+                        }}
+                    >
+                        Premium
+                    </option>
+
+                    <option
+                        value="Entreprise"
+                        {{ old('type') === 'Entreprise'
+                            ? 'selected'
+                            : ''
+                        }}
+                    >
+                        Entreprise
+                    </option>
+
+                </select>
+
+            </div>
 
 
-        {{-- =====================================================
-             FORMULAIRE
-        ====================================================== --}}
+            {{-- =================================================
+                 MONTANT
+            ================================================== --}}
 
-        <div
-            class="
-                bg-white
-                rounded-2xl
-                shadow-sm
-                border
-                border-gray-100
-                overflow-hidden
-            "
-        >
+            <div>
 
-            {{-- EN-TÊTE --}}
+                <label
+                    for="montant"
+                    class="tk-form-label"
+                >
+                    Montant de l’abonnement
+                </label>
+
+                <div class="relative">
+
+                    <input
+                        id="montant"
+                        type="number"
+                        name="montant"
+                        value="{{ old('montant') }}"
+                        min="0"
+                        step="0.01"
+                        required
+                        placeholder="Exemple : 50000"
+                        class="tk-input pr-20"
+                    >
+
+                    <span
+                        class="
+                            absolute right-4
+                            top-1/2 -translate-y-1/2
+                            font-semibold text-brand
+                        "
+                    >
+                        FCFA
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            {{-- =================================================
+                 DATES
+            ================================================== --}}
 
             <div
-                class="px-6 py-5 border-b"
-                style="background:#F6F8FC;"
+                class="
+                    grid grid-cols-1
+                    md:grid-cols-2
+                    gap-5
+                "
             >
 
-                <h2
-                    class="text-xl font-bold"
-                    style="color:#0A2A66;"
-                >
-                    Informations de l’abonnement
-                </h2>
+                {{-- DATE DÉBUT --}}
 
-                <p class="text-sm text-gray-500 mt-1">
-                    Tous les champs sont obligatoires.
+                <div>
+
+                    <label
+                        for="date_debut"
+                        class="tk-form-label"
+                    >
+                        Date de début
+                    </label>
+
+                    <input
+                        id="date_debut"
+                        type="date"
+                        name="date_debut"
+                        value="{{ old('date_debut') }}"
+                        required
+                        class="tk-input"
+                    >
+
+                </div>
+
+
+                {{-- DATE FIN --}}
+
+                <div>
+
+                    <label
+                        for="date_fin"
+                        class="tk-form-label"
+                    >
+                        Date de fin
+                    </label>
+
+                    <input
+                        id="date_fin"
+                        type="date"
+                        name="date_fin"
+                        value="{{ old('date_fin') }}"
+                        required
+                        class="tk-input"
+                    >
+
+                </div>
+
+            </div>
+
+
+            {{-- =================================================
+                 INFORMATION
+            ================================================== --}}
+
+            <div
+                class="
+                    rounded-xl p-4
+                    border border-[#DCE8FF]
+                    bg-[#EEF4FF]
+                "
+            >
+
+                <p class="flex items-center gap-2 font-bold text-navy">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    Fonctionnement
+
+                </p>
+
+                <p
+                    class="
+                        mt-2 text-sm
+                        text-slate-600
+                    "
+                >
+
+                    Le nouvel abonnement sera automatiquement
+                    enregistré avec le statut
+                    <strong class="text-emerald-600">
+                        Actif
+                    </strong>.
+
                 </p>
 
             </div>
 
 
-            <form
-                method="POST"
-                action="{{ route('admin.abonnements.store') }}"
-                class="p-6 space-y-6"
+            {{-- =================================================
+                 BOUTONS
+            ================================================== --}}
+
+            <div
+                class="
+                    flex flex-col sm:flex-row
+                    justify-end gap-3 pt-2
+                "
             >
 
-                @csrf
+                <a
+                    href="{{ route('admin.abonnements') }}"
+                    class="tk-btn-ghost"
+                >
+                    Annuler
+                </a>
 
 
-                {{-- =================================================
-                     AGENCE
-                ================================================== --}}
-
-                <div>
-
-                    <label
-                        for="agence_id"
-                        class="
-                            block
-                            font-semibold
-                            text-gray-700
-                            mb-2
-                        "
-                    >
-                        Agence
-                    </label>
-
-                    <select
-                        id="agence_id"
-                        name="agence_id"
-                        required
-                        class="
-                            w-full
-                            border
-                            border-gray-300
-                            rounded-xl
-                            px-4
-                            py-3
-                            bg-white
-                            focus:outline-none
-                        "
-                    >
-
-                        <option value="">
-                            -- Sélectionner une agence --
-                        </option>
-
-                        @foreach($agences as $agence)
-
-                            <option
-                                value="{{ $agence->id }}"
-                                {{ old('agence_id') == $agence->id
-                                    ? 'selected'
-                                    : ''
-                                }}
-                            >
-
-                                {{ $agence->nom_agence }}
-
-                            </option>
-
-                        @endforeach
-
-                    </select>
-
-                </div>
-
-
-                {{-- =================================================
-                     TYPE
-                ================================================== --}}
-
-                <div>
-
-                    <label
-                        for="type"
-                        class="
-                            block
-                            font-semibold
-                            text-gray-700
-                            mb-2
-                        "
-                    >
-                        Type d’abonnement
-                    </label>
-
-                    <select
-                        id="type"
-                        name="type"
-                        required
-                        class="
-                            w-full
-                            border
-                            border-gray-300
-                            rounded-xl
-                            px-4
-                            py-3
-                            bg-white
-                        "
-                    >
-
-                        <option value="">
-                            -- Sélectionner une formule --
-                        </option>
-
-                        <option
-                            value="Standard"
-                            {{ old('type') === 'Standard'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Standard
-                        </option>
-
-                        <option
-                            value="Premium"
-                            {{ old('type') === 'Premium'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Premium
-                        </option>
-
-                        <option
-                            value="Entreprise"
-                            {{ old('type') === 'Entreprise'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Entreprise
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                {{-- =================================================
-                     MONTANT
-                ================================================== --}}
-
-                <div>
-
-                    <label
-                        for="montant"
-                        class="
-                            block
-                            font-semibold
-                            text-gray-700
-                            mb-2
-                        "
-                    >
-                        Montant de l’abonnement
-                    </label>
-
-                    <div class="relative">
-
-                        <input
-                            id="montant"
-                            type="number"
-                            name="montant"
-                            value="{{ old('montant') }}"
-                            min="0"
-                            step="0.01"
-                            required
-                            placeholder="Exemple : 50000"
-                            class="
-                                w-full
-                                border
-                                border-gray-300
-                                rounded-xl
-                                px-4
-                                py-3
-                                pr-20
-                            "
-                        >
-
-                        <span
-                            class="
-                                absolute
-                                right-4
-                                top-1/2
-                                -translate-y-1/2
-                                font-semibold
-                            "
-                            style="color:#FF6B00;"
-                        >
-                            FCFA
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                {{-- =================================================
-                     DATES
-                ================================================== --}}
-
-                <div
-                    class="
-                        grid
-                        grid-cols-1
-                        md:grid-cols-2
-                        gap-5
-                    "
+                <button
+                    type="submit"
+                    class="tk-btn-accent"
                 >
 
-                    {{-- DATE DÉBUT --}}
+                    <i class="fa-solid fa-check"></i>
 
-                    <div>
+                    Enregistrer l’abonnement
 
-                        <label
-                            for="date_debut"
-                            class="
-                                block
-                                font-semibold
-                                text-gray-700
-                                mb-2
-                            "
-                        >
-                            Date de début
-                        </label>
+                </button>
 
-                        <input
-                            id="date_debut"
-                            type="date"
-                            name="date_debut"
-                            value="{{ old('date_debut') }}"
-                            required
-                            class="
-                                w-full
-                                border
-                                border-gray-300
-                                rounded-xl
-                                px-4
-                                py-3
-                            "
-                        >
+            </div>
 
-                    </div>
-
-
-                    {{-- DATE FIN --}}
-
-                    <div>
-
-                        <label
-                            for="date_fin"
-                            class="
-                                block
-                                font-semibold
-                                text-gray-700
-                                mb-2
-                            "
-                        >
-                            Date de fin
-                        </label>
-
-                        <input
-                            id="date_fin"
-                            type="date"
-                            name="date_fin"
-                            value="{{ old('date_fin') }}"
-                            required
-                            class="
-                                w-full
-                                border
-                                border-gray-300
-                                rounded-xl
-                                px-4
-                                py-3
-                            "
-                        >
-
-                    </div>
-
-                </div>
-
-
-                {{-- =================================================
-                     INFORMATION
-                ================================================== --}}
-
-                <div
-                    class="rounded-xl p-4"
-                    style="
-                        background:#EEF4FF;
-                        border:1px solid #DCE8FF;
-                    "
-                >
-
-                    <p
-                        class="font-bold"
-                        style="color:#0A2A66;"
-                    >
-                        ℹ️ Fonctionnement
-                    </p>
-
-                    <p
-                        class="
-                            text-sm
-                            text-gray-600
-                            mt-2
-                        "
-                    >
-
-                        Le nouvel abonnement sera automatiquement
-                        enregistré avec le statut
-                        <strong style="color:#16A34A;">
-                            Actif
-                        </strong>.
-
-                    </p>
-
-                </div>
-
-
-                {{-- =================================================
-                     BOUTONS
-                ================================================== --}}
-
-                <div
-                    class="
-                        flex
-                        flex-col
-                        sm:flex-row
-                        justify-end
-                        gap-3
-                        pt-2
-                    "
-                >
-
-                    <a
-                        href="{{ route('admin.abonnements') }}"
-                        class="
-                            px-5
-                            py-3
-                            rounded-xl
-                            bg-gray-200
-                            hover:bg-gray-300
-                            text-gray-700
-                            font-semibold
-                            text-center
-                        "
-                    >
-                        Annuler
-                    </a>
-
-
-                    <button
-                        type="submit"
-                        class="
-                            px-6
-                            py-3
-                            rounded-xl
-                            text-white
-                            font-bold
-                            shadow-md
-                        "
-                        style="background:#FF6B00;"
-                    >
-
-                        💾 Enregistrer l’abonnement
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
+
+</div>
 
 </x-layouts.admin>

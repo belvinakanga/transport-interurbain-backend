@@ -1,265 +1,285 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Modifier un utilisateur'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <div class="bg-white p-8 rounded-xl shadow">
+    <div class="tk-page-head">
 
-            <!-- Titre -->
+        <h1 class="tk-page-title">
 
-            <h1 class="text-3xl font-bold text-slate-800 mb-6">
-                ✏️ Modifier un utilisateur
-            </h1>
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-pen"></i>
+            </span>
 
-            <!-- Erreurs -->
+            Modifier un utilisateur
 
-            @if ($errors->any())
+        </h1>
 
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 p-4 rounded-xl">
+    </div>
 
-                    <p class="font-semibold mb-2">
-                        ⚠️ Veuillez corriger les erreurs suivantes :
-                    </p>
 
-                    <ul class="list-disc list-inside">
+    {{-- Formulaire --}}
 
-                        @foreach ($errors->all() as $error)
+    <div class="tk-card p-6">
 
-                            <li>{{ $error }}</li>
+        <form
+            method="POST"
+            action="{{ route('voyageurs.update', $voyageur->id) }}"
+        >
+
+            @csrf
+
+            @method('PUT')
+
+
+            {{-- Nom --}}
+
+            <div class="mb-5">
+
+                <label
+                    for="name"
+                    class="tk-form-label"
+                >
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Nom
+
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ old('name', $voyageur->name) }}"
+                    class="tk-input"
+                    required>
+
+            </div>
+
+
+            {{-- Email --}}
+
+            <div class="mb-5">
+
+                <label
+                    for="email"
+                    class="tk-form-label"
+                >
+
+                    <i class="fa-solid fa-envelope"></i>
+
+                    Adresse email
+
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ old('email', $voyageur->email) }}"
+                    class="tk-input"
+                    required>
+
+            </div>
+
+
+            {{-- Rôle --}}
+
+            <div class="mb-5">
+
+                <label
+                    for="role"
+                    class="tk-form-label"
+                >
+
+                    <i class="fa-solid fa-crown"></i>
+
+                    Rôle
+
+                </label>
+
+                <select
+                    id="role"
+                    name="role"
+                    class="tk-input"
+                    required>
+
+                    <option
+                        value="user"
+                        {{ old('role', $voyageur->role) == 'user' ? 'selected' : '' }}>
+
+                        Utilisateur
+
+                    </option>
+
+                    <option
+                        value="agent"
+                        {{ old('role', $voyageur->role) == 'agent' ? 'selected' : '' }}>
+
+                        Agent
+
+                    </option>
+
+                    <option
+                        value="admin"
+                        {{ old('role', $voyageur->role) == 'admin' ? 'selected' : '' }}>
+
+                        Administrateur
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            {{-- Agence --}}
+
+            <div class="mb-5">
+
+                <label
+                    for="agence_id"
+                    class="tk-form-label"
+                >
+
+                    <i class="fa-solid fa-building"></i>
+
+                    Agence
+
+                </label>
+
+                <select
+                    id="agence_id"
+                    name="agence_id"
+                    class="tk-input">
+
+                    <option value="">
+                        -- Aucune agence --
+                    </option>
+
+                    @if(isset($agences))
+
+                        @foreach($agences as $agence)
+
+                            <option
+                                value="{{ $agence->id }}"
+                                {{ old('agence_id', $voyageur->agence_id) == $agence->id ? 'selected' : '' }}>
+
+                                {{ $agence->nom_agence }}
+
+                            </option>
 
                         @endforeach
 
-                    </ul>
+                    @endif
 
-                </div>
+                </select>
 
-            @endif
+            </div>
 
-            <!-- Formulaire -->
 
-            <form
-                method="POST"
-                action="{{ route('voyageurs.update', $voyageur->id) }}">
+            {{-- Nouveau mot de passe --}}
 
-                @csrf
-                @method('PUT')
+            <div class="mb-5">
 
+                <label
+                    for="password"
+                    class="tk-form-label"
+                >
 
-                <!-- Nom -->
+                    <i class="fa-solid fa-key"></i>
 
-                <div class="mb-5">
+                    Nouveau mot de passe
 
-                    <label
-                        for="name"
-                        class="block font-semibold text-slate-700 mb-2">
+                </label>
 
-                        👤 Nom
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="tk-input"
+                    placeholder="Laisser vide pour conserver l'ancien mot de passe">
 
-                    </label>
+                <p class="mt-2 text-xs text-slate-500">
 
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value="{{ old('name', $voyageur->name) }}"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
-                        required>
+                    <i class="fa-solid fa-circle-info"></i>
 
-                </div>
+                    Si vous ne souhaitez pas modifier le mot de passe,
+                    laissez ce champ vide.
 
+                </p>
 
-                <!-- Email -->
+            </div>
 
-                <div class="mb-5">
 
-                    <label
-                        for="email"
-                        class="block font-semibold text-slate-700 mb-2">
+            {{-- Confirmation mot de passe --}}
 
-                        📧 Adresse email
+            <div class="mb-6">
 
-                    </label>
+                <label
+                    for="password_confirmation"
+                    class="tk-form-label"
+                >
 
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value="{{ old('email', $voyageur->email) }}"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
-                        required>
+                    <i class="fa-solid fa-lock"></i>
 
-                </div>
+                    Confirmer le nouveau mot de passe
 
+                </label>
 
-                <!-- Rôle -->
+                <input
+                    type="password"
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    class="tk-input"
+                    placeholder="Confirmer le nouveau mot de passe">
 
-                <div class="mb-5">
+            </div>
 
-                    <label
-                        for="role"
-                        class="block font-semibold text-slate-700 mb-2">
 
-                        👑 Rôle
+            {{-- Boutons --}}
 
-                    </label>
+            <div class="flex flex-col sm:flex-row gap-4 mt-6">
 
-                    <select
-                        id="role"
-                        name="role"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
-                        required>
+                {{-- Enregistrer --}}
 
-                        <option
-                            value="user"
-                            {{ old('role', $voyageur->role) == 'user' ? 'selected' : '' }}>
+                <button
+                    type="submit"
+                    class="tk-btn-accent"
+                >
 
-                            👤 Utilisateur
+                    <i class="fa-solid fa-floppy-disk"></i>
 
-                        </option>
+                    Enregistrer les modifications
 
-                        <option
-                            value="agent"
-                            {{ old('role', $voyageur->role) == 'agent' ? 'selected' : '' }}>
+                </button>
 
-                            👨‍💼 Agent
 
-                        </option>
+                {{-- Annuler --}}
 
-                        <option
-                            value="admin"
-                            {{ old('role', $voyageur->role) == 'admin' ? 'selected' : '' }}>
+                <a
+                    href="{{ route('voyageurs.index') }}"
+                    class="tk-btn-ghost"
+                >
 
-                            👑 Administrateur
+                    <i class="fa-solid fa-arrow-left"></i>
 
-                        </option>
+                    Retour
 
-                    </select>
+                </a>
 
-                </div>
+            </div>
 
-
-                <!-- Agence -->
-
-                <div class="mb-5">
-
-                    <label
-                        for="agence_id"
-                        class="block font-semibold text-slate-700 mb-2">
-
-                        🏢 Agence
-
-                    </label>
-
-                    <select
-                        id="agence_id"
-                        name="agence_id"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none">
-
-                        <option value="">
-                            -- Aucune agence --
-                        </option>
-
-                        @if(isset($agences))
-
-                            @foreach($agences as $agence)
-
-                                <option
-                                    value="{{ $agence->id }}"
-                                    {{ old('agence_id', $voyageur->agence_id) == $agence->id ? 'selected' : '' }}>
-
-                                    {{ $agence->nom_agence }}
-
-                                </option>
-
-                            @endforeach
-
-                        @endif
-
-                    </select>
-
-                </div>
-
-
-                <!-- Nouveau mot de passe -->
-
-                <div class="mb-5">
-
-                    <label
-                        for="password"
-                        class="block font-semibold text-slate-700 mb-2">
-
-                        🔑 Nouveau mot de passe
-
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
-                        placeholder="Laisser vide pour conserver l'ancien mot de passe">
-
-                    <p class="text-sm text-gray-500 mt-2">
-                        💡 Si vous ne souhaitez pas modifier le mot de passe,
-                        laissez ce champ vide.
-                    </p>
-
-                </div>
-
-
-                <!-- Confirmation mot de passe -->
-
-                <div class="mb-6">
-
-                    <label
-                        for="password_confirmation"
-                        class="block font-semibold text-slate-700 mb-2">
-
-                        🔐 Confirmer le nouveau mot de passe
-
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
-                        placeholder="Confirmer le nouveau mot de passe">
-
-                </div>
-
-
-                <!-- Boutons -->
-
-                <div class="flex flex-col sm:flex-row gap-4 mt-6">
-
-                    <!-- Enregistrer -->
-
-                    <button
-                        type="submit"
-                        class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold shadow transition">
-
-                        💾 Enregistrer les modifications
-
-                    </button>
-
-
-                    <!-- Annuler -->
-
-                    <a
-                        href="{{ route('voyageurs.index') }}"
-                        class="bg-slate-600 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-semibold text-center shadow transition">
-
-                        ← Retour
-
-                    </a>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
 

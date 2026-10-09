@@ -14,6 +14,49 @@
         {{ $title ?? 'TOKENDE - Espace Agent' }}
     </title>
 
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('tk-theme');
+                if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+
+            window.tkToggleTheme = function () {
+                var dark = document.documentElement.classList.toggle('dark');
+                try { localStorage.setItem('tk-theme', dark ? 'dark' : 'light'); } catch (e) {}
+                window.tkSyncTheme();
+            };
+
+            window.tkSyncTheme = function () {
+                var dark = document.documentElement.classList.contains('dark');
+                document.querySelectorAll('[data-theme-icon]').forEach(function (el) {
+                    el.className = 'fa-solid ' + (dark ? 'fa-sun' : 'fa-moon');
+                });
+                document.querySelectorAll('[data-theme-toggle]').forEach(function (el) {
+                    el.setAttribute('aria-label', dark ? 'Passer en mode clair' : 'Passer en mode sombre');
+                    el.setAttribute('title', dark ? 'Mode clair' : 'Mode sombre');
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', window.tkSyncTheme);
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap"
+    >
+
     @vite([
         'resources/css/app.css',
         'resources/js/app.js'
@@ -23,23 +66,20 @@
 
 
 <body
-    style="
-        margin:0;
-        padding:0;
-        background:#F8F9FB;
-        color:#1F2937;
-        font-family:Arial,sans-serif;
-        overflow:hidden;
-    "
+    class="m-0 bg-canvas text-slate-800 overflow-hidden antialiased"
 >
 
 
 <div
-    style="
-        display:flex;
-        width:100%;
-        height:100vh;
-    "
+    x-data="{
+        sidebarOpen: false,
+        collapsed: localStorage.getItem('tk-collapsed') === '1',
+        toggleCollapse() {
+            this.collapsed = !this.collapsed;
+            localStorage.setItem('tk-collapsed', this.collapsed ? '1' : '0');
+        }
+    }"
+    class="flex w-full h-screen"
 >
 
 
@@ -48,229 +88,171 @@
     ========================================================== --}}
 
     <aside
-        style="
-            width:350px;
-            height:100vh;
-            background:#FFFFFF;
-            border-right:1px solid #ebe9e5;
-            box-shadow:2px 0 10px rgba(0,0,0,.04);
-            display:flex;
-            flex-direction:column;
-            flex-shrink:0;
+        :class="[
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+            collapsed ? 'tk-sidebar-collapsed' : '',
+        ]"
+        class="
+            fixed inset-y-0 left-0 z-40
+            flex w-[264px] shrink-0
+            flex-col
+            bg-white border-r border-slate-200
+            transition-[transform,width] duration-200 ease-out
+            lg:static lg:z-auto lg:translate-x-0
         "
     >
 
-
-       {{-- =====================================================
-     LOGO
-====================================================== --}}
-
-<div
-    style="
-        height:70px;
-        min-height:70px;
-        padding:0 16px;
-        border-bottom:1px solid #E5E7EB;
-        display:flex;
-        align-items:center;
-    "
->
-
-    <div
-        style="
-            display:flex;
-            align-items:center;
-            gap:11px;
-        "
-    >
-
-        <div
-            style="
-                width:48px;
-                height:48px;
-                border-radius:14px;
-                background:#0A2A66;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:22px;
-                flex-shrink:0;
-            "
-        >
-            🚌
-        </div>
-
-
-        <div>
-
-            <div
-                style="
-                    font-size:25px;
-                    font-weight:800;
-                    line-height:1;
-                    color:#0A2A66;
-                "
-            >
-                TOKENDE
-            </div>
-
-            <div
-                style="
-                    margin-top:3px;
-                    font-size:14px;
-                    font-weight:700;
-                    color:#FF6B00;
-                "
-            >
-                Espace Agent
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
         {{-- =====================================================
-     INFORMATIONS AGENT
-====================================================== --}}
-
-<div
-    style="
-        padding:13px 14px 12px;
-        border-bottom:1px solid #E5E7EB;
-    "
->
-
-    <div
-        style="
-            display:flex;
-            align-items:center;
-            gap:9px;
-        "
-    >
+             LOGO
+        ====================================================== --}}
 
         <div
-            style="
-                width:40px;
-                height:40px;
-                border-radius:50%;
-                background:#EEF4FF;
-                border:2px solid #FF6B00;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:17px;
-                flex-shrink:0;
+            class="
+                tk-logo-box flex h-16 items-center
+                px-5 border-b border-slate-200
             "
         >
-            👨‍💼
+
+            <div class="flex items-center gap-3">
+
+                <div
+                    class="
+                        flex h-10 w-10 shrink-0 items-center
+                        justify-center rounded-xl
+                        bg-navy text-white text-lg
+                    "
+                >
+                    <i class="fa-solid fa-bus"></i>
+                </div>
+
+
+                <div class="tk-brand">
+
+                    <div
+                        class="
+                            text-[19px] font-extrabold
+                            leading-none text-navy
+                            tracking-tight
+                        "
+                    >
+                        TOKENDE
+                    </div>
+
+                    <div
+                        class="
+                            mt-1 text-xs
+                            font-semibold text-brand
+                        "
+                    >
+                        Espace Agent
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
 
+        {{-- =====================================================
+             INFORMATIONS AGENT
+        ====================================================== --}}
+
         <div
-            style="
-                min-width:0;
+            class="
+                tk-collaps-hide
+                border-b border-slate-200
+                px-4 py-3
             "
         >
 
-            <p
-                style="
-                    margin:0;
-                    font-size:17px;
-                    font-weight:800;
-                    color:#0A2A66;
-                    white-space:nowrap;
-                    overflow:hidden;
-                    text-overflow:ellipsis;
+            <div
+                class="flex items-center gap-3"
+            >
+
+                <div
+                    class="
+                        flex h-10 w-10 shrink-0
+                        items-center justify-center
+                        rounded-full bg-[#EEF4FF]
+                        text-navy text-sm
+                    "
+                >
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+
+
+                <div class="min-w-0">
+
+                    <p
+                        class="
+                            m-0 truncate text-sm
+                            font-semibold text-slate-800
+                        "
+                    >
+                        {{ auth()->user()->name }}
+                    </p>
+
+                    <p
+                        class="
+                            m-0 mt-0.5 text-xs
+                            font-semibold text-brand
+                        "
+                    >
+                        Agent
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {{-- AGENCE --}}
+
+            <div
+                class="
+                    mt-3 rounded-lg
+                    border border-slate-200
+                    bg-slate-50 px-3 py-2
                 "
             >
-                {{ auth()->user()->name }}
-            </p>
 
-           <p
-    style="
-        margin:2px 0 0;
-        font-size:16px;
-        font-weight:700;
-        color:#FF6B00;
-    "
->
-    Agent
-</p>
+                <p
+                    class="
+                        m-0 text-[11px]
+                        text-slate-500
+                    "
+                >
+                    Mon agence
+                </p>
+
+                <p
+                    class="
+                        m-0 mt-0.5 truncate
+                        text-sm font-bold
+                        text-navy
+                    "
+                >
+                    {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+                </p>
+
+            </div>
 
         </div>
 
-    </div>
-
-
-    {{-- AGENCE --}}
-
-    <div
-        style="
-            margin-top:10px;
-            background:#F8FAFD;
-            border:1px solid #DCE8FF;
-            border-radius:11px;
-            padding:9px 12px;
-        "
-    >
-
-        <p
-            style="
-                margin:0;
-                font-size:11px;
-                color:#6B7280;
-            "
-        >
-            Mon agence
-        </p>
-
-        <p
-            style="
-                margin:4px 0 0;
-                font-size:15px;
-                font-weight:800;
-                color:#0A2A66;
-                white-space:nowrap;
-                overflow:hidden;
-                text-overflow:ellipsis;
-            "
-        >
-            {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
-        </p>
-
-    </div>
-
-</div>
 
         {{-- =====================================================
              NAVIGATION
         ====================================================== --}}
 
         <nav
-    style="
-        flex:1;
-        padding:30px 20px;
-        overflow-y:auto;
-    "
->
+            class="flex-1 overflow-y-auto px-3 py-4"
+        >
 
-            {{-- TITRE NAVIGATION --}}
-
-            <div
-    style="
-        padding:0 14px;
-        margin:0 0 18px;
-        font-size:12px;
-        font-weight:800;
-        text-transform:uppercase;
-        letter-spacing:1.5px;
-        color:#9CA3AF;
-    "
->
-    Navigation
-</div>
+            <span class="tk-nav-label">
+                Navigation
+            </span>
 
 
             {{-- =================================================
@@ -278,34 +260,15 @@
             ================================================== --}}
 
             <a
-                href="{{ route('agent.dashboard') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:11px;
-                    min-height:52px;
-                    padding:0 16px;
-                    margin-bottom:8px; 
-                    text-decoration:none;
-                    font-size:15px;
-                    font-weight:800;
-
-                    {{
-                        request()->routeIs('agent.dashboard')
-                            ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                            : 'background:transparent;color:#0A2A66;'
-                    }}
-                "
+                href="{{ route('agent.dashboard') }}" title="Tableau de bord"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->routeIs('agent.dashboard'),
+                ])
             >
 
-                <span
-                    style="
-                        width:23px;
-                        text-align:center;
-                        font-size:18px;
-                    "
-                >
-                    📊
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-gauge-high"></i>
                 </span>
 
                 <span>
@@ -320,35 +283,15 @@
             ================================================== --}}
 
             <a
-                href="{{ route('admin.trajets') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:11px;
-                    min-height:44px;
-                    padding:0 12px;
-                    margin-bottom:4px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:15px;
-                    font-weight:800;
-
-                    {{
-                        request()->is('admin/trajets*')
-                            ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                            : 'background:transparent;color:#0A2A66;'
-                    }}
-                "
+                href="{{ route('admin.trajets') }}" title="Mes trajets"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/trajets*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:23px;
-                        text-align:center;
-                        font-size:18px;
-                    "
-                >
-                    🚌
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-bus"></i>
                 </span>
 
                 <span>
@@ -363,35 +306,15 @@
             ================================================== --}}
 
             <a
-                href="{{ route('admin.reservations') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:11px;
-                    min-height:44px;
-                    padding:0 12px;
-                    margin-bottom:4px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:15px;
-                    font-weight:800;
-
-                    {{
-                        request()->is('admin/reservations*')
-                            ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                            : 'background:transparent;color:#0A2A66;'
-                    }}
-                "
+                href="{{ route('admin.reservations') }}" title="Réservations"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/reservations*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:23px;
-                        text-align:center;
-                        font-size:18px;
-                    "
-                >
-                    🎫
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-ticket"></i>
                 </span>
 
                 <span>
@@ -408,35 +331,15 @@
             @if(Route::has('achats.index'))
 
                 <a
-                    href="{{ route('achats.index') }}"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:11px;
-                        min-height:44px;
-                        padding:0 12px;
-                        margin-bottom:4px;
-                        border-radius:11px;
-                        text-decoration:none;
-                        font-size:15px;
-                        font-weight:800;
-
-                        {{
-                            request()->is('achats*')
-                                ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                                : 'background:transparent;color:#0A2A66;'
-                        }}
-                    "
+                    href="{{ route('achats.index') }}" title="Achats"
+                    @class([
+                        'tk-nav-link',
+                        'is-active' => request()->is('achats*'),
+                    ])
                 >
 
-                    <span
-                        style="
-                            width:23px;
-                            text-align:center;
-                            font-size:18px;
-                        "
-                    >
-                        💳
+                    <span class="flex w-5 justify-center text-[15px]">
+                        <i class="fa-solid fa-credit-card"></i>
                     </span>
 
                     <span>
@@ -455,35 +358,15 @@
             @if(Route::has('agent.paiements'))
 
                 <a
-                    href="{{ route('agent.paiements') }}"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:11px;
-                        min-height:44px;
-                        padding:0 12px;
-                        margin-bottom:4px;
-                        border-radius:11px;
-                        text-decoration:none;
-                        font-size:15px;
-                        font-weight:800;
-
-                        {{
-                            request()->routeIs('agent.paiements')
-                                ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                                : 'background:transparent;color:#0A2A66;'
-                        }}
-                    "
+                    href="{{ route('agent.paiements') }}" title="Mes paiements"
+                    @class([
+                        'tk-nav-link',
+                        'is-active' => request()->routeIs('agent.paiements'),
+                    ])
                 >
 
-                    <span
-                        style="
-                            width:23px;
-                            text-align:center;
-                            font-size:18px;
-                        "
-                    >
-                        💰
+                    <span class="flex w-5 justify-center text-[15px]">
+                        <i class="fa-solid fa-wallet"></i>
                     </span>
 
                     <span>
@@ -495,102 +378,24 @@
             @endif
 
 
-            {{-- =================================================
-                 PROFIL
-            ================================================== --}}
-
-            @if(Route::has('profile.edit'))
-
-                <a
-                    href="{{ route('profile.edit') }}"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:11px;
-                        min-height:44px;
-                        padding:0 12px;
-                        margin-top:10px;
-                        border-radius:11px;
-                        text-decoration:none;
-                        font-size:15px;
-                        font-weight:800;
-
-                        {{
-                            request()->is('profile*')
-                                ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                                : 'background:transparent;color:#0A2A66;'
-                        }}
-                    "
-                >
-
-                    <span
-                        style="
-                            width:23px;
-                            text-align:center;
-                            font-size:18px;
-                        "
-                    >
-                        👤
-                    </span>
-
-                    <span>
-                        Profil
-                    </span>
-
-                </a>
-
-            @endif
-
         </nav>
-
-
-        {{-- =====================================================
-             DÉCONNEXION
-        ====================================================== --}}
-
-        <div
-            style="
-                padding:10px;
-                border-top:1px solid #E5E7EB;
-                background:#FFFFFF;
-            "
-        >
-
-            <form
-                method="POST"
-                action="{{ route('logout') }}"
-            >
-
-                @csrf
-
-                <button
-                    type="submit"
-                    style="
-                        width:100%;
-                        min-height:45px;
-                        border:none;
-                        border-radius:11px;
-                        background:#FF6B00;
-                        color:#FFFFFF;
-                        font-size:15px;
-                        font-weight:800;
-                        cursor:pointer;
-                        box-shadow:0 4px 10px rgba(255,107,0,.16);
-                    "
-                >
-
-                    🚪
-                    &nbsp;
-                    Déconnexion
-
-                </button>
-
-            </form>
-
-        </div>
 
     </aside>
 
+
+    {{-- OVERLAY MOBILE --}}
+
+    <div
+        x-show="sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="
+            fixed inset-0 z-30
+            bg-slate-900/40
+            lg:hidden
+        "
+        aria-hidden="true"
+    ></div>
 
 
     {{-- =========================================================
@@ -598,13 +403,10 @@
     ========================================================== --}}
 
     <div
-        style="
-            flex:1;
-            min-width:0;
-            height:100vh;
-            display:flex;
-            flex-direction:column;
-            overflow:hidden;
+        class="
+            flex h-screen min-w-0
+            flex-1 flex-col
+            overflow-hidden
         "
     >
 
@@ -614,58 +416,261 @@
         ====================================================== --}}
 
         <header
-            style="
-                height:70px;
-                min-height:70px;
-                background:#FFFFFF;
-                border-bottom:1px solid #E5E7EB;
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                padding:0 24px;
-                box-shadow:0 1px 5px rgba(0,0,0,.03);
+            class="
+                flex h-16 min-h-16 items-center
+                justify-between gap-4
+                border-b border-slate-200
+                bg-white px-4 sm:px-6
             "
         >
 
-            <div>
+            <div class="flex min-w-0 items-center gap-3">
 
-                <div
-                    style="
-                        font-size:25px;
-                        font-weight:800;
-                        color:#0A2A66;
+                <button
+                    type="button"
+                    @click="sidebarOpen = !sidebarOpen"
+                    class="
+                        flex h-10 w-10 items-center justify-center
+                        rounded-lg text-navy
+                        transition-colors hover:bg-slate-100
+                        lg:hidden
                     "
+                    aria-label="Menu"
                 >
-                    {{ $header ?? 'Espace Agent' }}
-                </div>
 
-                <div
-                    style="
-                        margin-top:2px;
-                        font-size:13px;
-                        color:#6B7280;
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    @click="toggleCollapse()"
+                    class="
+                        hidden h-10 w-10 items-center justify-center
+                        rounded-lg text-navy
+                        transition-colors hover:bg-slate-100
+                        lg:flex
                     "
+                    :aria-label="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
+                    x-bind:title="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
                 >
-                    {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+
+                    <i
+                        class="fa-solid"
+                        :class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"
+                    ></i>
+
+                </button>
+
+                <div class="min-w-0">
+
+                    <div
+                        class="
+                            truncate text-lg sm:text-xl
+                            font-bold text-navy
+                        "
+                    >
+                        {{ $header ?? 'Espace Agent' }}
+                    </div>
+
+                    <div
+                        class="
+                            mt-0.5 truncate text-xs
+                            text-slate-500
+                        "
+                    >
+                        {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <div
-                style="
-                    width:40px;
-                    height:40px;
-                    border-radius:50%;
-                    background:#FFF3E8;
-                    border:2px solid #FF6B00;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    font-size:18px;
-                "
-            >
-                👨‍💼
+            <div class="flex items-center gap-3">
+
+                {{-- THEME CLAIR / SOMBRE --}}
+
+                <button
+                    type="button"
+                    data-theme-toggle
+                    onclick="tkToggleTheme()"
+                    aria-label="Passer en mode sombre"
+                    title="Mode sombre"
+                    class="
+                        flex h-10 w-10 items-center justify-center
+                        rounded-lg border border-slate-200
+                        bg-white text-navy
+                        transition-colors hover:bg-slate-50
+                    "
+                >
+                    <i data-theme-icon class="fa-solid fa-moon"></i>
+                </button>
+
+
+                <div
+                    class="relative"
+                    x-data="{ avatarOpen: false }"
+                    @click.outside="avatarOpen = false"
+                    @keydown.escape.window="avatarOpen = false"
+                >
+
+                <button
+                    type="button"
+                    @click="avatarOpen = !avatarOpen"
+                    class="
+                        flex items-center gap-3
+                        rounded-lg p-1.5
+                        transition-colors hover:bg-slate-50
+                    "
+                    aria-label="Menu du compte"
+                    aria-haspopup="true"
+                    x-bind:aria-expanded="avatarOpen"
+                >
+
+                    <span
+                        class="
+                            flex h-10 w-10 shrink-0
+                            items-center justify-center
+                            rounded-full bg-[#EEF4FF]
+                            text-navy text-sm
+                        "
+                    >
+                        <i class="fa-solid fa-user-tie"></i>
+                    </span>
+
+
+                    <span class="hidden sm:block text-left">
+
+                        <span
+                            class="
+                                block text-sm font-semibold
+                                text-slate-800
+                            "
+                        >
+                            {{ auth()->user()->name }}
+                        </span>
+
+                        <span
+                            class="
+                                block mt-0.5 text-xs
+                                text-slate-500
+                            "
+                        >
+                            Agent
+                        </span>
+
+                    </span>
+
+
+                    <i
+                        class="
+                            fa-solid fa-chevron-down
+                            text-xs text-slate-400
+                            transition-transform
+                        "
+                        :class="avatarOpen && 'rotate-180'"
+                    ></i>
+
+                </button>
+
+
+                <div
+                    x-show="avatarOpen"
+                    x-transition.origin.top.right
+                    x-cloak
+                    class="
+                        absolute right-0 top-full z-50 mt-2
+                        w-56 overflow-hidden rounded-xl
+                        border border-slate-200 bg-white
+                        shadow-lg
+                    "
+                >
+
+                    <div
+                        class="
+                            border-b border-slate-100
+                            bg-slate-50 px-4 py-3
+                        "
+                    >
+
+                        <div
+                            class="
+                                truncate text-sm
+                                font-bold text-navy
+                            "
+                        >
+                            {{ auth()->user()->name }}
+                        </div>
+
+                        <div
+                            class="
+                                mt-0.5 truncate text-xs
+                                text-slate-500
+                            "
+                        >
+                            Agent
+                        </div>
+
+                    </div>
+
+
+                    @if(Route::has('profile.edit'))
+
+                        <a
+                            href="{{ route('profile.edit') }}"
+                            class="
+                                flex items-center gap-3
+                                px-4 py-3 text-sm
+                                font-semibold text-slate-600
+                                transition-colors hover:bg-slate-50
+                                hover:text-navy
+                            "
+                        >
+
+                            <i class="fa-solid fa-user w-4 text-center"></i>
+
+                            Mon profil
+
+                        </a>
+
+                    @endif
+
+
+                    <div class="border-t border-slate-100">
+
+                        <form
+                            method="POST"
+                            action="{{ route('logout') }}"
+                        >
+
+                            @csrf
+
+                            <button
+                                type="submit"
+                                class="
+                                    flex w-full items-center gap-3
+                                    px-4 py-3 text-sm
+                                    font-semibold text-red-600
+                                    transition-colors hover:bg-red-50
+                                "
+                            >
+
+                                <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+
+                                Se déconnecter
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
             </div>
 
         </header>
@@ -676,12 +681,10 @@
         ====================================================== --}}
 
         <main
-            style="
-                flex:1;
-                overflow-y:auto;
-                overflow-x:hidden;
-                background:#F8F9FB;
-                padding:24px;
+            class="
+                flex-1 overflow-y-auto
+                overflow-x-hidden
+                bg-canvas p-4 sm:p-6
             "
         >
 
@@ -693,6 +696,10 @@
 
 </div>
 
+
+<x-confirm-modal />
+
+<x-flash-modal />
 
 </body>
 

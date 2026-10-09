@@ -1,163 +1,184 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Modifier un trajet'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <div class="bg-white p-8 rounded-xl shadow">
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-            <h1 class="text-3xl font-bold mb-6">
-                ✏️ Modifier un trajet
-            </h1>
+        <h1 class="tk-page-title">
 
-            @if ($errors->any())
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-pen"></i>
+            </span>
 
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 p-4 rounded">
+            Modifier un trajet
 
-                    <ul class="list-disc list-inside">
+        </h1>
 
-                        @foreach ($errors->all() as $error)
+        <a
+            href="/admin/trajets"
+            class="tk-btn-ghost shrink-0"
+        >
+            <i class="fa-solid fa-arrow-left"></i>
 
-                            <li>{{ $error }}</li>
+            Retour
+        </a>
 
-                        @endforeach
+    </div>
 
-                    </ul>
 
-                </div>
+    {{-- Formulaire --}}
 
-            @endif
+    <div class="tk-card p-6">
 
-            <form method="POST" action="/admin/trajets/{{ $trajet->id }}">
 
-                @csrf
-                @method('PUT')
+        <form method="POST" action="/admin/trajets/{{ $trajet->id }}">
 
-                <div class="mb-4">
+            @csrf
+            @method('PUT')
 
-                    <label class="block font-semibold mb-2">
-                        Agence
-                    </label>
+            <div class="mb-5">
 
-                    <select
-                        name="agence_id"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Agence
+                </label>
 
-                        @foreach($agences as $agence)
+                <select
+                    name="agence_id"
+                    class="tk-input"
+                    required>
 
-                            <option
-                                value="{{ $agence->id }}"
-                                {{ $trajet->agence_id == $agence->id ? 'selected' : '' }}>
+                    @foreach($agences as $agence)
 
-                                {{ $agence->nom_agence }}
+                        <option
+                            value="{{ $agence->id }}"
+                            {{ $trajet->agence_id == $agence->id ? 'selected' : '' }}>
 
-                            </option>
+                            {{ $agence->nom_agence }}
 
-                        @endforeach
+                        </option>
 
-                    </select>
+                    @endforeach
 
-                </div>
+                </select>
 
-                <div class="mb-4">
+            </div>
 
-                    <label class="block font-semibold mb-2">
-                        Départ
-                    </label>
+            <div class="mb-5">
 
-                    <input
-                        type="text"
-                        name="depart"
-                        value="{{ old('depart', $trajet->depart) }}"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Départ
+                </label>
 
-                </div>
+                <input
+                    type="text"
+                    name="depart"
+                    value="{{ old('depart', $trajet->depart) }}"
+                    class="tk-input"
+                    required>
 
-                <div class="mb-4">
+            </div>
 
-                    <label class="block font-semibold mb-2">
-                        Arrivée
-                    </label>
+            <div class="mb-5">
 
-                    <input
-                        type="text"
-                        name="arrivee"
-                        value="{{ old('arrivee', $trajet->arrivee) }}"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Arrivée
+                </label>
 
-                </div>
+                <input
+                    type="text"
+                    name="arrivee"
+                    value="{{ old('arrivee', $trajet->arrivee) }}"
+                    class="tk-input"
+                    required>
 
-                <div class="mb-4">
+            </div>
 
-                    <label class="block font-semibold mb-2">
-                        Date de départ
-                    </label>
+            <div class="mb-5">
 
-                    <input
-                        type="date"
-                        name="date_depart"
-                        value="{{ old('date_depart', $trajet->date_depart) }}"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Date de départ
+                </label>
 
-                </div>
+                <input
+                    type="date"
+                    name="date_depart"
+                    value="{{ old('date_depart', $trajet->date_depart) }}"
+                    class="tk-input"
+                    required>
 
-                <div class="mb-4">
+            </div>
 
-                    <label class="block font-semibold mb-2">
-                        Heure de départ
-                    </label>
+            <div class="mb-5">
 
-                    <input
-                        type="time"
-                        name="heure_depart"
-                        value="{{ old('heure_depart', $trajet->heure_depart) }}"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Heure de départ
+                </label>
 
-                </div>
+                <input
+                    type="time"
+                    name="heure_depart"
+                    value="{{ old('heure_depart', $trajet->heure_depart) }}"
+                    class="tk-input"
+                    required>
 
-                <div class="mb-4">
+            </div>
 
-                    <label class="block font-semibold mb-2">
-                        Prix (FCFA)
-                    </label>
+            <div class="mb-5">
 
-                    <input
-                        type="number"
-                        name="prix"
-                        value="{{ old('prix', $trajet->prix) }}"
-                        class="w-full border rounded p-3"
-                        required>
+                <label class="tk-form-label">
+                    Prix (FCFA)
+                </label>
 
-                </div>
+                <input
+                    type="number"
+                    name="prix"
+                    value="{{ old('prix', $trajet->prix) }}"
+                    class="tk-input"
+                    required>
 
-                <div class="flex gap-4 mt-6">
+            </div>
 
-                    <button
-                        type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded">
+            <div class="flex flex-wrap gap-3 mt-6">
 
-                        💾 Mettre à jour
+                <button
+                    type="submit"
+                    class="tk-btn-accent">
 
-                    </button>
+                    <i class="fa-solid fa-check"></i>
 
-                    <a
-                        href="/admin/trajets"
-                        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded">
+                    Mettre à jour
 
-                        ← Retour
+                </button>
 
-                    </a>
+                <a
+                    href="/admin/trajets"
+                    class="tk-btn-ghost">
 
-                </div>
+                    <i class="fa-solid fa-arrow-left"></i>
 
-            </form>
+                    Retour
 
-        </div>
+                </a>
+
+            </div>
+
+        </form>
 
     </div>
 

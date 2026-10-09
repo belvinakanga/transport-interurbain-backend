@@ -2,22 +2,32 @@
     :header="'Nouveau paiement agence'"
 >
 
-    <div class="max-w-3xl mx-auto space-y-6">
+    <div class="tk-page">
 
         {{-- =====================================================
              TITRE
         ====================================================== --}}
 
-        <div>
+        <div class="tk-page-head">
 
-            <h1
-                class="text-3xl md:text-4xl font-bold"
-                style="color:#0A2A66;"
-            >
-                💰 Nouveau paiement
+            <h1 class="tk-page-title">
+
+                <span
+                    class="
+                        flex h-11 w-11 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-orange-50
+                        text-lg text-brand
+                    "
+                >
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </span>
+
+                Nouveau paiement
+
             </h1>
 
-            <p class="text-gray-500 mt-2">
+            <p class="mt-2 text-sm text-slate-500">
                 Enregistrez le paiement dû par une agence à TOKENDE.
             </p>
 
@@ -25,74 +35,31 @@
 
 
         {{-- =====================================================
-             ERREURS
-        ====================================================== --}}
-
-        @if($errors->any())
-
-            <div
-                class="rounded-xl p-4"
-                style="
-                    background:#FEE2E2;
-                    color:#B91C1C;
-                "
-            >
-
-                <p class="font-bold mb-2">
-                    ⚠️ Vérifiez les informations suivantes :
-                </p>
-
-                <ul class="list-disc ml-5">
-
-                    @foreach($errors->all() as $error)
-
-                        <li>
-                            {{ $error }}
-                        </li>
-
-                    @endforeach
-
-                </ul>
-
-            </div>
-
-        @endif
-
-
-        {{-- =====================================================
              FORMULAIRE
         ====================================================== --}}
 
-        <div
-            class="
-                bg-white
-                rounded-2xl
-                shadow-sm
-                border
-                border-gray-100
-                overflow-hidden
-            "
-        >
+        <div class="tk-card overflow-hidden">
 
             {{-- EN-TÊTE --}}
 
-            <div
-                class="
-                    px-6
-                    py-5
-                    border-b
-                "
-                style="background:#F6F8FC;"
-            >
+            <div class="border-b border-slate-200 px-5 py-4">
 
                 <h2
-                    class="text-xl font-bold"
-                    style="color:#0A2A66;"
+                    class="
+                        flex
+                        items-center
+                        gap-2
+                        text-xl
+                        font-bold
+                        text-navy
+                    "
                 >
+                    <i class="fa-solid fa-receipt"></i>
+
                     Informations du paiement
                 </h2>
 
-                <p class="text-sm text-gray-500 mt-1">
+                <p class="mt-1 text-sm text-slate-500">
                     Sélectionnez l’abonnement concerné.
                 </p>
 
@@ -116,12 +83,7 @@
 
                     <label
                         for="abonnement_id"
-                        class="
-                            block
-                            font-semibold
-                            text-gray-700
-                            mb-2
-                        "
+                        class="tk-form-label"
                     >
                         Abonnement concerné
                     </label>
@@ -133,15 +95,7 @@
                             id="abonnement_id"
                             name="abonnement_id"
                             required
-                            class="
-                                w-full
-                                border
-                                border-gray-300
-                                rounded-xl
-                                px-4
-                                py-3
-                                bg-white
-                            "
+                            class="tk-input"
                         >
 
                             <option value="">
@@ -191,19 +145,23 @@
                         <div
                             class="
                                 rounded-xl
+                                border border-[#FFD7B8]
+                                bg-[#FFF3E8]
                                 p-4
-                            "
-                            style="
-                                background:#FFF3E8;
-                                color:#9A3412;
+                                text-sm
+                                text-[#9A3412]
                             "
                         >
 
-                            <p class="font-semibold">
-                                ⚠️ Aucun abonnement actif disponible.
+                            <p class="flex items-center gap-2 font-semibold">
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                Aucun abonnement actif disponible.
+
                             </p>
 
-                            <p class="text-sm mt-1">
+                            <p class="mt-1">
                                 Créez d’abord un abonnement actif dans
                                 la page « Abonnements ».
                             </p>
@@ -220,29 +178,27 @@
                 ================================================== --}}
 
                 <div
-                    class="rounded-xl p-5"
-                    style="
-                        background:#EEF4FF;
-                        border:1px solid #D8E6FF;
+                    class="
+                        rounded-xl
+                        border border-[#D8E6FF]
+                        bg-[#EEF4FF]
+                        p-5
                     "
                 >
 
                     <div class="flex items-start gap-3">
 
-                        <div class="text-2xl">
-                            ℹ️
+                        <div class="text-xl text-navy">
+                            <i class="fa-solid fa-circle-info"></i>
                         </div>
 
                         <div>
 
-                            <h3
-                                class="font-bold"
-                                style="color:#0A2A66;"
-                            >
+                            <h3 class="font-bold text-navy">
                                 Fonctionnement
                             </h3>
 
-                            <p class="text-sm text-gray-600 mt-2">
+                            <p class="text-sm text-slate-600 mt-2">
 
                                 Le montant du paiement et la date
                                 d’échéance seront automatiquement
@@ -250,10 +206,10 @@
 
                             </p>
 
-                            <p class="text-sm text-gray-600 mt-2">
+                            <p class="text-sm text-slate-600 mt-2">
 
                                 Le paiement sera enregistré comme
-                                <strong style="color:#FF6B00;">
+                                <strong class="text-brand">
                                     « En attente »
                                 </strong>
                                 jusqu’à ce qu’il soit effectivement
@@ -276,12 +232,7 @@
 
                     <label
                         for="note"
-                        class="
-                            block
-                            font-semibold
-                            text-gray-700
-                            mb-2
-                        "
+                        class="tk-form-label"
                     >
                         Note
                     </label>
@@ -292,14 +243,7 @@
                         rows="4"
                         maxlength="2000"
                         placeholder="Exemple : Paiement de l'abonnement du mois d'août 2026."
-                        class="
-                            w-full
-                            border
-                            border-gray-300
-                            rounded-xl
-                            px-4
-                            py-3
-                        "
+                        class="tk-input h-auto py-2.5 min-h-[100px]"
                     >{{ old('note') }}</textarea>
 
                 </div>
@@ -322,18 +266,13 @@
 
                     <a
                         href="{{ route('paiements-agences.index') }}"
-                        class="
-                            px-5
-                            py-3
-                            rounded-xl
-                            bg-gray-200
-                            hover:bg-gray-300
-                            text-gray-700
-                            font-semibold
-                            text-center
-                        "
+                        class="tk-btn-ghost"
                     >
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
                         Annuler
+
                     </a>
 
 
@@ -341,17 +280,13 @@
 
                         <button
                             type="submit"
-                            class="
-                                px-6
-                                py-3
-                                rounded-xl
-                                text-white
-                                font-bold
-                                shadow-md
-                            "
-                            style="background:#FF6B00;"
+                            class="tk-btn-accent"
                         >
-                            💰 Créer le paiement
+
+                            <i class="fa-solid fa-check"></i>
+
+                            Créer le paiement
+
                         </button>
 
                     @endif

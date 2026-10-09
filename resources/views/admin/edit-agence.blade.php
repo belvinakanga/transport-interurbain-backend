@@ -1,169 +1,193 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Modifier une agence'">
 
-    <div class="py-12">
+<div class="tk-page">
 
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-            <div class="bg-white p-8 rounded shadow">
+    <div class="tk-page-head">
 
-                <h1 class="text-3xl font-bold mb-6">
-                    ✏️ Modifier une agence
-                </h1>
+        <h1 class="tk-page-title">
 
-                <form method="POST" action="/admin/agences/{{ $agence->id }}">
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-pen"></i>
+            </span>
 
-                    @csrf
+            Modifier une agence
 
-                    @method('PUT')
+        </h1>
 
-                    <div class="mb-4">
+    </div>
 
-                        <label class="block font-semibold mb-2">
-                            Nom de l'agence
-                        </label>
 
-                        <input
-                            type="text"
-                            name="nom_agence"
-                            value="{{ old('nom_agence', $agence->nom_agence) }}"
-                            required
-                            class="w-full border rounded p-3">
+    {{-- Formulaire --}}
 
-                    </div>
+    <div class="tk-card p-6">
 
-                    <div class="mb-4">
+        <form method="POST" action="/admin/agences/{{ $agence->id }}">
 
-                        <label class="block font-semibold mb-2">
-                            Ville
-                        </label>
+            @csrf
 
-                        <input
-                            type="text"
-                            name="ville"
-                            value="{{ old('ville', $agence->ville) }}"
-                            required
-                            class="w-full border rounded p-3">
+            @method('PUT')
 
-                    </div>
+            <div class="mb-4">
 
-                    <div class="mb-4">
+                <label class="tk-form-label">
+                    Nom de l'agence
+                </label>
 
-                        <label class="block font-semibold mb-2">
-                            Adresse
-                        </label>
-
-                        <input
-                            type="text"
-                            name="adresse"
-                            value="{{ old('adresse', $agence->adresse) }}"
-                            required
-                            class="w-full border rounded p-3">
-
-                    </div>
-
-                    <div class="mb-4">
-
-                        <label class="block font-semibold mb-2">
-                            Téléphone
-                        </label>
-
-                        <input
-                            type="text"
-                            name="telephone"
-                            value="{{ old('telephone', $agence->telephone) }}"
-                            required
-                            class="w-full border rounded p-3">
-
-                    </div>
-
-                    {{-- MODÈLE ÉCONOMIQUE --}}
-
-                    <div class="mb-6">
-
-                        <label class="block font-semibold mb-3">
-                            Modèle économique
-                        </label>
-
-                        <div class="space-y-3">
-
-                            {{-- COMMISSION --}}
-
-                            <label class="flex items-center gap-3 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-
-                                <input
-                                    type="radio"
-                                    name="modele_economique"
-                                    value="commission"
-                                    {{ old('modele_economique', $agence->modele_economique) === 'commission' ? 'checked' : '' }}
-                                    required>
-
-                                <div>
-                                    <div class="font-semibold">
-                                        Commission par billet
-                                    </div>
-
-                                    <div class="text-sm text-gray-600">
-                                        100 FCFA sont ajoutés à chaque billet :
-                                        80 FCFA pour Tokende et 20 FCFA pour l'agence.
-                                    </div>
-                                </div>
-
-                            </label>
-
-                            {{-- ABONNEMENT --}}
-
-                            <label class="flex items-center gap-3 border rounded-lg p-4 cursor-pointer hover:bg-gray-50">
-
-                                <input
-                                    type="radio"
-                                    name="modele_economique"
-                                    value="abonnement"
-                                    {{ old('modele_economique', $agence->modele_economique) === 'abonnement' ? 'checked' : '' }}
-                                    required>
-
-                                <div>
-                                    <div class="font-semibold">
-                                        Abonnement mensuel
-                                    </div>
-
-                                    <div class="text-sm text-gray-600">
-                                        Aucun montant supplémentaire n'est ajouté
-                                        aux billets. L'agence paie un abonnement mensuel à Tokende.
-                                    </div>
-                                </div>
-
-                            </label>
-
-                        </div>
-
-                    </div>
-
-                    <div class="flex gap-4 mt-6">
-
-                        <button
-                            type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded">
-
-                            💾 Mettre à jour
-
-                        </button>
-
-                        <a
-                            href="/admin/agences"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded">
-
-                            Retour
-
-                        </a>
-
-                    </div>
-
-                </form>
+                <input
+                    type="text"
+                    name="nom_agence"
+                    value="{{ old('nom_agence', $agence->nom_agence) }}"
+                    required
+                    class="tk-input">
 
             </div>
 
-        </div>
+            <div class="mb-4">
+
+                <label class="tk-form-label">
+                    Ville
+                </label>
+
+                <input
+                    type="text"
+                    name="ville"
+                    value="{{ old('ville', $agence->ville) }}"
+                    required
+                    class="tk-input">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="tk-form-label">
+                    Adresse
+                </label>
+
+                <input
+                    type="text"
+                    name="adresse"
+                    value="{{ old('adresse', $agence->adresse) }}"
+                    required
+                    class="tk-input">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="tk-form-label">
+                    Téléphone
+                </label>
+
+                <input
+                    type="text"
+                    name="telephone"
+                    value="{{ old('telephone', $agence->telephone) }}"
+                    required
+                    class="tk-input">
+
+            </div>
+
+            {{-- MODÈLE ÉCONOMIQUE --}}
+
+            <div class="mb-6">
+
+                <label class="tk-form-label">
+                    Modèle économique
+                </label>
+
+                <div class="space-y-3">
+
+                    {{-- COMMISSION --}}
+
+                    <label class="flex items-center gap-3 rounded-lg border border-slate-200 p-4 cursor-pointer hover:bg-slate-50 transition-colors">
+
+                        <input
+                            type="radio"
+                            name="modele_economique"
+                            value="commission"
+                            {{ old('modele_economique', $agence->modele_economique) === 'commission' ? 'checked' : '' }}
+                            required>
+
+                        <div>
+                            <div class="font-semibold text-navy">
+                                Commission par billet
+                            </div>
+
+                            <div class="text-sm text-slate-500">
+                                100 FCFA sont ajoutés à chaque billet :
+                                80 FCFA pour Tokende et 20 FCFA pour l'agence.
+                            </div>
+                        </div>
+
+                    </label>
+
+                    {{-- ABONNEMENT --}}
+
+                    <label class="flex items-center gap-3 rounded-lg border border-slate-200 p-4 cursor-pointer hover:bg-slate-50 transition-colors">
+
+                        <input
+                            type="radio"
+                            name="modele_economique"
+                            value="abonnement"
+                            {{ old('modele_economique', $agence->modele_economique) === 'abonnement' ? 'checked' : '' }}
+                            required>
+
+                        <div>
+                            <div class="font-semibold text-navy">
+                                Abonnement mensuel
+                            </div>
+
+                            <div class="text-sm text-slate-500">
+                                Aucun montant supplémentaire n'est ajouté
+                                aux billets. L'agence paie un abonnement mensuel à Tokende.
+                            </div>
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="flex gap-3">
+
+                <button
+                    type="submit"
+                    class="tk-btn-accent"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Mettre à jour
+
+                </button>
+
+                <a
+                    href="/admin/agences"
+                    class="tk-btn-ghost"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Retour
+
+                </a>
+
+            </div>
+
+        </form>
 
     </div>
+
+</div>
 
 </x-layouts.admin>

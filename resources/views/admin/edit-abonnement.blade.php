@@ -1,283 +1,275 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Modifier l\'abonnement'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <!-- Carte principale -->
+    <div class="tk-page-head">
 
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <h1 class="tk-page-title">
 
-            <!-- En-tête -->
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-pen"></i>
+            </span>
 
-            <div class="px-8 py-6 border-b bg-slate-50">
+            Modifier l'abonnement
 
-                <h1 class="text-3xl font-bold text-slate-800">
-                    ✏️ Modifier l'abonnement
-                </h1>
+        </h1>
 
-                <p class="text-gray-500 mt-2">
-                    Modifiez les informations de cet abonnement.
-                </p>
+        <p class="mt-2 text-sm text-slate-500">
+            Modifiez les informations de cet abonnement.
+        </p>
+
+    </div>
+
+
+    {{-- Formulaire --}}
+
+    <div class="tk-card p-6">
+
+
+        {{-- Formulaire --}}
+
+        <form
+            action="{{ route('admin.abonnements.update', $abonnement->id) }}"
+            method="POST"
+        >
+
+            @csrf
+
+            @method('PUT')
+
+
+            {{-- Agence --}}
+
+            <div class="mb-6">
+
+                <label
+                    for="agence_id"
+                    class="tk-form-label"
+                >
+                    <i class="fa-solid fa-building mr-1.5"></i>
+                    Agence
+                </label>
+
+                <select
+                    id="agence_id"
+                    name="agence_id"
+                    required
+                    class="tk-input">
+
+                    <option value="">
+                        -- Sélectionner une agence --
+                    </option>
+
+                    @foreach($agences as $agence)
+
+                        <option
+                            value="{{ $agence->id }}"
+                            {{ old('agence_id', $abonnement->agence_id) == $agence->id ? 'selected' : '' }}>
+
+                            {{ $agence->nom_agence }}
+
+                        </option>
+
+                    @endforeach
+
+                </select>
 
             </div>
 
 
-            <!-- Erreurs -->
+            {{-- Type --}}
 
-            @if ($errors->any())
+            <div class="mb-6">
 
-                <div class="mx-8 mt-6 bg-red-100 border border-red-400 text-red-700 px-5 py-4 rounded-xl">
+                <label
+                    for="type"
+                    class="tk-form-label"
+                >
+                    <i class="fa-solid fa-box mr-1.5"></i>
+                    Type d'abonnement
+                </label>
 
-                    <p class="font-semibold mb-2">
-                        ⚠️ Veuillez corriger les erreurs suivantes :
-                    </p>
+                <input
+                    type="text"
+                    id="type"
+                    name="type"
+                    value="{{ old('type', $abonnement->type) }}"
+                    required
+                    maxlength="100"
+                    placeholder="Exemple : Mensuel, Trimestriel..."
+                    class="tk-input">
 
-                    <ul class="list-disc list-inside">
-
-                        @foreach ($errors->all() as $error)
-
-                            <li>{{ $error }}</li>
-
-                        @endforeach
-
-                    </ul>
-
-                </div>
-
-            @endif
-
-
-            <!-- Formulaire -->
-
-            <form
-                action="{{ route('admin.abonnements.update', $abonnement->id) }}"
-                method="POST"
-                class="p-8">
-
-                @csrf
-                @method('PUT')
+            </div>
 
 
-                <!-- Agence -->
+            {{-- Montant --}}
 
-                <div class="mb-6">
+            <div class="mb-6">
 
-                    <label
-                        for="agence_id"
-                        class="block text-sm font-semibold text-slate-700 mb-2">
+                <label
+                    for="montant"
+                    class="tk-form-label"
+                >
+                    <i class="fa-solid fa-money-bill-wave mr-1.5"></i>
+                    Montant
+                </label>
 
-                        🏢 Agence
+                <div class="relative">
 
-                    </label>
-
-                    <select
-                        id="agence_id"
-                        name="agence_id"
+                    <input
+                        type="number"
+                        id="montant"
+                        name="montant"
+                        value="{{ old('montant', $abonnement->montant) }}"
                         required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        min="0"
+                        step="0.01"
+                        placeholder="Exemple : 50000"
+                        class="tk-input pr-20">
 
-                        <option value="">
-                            -- Sélectionner une agence --
-                        </option>
-
-                        @foreach($agences as $agence)
-
-                            <option
-                                value="{{ $agence->id }}"
-                                {{ old('agence_id', $abonnement->agence_id) == $agence->id ? 'selected' : '' }}>
-
-                                {{ $agence->nom_agence }}
-
-                            </option>
-
-                        @endforeach
-
-                    </select>
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 font-semibold text-slate-500">
+                        FCFA
+                    </span>
 
                 </div>
 
+            </div>
 
-                <!-- Type -->
 
-                <div class="mb-6">
+            {{-- Dates --}}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+                {{-- Date début --}}
+
+                <div>
 
                     <label
-                        for="type"
-                        class="block text-sm font-semibold text-slate-700 mb-2">
-
-                        📦 Type d'abonnement
-
+                        for="date_debut"
+                        class="tk-form-label"
+                    >
+                        <i class="fa-solid fa-calendar mr-1.5"></i>
+                        Date de début
                     </label>
 
                     <input
-                        type="text"
-                        id="type"
-                        name="type"
-                        value="{{ old('type', $abonnement->type) }}"
+                        type="date"
+                        id="date_debut"
+                        name="date_debut"
+                        value="{{ old('date_debut', \Carbon\Carbon::parse($abonnement->date_debut)->format('Y-m-d')) }}"
                         required
-                        maxlength="100"
-                        placeholder="Exemple : Mensuel, Trimestriel..."
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        class="tk-input">
 
                 </div>
 
 
-                <!-- Montant -->
+                {{-- Date fin --}}
 
-                <div class="mb-6">
+                <div>
 
                     <label
-                        for="montant"
-                        class="block text-sm font-semibold text-slate-700 mb-2">
-
-                        💰 Montant
-
+                        for="date_fin"
+                        class="tk-form-label"
+                    >
+                        <i class="fa-solid fa-calendar mr-1.5"></i>
+                        Date de fin
                     </label>
 
-                    <div class="relative">
-
-                        <input
-                            type="number"
-                            id="montant"
-                            name="montant"
-                            value="{{ old('montant', $abonnement->montant) }}"
-                            required
-                            min="0"
-                            step="0.01"
-                            placeholder="Exemple : 50000"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 pr-20 focus:outline-none focus:ring-2 focus:ring-orange-500">
-
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-                            FCFA
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Dates -->
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-
-                    <!-- Date début -->
-
-                    <div>
-
-                        <label
-                            for="date_debut"
-                            class="block text-sm font-semibold text-slate-700 mb-2">
-
-                            📅 Date de début
-
-                        </label>
-
-                        <input
-                            type="date"
-                            id="date_debut"
-                            name="date_debut"
-                            value="{{ old('date_debut', \Carbon\Carbon::parse($abonnement->date_debut)->format('Y-m-d')) }}"
-                            required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
-
-                    </div>
-
-
-                    <!-- Date fin -->
-
-                    <div>
-
-                        <label
-                            for="date_fin"
-                            class="block text-sm font-semibold text-slate-700 mb-2">
-
-                            📅 Date de fin
-
-                        </label>
-
-                        <input
-                            type="date"
-                            id="date_fin"
-                            name="date_fin"
-                            value="{{ old('date_fin', \Carbon\Carbon::parse($abonnement->date_fin)->format('Y-m-d')) }}"
-                            required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
-
-                    </div>
-
-                </div>
-
-
-                <!-- Statut -->
-
-                <div class="mb-8">
-
-                    <label
-                        for="statut"
-                        class="block text-sm font-semibold text-slate-700 mb-2">
-
-                        📌 Statut
-
-                    </label>
-
-                    <select
-                        id="statut"
-                        name="statut"
+                    <input
+                        type="date"
+                        id="date_fin"
+                        name="date_fin"
+                        value="{{ old('date_fin', \Carbon\Carbon::parse($abonnement->date_fin)->format('Y-m-d')) }}"
                         required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-500">
-
-                        <option
-                            value="Actif"
-                            {{ old('statut', $abonnement->statut) == 'Actif' ? 'selected' : '' }}>
-
-                            ✅ Actif
-
-                        </option>
-
-                        <option
-                            value="Expiré"
-                            {{ old('statut', $abonnement->statut) == 'Expiré' ? 'selected' : '' }}>
-
-                            ❌ Expiré
-
-                        </option>
-
-                    </select>
+                        class="tk-input">
 
                 </div>
 
-
-                <!-- Boutons -->
-
-                <div class="flex flex-col sm:flex-row gap-4">
-
-                    <!-- Enregistrer -->
-
-                    <button
-                        type="submit"
-                        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl shadow-md transition">
-
-                        💾 Enregistrer les modifications
-
-                    </button>
+            </div>
 
 
-                    <!-- Annuler -->
+            {{-- Statut --}}
 
-                    <a
-                        href="{{ route('admin.abonnements') }}"
-                        class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold px-6 py-3 rounded-xl text-center shadow-md transition">
+            <div class="mb-8">
 
-                        ↩️ Annuler
+                <label
+                    for="statut"
+                    class="tk-form-label"
+                >
+                    <i class="fa-solid fa-toggle-on mr-1.5"></i>
+                    Statut
+                </label>
 
-                    </a>
+                <select
+                    id="statut"
+                    name="statut"
+                    required
+                    class="tk-input">
 
-                </div>
+                    <option
+                        value="Actif"
+                        {{ old('statut', $abonnement->statut) == 'Actif' ? 'selected' : '' }}>
 
-            </form>
+                        Actif
 
-        </div>
+                    </option>
+
+                    <option
+                        value="Expiré"
+                        {{ old('statut', $abonnement->statut) == 'Expiré' ? 'selected' : '' }}>
+
+                        Expiré
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            {{-- Boutons --}}
+
+            <div class="flex flex-col sm:flex-row gap-4">
+
+                {{-- Enregistrer --}}
+
+                <button
+                    type="submit"
+                    class="flex-1 tk-btn-accent"
+                >
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Enregistrer les modifications
+
+                </button>
+
+
+                {{-- Annuler --}}
+
+                <a
+                    href="{{ route('admin.abonnements') }}"
+                    class="flex-1 tk-btn-ghost text-center"
+                >
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Annuler
+
+                </a>
+
+            </div>
+
+        </form>
 
     </div>
 

@@ -10,24 +10,11 @@
 
         <div>
 
-            <h1
-                style="
-                    margin:0;
-                    font-size:28px;
-                    font-weight:800;
-                    color:#0A2A66;
-                "
-            >
-                Bonjour {{ auth()->user()->name }} 👋
+            <h1 class="text-2xl font-extrabold text-navy">
+                Bonjour {{ auth()->user()->name }}
             </h1>
 
-            <p
-                style="
-                    margin-top:6px;
-                    font-size:14px;
-                    color:#6B7280;
-                "
-            >
+            <p class="mt-1 text-sm text-slate-500">
                 Bienvenue dans l’espace de gestion de votre agence.
             </p>
 
@@ -35,122 +22,43 @@
 
 
         {{-- =====================================================
-             MESSAGE SUCCÈS
-        ====================================================== --}}
-
-        @if(session('success'))
-
-            <div
-                style="
-                    background:#DCFCE7;
-                    color:#15803D;
-                    padding:14px 18px;
-                    border-radius:12px;
-                    font-size:14px;
-                    font-weight:600;
-                "
-            >
-
-                ✅ {{ session('success') }}
-
-            </div>
-
-        @endif
-
-
-        {{-- =====================================================
              MESSAGE ERREUR
         ====================================================== --}}
-
-        @if(session('error'))
-
-            <div
-                style="
-                    background:#FEF2F2;
-                    color:#DC2626;
-                    border:1px solid #FECACA;
-                    padding:15px 18px;
-                    border-radius:12px;
-                    font-size:14px;
-                "
-            >
-
-                <strong>
-                    ⚠️ Attention
-                </strong>
-
-                <div style="margin-top:5px;">
-                    {{ session('error') }}
-                </div>
-
-            </div>
-
-        @endif
 
 
         {{-- =====================================================
              AGENCE
         ====================================================== --}}
 
-        <div
-            style="
-                background:#0A2A66;
-                color:#FFFFFF;
-                border-radius:18px;
-                padding:22px 24px;
-                box-shadow:0 8px 20px rgba(10,42,102,.12);
-            "
-        >
+        <div class="tk-card p-6">
 
-            <div
-                style="
-                    font-size:12px;
-                    color:#DCE8FF;
-                    text-transform:uppercase;
-                    letter-spacing:.8px;
-                    font-weight:700;
-                "
-            >
+            <div class="tk-label text-slate-500">
                 Mon agence
             </div>
 
-            <div
-                style="
-                    margin-top:6px;
-                    font-size:25px;
-                    font-weight:800;
-                "
-            >
+            <div class="mt-1 text-xl font-extrabold text-navy">
                 {{ $agence->nom_agence }}
             </div>
 
             @if(!empty($agence->ville))
 
-    <div
-        style="
-            margin-top:5px;
-            font-size:13px;
-            color:#DCE8FF;
-        "
-    >
-        🏙️ Ville : {{ $agence->ville }}
-    </div>
+                <div class="mt-2 flex items-center gap-2 text-sm text-slate-500">
+                    <i class="fa-solid fa-city w-4 text-center"></i>
+                    <span>Ville : {{ $agence->ville }}</span>
+                </div>
 
-@endif
+            @endif
 
-@if(!empty($agence->adresse))
+            @if(!empty($agence->adresse))
 
-    <div
-        style="
-            margin-top:5px;
-            font-size:13px;
-            color:#DCE8FF;
-        "
-    >
-        📍 Adresse : {{ $agence->adresse }}
-    </div>
+                <div class="mt-1 flex items-center gap-2 text-sm text-slate-500">
+                    <i class="fa-solid fa-location-dot w-4 text-center"></i>
+                    <span>Adresse : {{ $agence->adresse }}</span>
+                </div>
 
-@endif
+            @endif
+
+        </div>
 
 
         {{-- =====================================================
@@ -182,56 +90,26 @@
         @endphp
 
 
-        <div
-            style="
-                display:grid;
-                grid-template-columns:repeat(3,minmax(0,1fr));
-                gap:16px;
-            "
-        >
+        <div class="grid gap-4 sm:grid-cols-3">
 
             {{-- TRAJETS --}}
 
-            <div
-                style="
-                    background:#FFFFFF;
-                    border:1px solid #E8EDF5;
-                    border-left:4px solid #FF6B00;
-                    border-radius:16px;
-                    padding:18px;
-                    box-shadow:0 4px 14px rgba(10,42,102,.05);
-                "
-            >
+            <div class="tk-card flex flex-col items-start gap-1 p-5">
 
-                <div
-                    style="
-                        font-size:12px;
-                        color:#6B7280;
-                        font-weight:600;
-                    "
-                >
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                    <i class="fa-solid fa-bus"></i>
+                </div>
+
+                <div class="mt-2 tk-label text-slate-500">
                     Mes trajets
                 </div>
 
-                <div
-                    style="
-                        margin-top:7px;
-                        font-size:30px;
-                        font-weight:800;
-                        color:#0A2A66;
-                    "
-                >
+                <div class="text-3xl font-extrabold text-navy">
                     {{ $nombreTrajets }}
                 </div>
 
-                <div
-                    style="
-                        margin-top:3px;
-                        font-size:12px;
-                        color:#FF6B00;
-                    "
-                >
-                    🚌 Trajets de mon agence
+                <div class="text-xs text-brand">
+                    Trajets de mon agence
                 </div>
 
             </div>
@@ -239,46 +117,22 @@
 
             {{-- RÉSERVATIONS --}}
 
-            <div
-                style="
-                    background:#FFFFFF;
-                    border:1px solid #E8EDF5;
-                    border-left:4px solid #0A2A66;
-                    border-radius:16px;
-                    padding:18px;
-                    box-shadow:0 4px 14px rgba(10,42,102,.05);
-                "
-            >
+            <div class="tk-card flex flex-col items-start gap-1 p-5">
 
-                <div
-                    style="
-                        font-size:12px;
-                        color:#6B7280;
-                        font-weight:600;
-                    "
-                >
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-navy/10 text-navy">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+
+                <div class="mt-2 tk-label text-slate-500">
                     Réservations
                 </div>
 
-                <div
-                    style="
-                        margin-top:7px;
-                        font-size:30px;
-                        font-weight:800;
-                        color:#0A2A66;
-                    "
-                >
+                <div class="text-3xl font-extrabold text-navy">
                     {{ $nombreReservations }}
                 </div>
 
-                <div
-                    style="
-                        margin-top:3px;
-                        font-size:12px;
-                        color:#6B7280;
-                    "
-                >
-                    🎫 Réservations de mes trajets
+                <div class="text-xs text-slate-500">
+                    Réservations de mes trajets
                 </div>
 
             </div>
@@ -286,46 +140,22 @@
 
             {{-- ACHATS --}}
 
-            <div
-                style="
-                    background:#FFFFFF;
-                    border:1px solid #E8EDF5;
-                    border-left:4px solid #FF6B00;
-                    border-radius:16px;
-                    padding:18px;
-                    box-shadow:0 4px 14px rgba(10,42,102,.05);
-                "
-            >
+            <div class="tk-card flex flex-col items-start gap-1 p-5">
 
-                <div
-                    style="
-                        font-size:12px;
-                        color:#6B7280;
-                        font-weight:600;
-                    "
-                >
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+
+                <div class="mt-2 tk-label text-slate-500">
                     Achats
                 </div>
 
-                <div
-                    style="
-                        margin-top:7px;
-                        font-size:30px;
-                        font-weight:800;
-                        color:#0A2A66;
-                    "
-                >
+                <div class="text-3xl font-extrabold text-navy">
                     {{ $nombreAchats }}
                 </div>
 
-                <div
-                    style="
-                        margin-top:3px;
-                        font-size:12px;
-                        color:#FF6B00;
-                    "
-                >
-                    💳 Billets achetés
+                <div class="text-xs text-brand">
+                    Billets achetés
                 </div>
 
             </div>
@@ -337,46 +167,17 @@
              DERNIERS TRAJETS
         ====================================================== --}}
 
-        <div
-            style="
-                background:#FFFFFF;
-                border:1px solid #E8EDF5;
-                border-radius:16px;
-                overflow:hidden;
-                box-shadow:0 4px 14px rgba(10,42,102,.05);
-            "
-        >
+        <div class="tk-card overflow-hidden">
 
-            <div
-                style="
-                    padding:17px 20px;
-                    border-bottom:1px solid #E8EDF5;
-                    display:flex;
-                    align-items:center;
-                    justify-content:space-between;
-                    gap:10px;
-                "
-            >
+            <div class="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
 
                 <div>
 
-                    <div
-                        style="
-                            font-size:17px;
-                            font-weight:800;
-                            color:#0A2A66;
-                        "
-                    >
-                        🚌 Mes derniers trajets
+                    <div class="font-bold text-navy">
+                        Mes derniers trajets
                     </div>
 
-                    <div
-                        style="
-                            margin-top:3px;
-                            font-size:12px;
-                            color:#6B7280;
-                        "
-                    >
+                    <div class="mt-1 text-xs text-slate-500">
                         Les trajets récemment ajoutés par votre agence.
                     </div>
 
@@ -385,94 +186,40 @@
 
                 <a
                     href="{{ route('admin.trajets') }}"
-                    style="
-                        display:inline-flex;
-                        align-items:center;
-                        justify-content:center;
-                        padding:8px 13px;
-                        border-radius:9px;
-                        background:#FF6B00;
-                        color:#FFFFFF;
-                        text-decoration:none;
-                        font-size:12px;
-                        font-weight:700;
-                    "
+                    class="tk-btn tk-btn-primary"
                 >
-                    Voir mes trajets
+                    <i class="fa-solid fa-route"></i>
+                    <span>Voir mes trajets</span>
                 </a>
 
             </div>
 
 
-            <div style="overflow-x:auto;">
+            <div class="overflow-x-auto">
 
-                <table
-                    style="
-                        width:100%;
-                        border-collapse:collapse;
-                    "
-                >
+                <table class="tk-table">
 
-                    <thead
-                        style="
-                            background:#EEF4FF;
-                        "
-                    >
+                    <thead>
 
                         <tr>
 
-                            <th
-                                style="
-                                    padding:13px 16px;
-                                    text-align:left;
-                                    font-size:12px;
-                                    color:#0A2A66;
-                                "
-                            >
+                            <th class="text-left">
                                 Départ
                             </th>
 
-                            <th
-                                style="
-                                    padding:13px 16px;
-                                    text-align:left;
-                                    font-size:12px;
-                                    color:#0A2A66;
-                                "
-                            >
+                            <th class="text-left">
                                 Arrivée
                             </th>
 
-                            <th
-                                style="
-                                    padding:13px 16px;
-                                    text-align:center;
-                                    font-size:12px;
-                                    color:#0A2A66;
-                                "
-                            >
+                            <th class="text-center">
                                 Date
                             </th>
 
-                            <th
-                                style="
-                                    padding:13px 16px;
-                                    text-align:center;
-                                    font-size:12px;
-                                    color:#0A2A66;
-                                "
-                            >
+                            <th class="text-center">
                                 Heure
                             </th>
 
-                            <th
-                                style="
-                                    padding:13px 16px;
-                                    text-align:right;
-                                    font-size:12px;
-                                    color:#0A2A66;
-                                "
-                            >
+                            <th class="text-right">
                                 Prix
                             </th>
 
@@ -485,68 +232,29 @@
 
                         @forelse($trajets as $trajet)
 
-                            <tr
-                                style="
-                                    border-top:1px solid #F0F2F5;
-                                "
-                            >
+                            <tr>
 
-                                <td
-                                    style="
-                                        padding:13px 16px;
-                                        font-size:13px;
-                                        font-weight:700;
-                                        color:#0A2A66;
-                                    "
-                                >
+                                <td class="font-semibold text-navy">
                                     {{ $trajet->depart }}
                                 </td>
 
 
-                                <td
-                                    style="
-                                        padding:13px 16px;
-                                        font-size:13px;
-                                        color:#374151;
-                                    "
-                                >
+                                <td>
                                     {{ $trajet->arrivee }}
                                 </td>
 
 
-                                <td
-                                    style="
-                                        padding:13px 16px;
-                                        text-align:center;
-                                        font-size:13px;
-                                        color:#6B7280;
-                                    "
-                                >
+                                <td class="text-center text-slate-500">
                                     {{ $trajet->date_depart }}
                                 </td>
 
 
-                                <td
-                                    style="
-                                        padding:13px 16px;
-                                        text-align:center;
-                                        font-size:13px;
-                                        color:#6B7280;
-                                    "
-                                >
+                                <td class="text-center text-slate-500">
                                     {{ $trajet->heure_depart }}
                                 </td>
 
 
-                                <td
-                                    style="
-                                        padding:13px 16px;
-                                        text-align:right;
-                                        font-size:13px;
-                                        font-weight:800;
-                                        color:#FF6B00;
-                                    "
-                                >
+                                <td class="text-right font-bold text-brand">
 
                                     {{ number_format(
                                         $trajet->prix,
@@ -565,18 +273,8 @@
 
                             <tr>
 
-                                <td
-                                    colspan="5"
-                                    style="
-                                        padding:35px;
-                                        text-align:center;
-                                        color:#9CA3AF;
-                                        font-size:13px;
-                                    "
-                                >
-
+                                <td colspan="5">
                                     Aucun trajet enregistré.
-
                                 </td>
 
                             </tr>
@@ -620,90 +318,52 @@
 
         @if($paiementEnRetard)
 
-            <div
-                style="
-                    background:#FEF2F2;
-                    border:1px solid #FECACA;
-                    border-left:5px solid #DC2626;
-                    border-radius:14px;
-                    padding:17px 20px;
-                "
-            >
+            <div class="tk-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
 
-                <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:space-between;
-                        gap:20px;
-                    "
-                >
+                <div>
 
-                    <div>
+                    <div class="flex items-center gap-2 font-bold text-red-600">
 
-                        <div
-                            style="
-                                font-size:16px;
-                                font-weight:800;
-                                color:#DC2626;
-                            "
-                        >
-                            🔴 Paiement en retard
-                        </div>
+                        <i class="fa-solid fa-circle-exclamation"></i>
 
-                        <div
-                            style="
-                                margin-top:5px;
-                                font-size:13px;
-                                color:#6B7280;
-                            "
-                        >
-
-                            Votre agence a une échéance de
-
-                            <strong>
-                                {{
-                                    number_format(
-                                        $paiementEnRetard->montant,
-                                        0,
-                                        ',',
-                                        ' '
-                                    )
-                                }}
-                                FCFA
-                            </strong>
-
-                            non réglée.
-
-                        </div>
+                        <span>Paiement en retard</span>
 
                     </div>
 
+                    <div class="mt-1 text-sm text-slate-500">
 
-                    @if(Route::has('agent.paiements'))
+                        Votre agence a une échéance de
 
-                        <a
-                            href="{{ route('agent.paiements') }}"
-                            style="
-                                display:inline-flex;
-                                align-items:center;
-                                justify-content:center;
-                                padding:10px 15px;
-                                border-radius:10px;
-                                background:#FF6B00;
-                                color:#FFFFFF;
-                                text-decoration:none;
-                                font-size:13px;
-                                font-weight:700;
-                                white-space:nowrap;
-                            "
-                        >
-                            💳 Régler maintenant
-                        </a>
+                        <strong class="text-slate-800">
+                            {{
+                                number_format(
+                                    $paiementEnRetard->montant,
+                                    0,
+                                    ',',
+                                    ' '
+                                )
+                            }}
+                            FCFA
+                        </strong>
 
-                    @endif
+                        non réglée.
+
+                    </div>
 
                 </div>
+
+
+                @if(Route::has('agent.paiements'))
+
+                    <a
+                        href="{{ route('agent.paiements') }}"
+                        class="tk-btn tk-btn-primary shrink-0"
+                    >
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>Régler maintenant</span>
+                    </a>
+
+                @endif
 
             </div>
 

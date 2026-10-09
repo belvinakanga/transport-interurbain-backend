@@ -28,25 +28,49 @@
             passwordModal: false,
             deleteModal: false
         }"
-        class="space-y-6"
+        class="tk-page"
     >
 
         {{-- =========================================================
              TITRE
         ========================================================== --}}
 
-        <div>
+        <div class="tk-page-head">
 
-            <h1
-                class="text-3xl md:text-4xl font-bold flex items-center gap-3"
-                style="color:#0A2A66;"
+            <div
+                class="
+                    flex flex-col gap-4
+                    md:flex-row md:items-center
+                    md:justify-between
+                "
             >
-                👤 Mon Profil
-            </h1>
 
-            <p class="mt-2 text-gray-500">
-                Consultez et gérez vos informations personnelles.
-            </p>
+                <div>
+
+                    <h1 class="tk-page-title">
+
+                        <span
+                            class="
+                                flex h-11 w-11 shrink-0
+                                items-center justify-center
+                                rounded-lg bg-orange-50
+                                text-lg text-brand
+                            "
+                        >
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+
+                        Mon Profil
+
+                    </h1>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Consultez et gérez vos informations personnelles.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -55,10 +79,7 @@
              BANNIÈRE PROFIL
         ========================================================== --}}
 
-        <div
-            class="rounded-2xl shadow-lg overflow-hidden"
-            style="background:#0A2A66;"
-        >
+        <div class="bg-navy rounded-xl overflow-hidden text-white">
 
             <div class="px-6 md:px-8 py-7">
 
@@ -89,13 +110,11 @@
                                 justify-center
                                 text-4xl
                                 font-bold
-                                shadow-lg
                                 shrink-0
-                            "
-                            style="
-                                background:#FFFFFF;
-                                color:#0A2A66;
-                                border:4px solid #FF6B00;
+                                bg-white
+                                text-navy
+                                border-4
+                                border-brand
                             "
                         >
                             {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -106,18 +125,13 @@
 
                         <div class="min-w-0">
 
-                            <h2
-                                class="text-3xl font-bold"
-                                style="color:#FFFFFF;"
-                            >
+                            <h2 class="text-3xl font-bold text-white">
                                 {{ $user->name }}
                             </h2>
 
-                            <p
-                                class="mt-2 break-all"
-                                style="color:#DCE8FF;"
-                            >
-                                ✉️ {{ $user->email }}
+                            <p class="mt-2 break-all text-[#DCE8FF]">
+                                <i class="fa-solid fa-envelope"></i>
+                                {{ $user->email }}
                             </p>
 
 
@@ -127,26 +141,14 @@
 
                                 {{-- ROLE --}}
 
-                                <span
-                                    class="
-                                        px-4
-                                        py-2
-                                        rounded-full
-                                        text-sm
-                                        font-bold
-                                    "
-                                    style="
-                                        background:#FF6B00;
-                                        color:#FFFFFF;
-                                    "
-                                >
+                                <span class="tk-badge tk-badge-orange">
 
                                     @if($user->role === 'admin')
-                                        👑
+                                        <i class="fa-solid fa-crown"></i>
                                     @elseif($user->role === 'agent')
-                                        👨‍💼
+                                        <i class="fa-solid fa-user-tie"></i>
                                     @else
-                                        👤
+                                        <i class="fa-solid fa-user"></i>
                                     @endif
 
                                     {{ $roleLabel }}
@@ -156,20 +158,9 @@
 
                                 {{-- ACTIF --}}
 
-                                <span
-                                    class="
-                                        px-4
-                                        py-2
-                                        rounded-full
-                                        text-sm
-                                        font-bold
-                                    "
-                                    style="
-                                        background:#16A34A;
-                                        color:#FFFFFF;
-                                    "
-                                >
-                                    ✓ Actif
+                                <span class="tk-badge tk-badge-green">
+                                    <i class="fa-solid fa-check"></i>
+                                    Actif
                                 </span>
 
 
@@ -179,19 +170,13 @@
 
                                     <span
                                         class="
-                                            px-4
-                                            py-2
-                                            rounded-full
-                                            text-sm
-                                            font-semibold
-                                        "
-                                        style="
-                                            background:#163B80;
-                                            color:#FFFFFF;
-                                            border:1px solid #4265A5;
+                                            tk-badge
+                                            bg-white/10
+                                            text-[#DCE8FF]
                                         "
                                     >
-                                        🏢 {{ $agencyName }}
+                                        <i class="fa-solid fa-building"></i>
+                                        {{ $agencyName }}
                                     </span>
 
                                 @endif
@@ -208,21 +193,10 @@
                     <button
                         type="button"
                         @click="profileModal = true"
-                        class="
-                            px-6
-                            py-3
-                            rounded-xl
-                            font-bold
-                            shadow-lg
-                            transition
-                            shrink-0
-                        "
-                        style="
-                            background:#FF6B00;
-                            color:#FFFFFF;
-                        "
+                        class="tk-btn-accent shrink-0"
                     >
-                        ✏️ Modifier
+                        <i class="fa-solid fa-pen"></i>
+                        Modifier
                     </button>
 
                 </div>
@@ -236,58 +210,45 @@
              INFORMATIONS
         ========================================================== --}}
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
 
             {{-- INFORMATIONS PERSONNELLES --}}
 
-            <div
-                class="
-                    lg:col-span-2
-                    bg-white
-                    rounded-2xl
-                    shadow-sm
-                    border
-                    border-gray-100
-                    overflow-hidden
-                "
-            >
+            <div class="lg:col-span-2 tk-card overflow-hidden">
 
                 <div
                     class="
                         px-6
                         py-5
                         border-b
+                        border-slate-200
+                        bg-slate-50
                         flex
                         items-center
                         justify-between
                         gap-4
                     "
-                    style="background:#F6F8FC;"
                 >
 
                     <h2
-                        class="text-xl font-bold"
-                        style="color:#0A2A66;"
+                        class="
+                            text-xl font-bold
+                            text-navy
+                            flex items-center gap-2.5
+                        "
                     >
-                        🪪 Informations personnelles
+                        <i class="fa-solid fa-id-card text-brand"></i>
+                        Informations personnelles
                     </h2>
 
                     <button
                         type="button"
                         @click="profileModal = true"
-                        class="
-                            px-4
-                            py-2
-                            rounded-lg
-                            font-semibold
-                        "
-                        style="
-                            background:#FF6B00;
-                            color:#FFFFFF;
-                        "
+                        class="tk-btn-accent"
                     >
-                        ✏️ Modifier
+                        <i class="fa-solid fa-pen"></i>
+                        Modifier
                     </button>
 
                 </div>
@@ -299,19 +260,13 @@
 
                         {{-- NOM --}}
 
-                        <div
-                            class="rounded-xl p-5"
-                            style="background:#EEF4FF;"
-                        >
+                        <div class="rounded-xl p-5 bg-[#EEF4FF]">
 
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-slate-500">
                                 Nom
                             </p>
 
-                            <p
-                                class="mt-2 text-xl font-bold"
-                                style="color:#0A2A66;"
-                            >
+                            <p class="mt-2 text-xl font-bold text-navy">
                                 {{ $user->name }}
                             </p>
 
@@ -321,18 +276,18 @@
                         {{-- EMAIL --}}
 
                         <div
-                            class="rounded-xl p-5"
-                            style="background:#FFF3E8;"
+                            class="
+                                rounded-xl p-5
+                                bg-[#FFF3E8]
+                                border border-[#FFD7B8]
+                            "
                         >
 
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-slate-500">
                                 Adresse e-mail
                             </p>
 
-                            <p
-                                class="mt-2 text-lg font-bold break-all"
-                                style="color:#0A2A66;"
-                            >
+                            <p class="mt-2 text-lg font-bold break-all text-navy">
                                 {{ $user->email }}
                             </p>
 
@@ -347,27 +302,25 @@
 
             {{-- INFORMATIONS DU COMPTE --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    shadow-sm
-                    border
-                    border-gray-100
-                    overflow-hidden
-                "
-            >
+            <div class="tk-card overflow-hidden">
 
                 <div
-                    class="px-6 py-5 border-b"
-                    style="background:#F6F8FC;"
+                    class="
+                        px-6 py-5
+                        border-b border-slate-200
+                        bg-slate-50
+                    "
                 >
 
                     <h2
-                        class="text-xl font-bold"
-                        style="color:#0A2A66;"
+                        class="
+                            text-xl font-bold
+                            text-navy
+                            flex items-center gap-2.5
+                        "
                     >
-                        ℹ️ Informations du compte
+                        <i class="fa-solid fa-circle-info text-brand"></i>
+                        Informations du compte
                     </h2>
 
                 </div>
@@ -386,18 +339,15 @@
                             rounded-xl
                             px-4
                             py-3
+                            bg-[#FFF3E8]
                         "
-                        style="background:#FFF3E8;"
                     >
 
-                        <span class="text-gray-500">
+                        <span class="text-slate-500">
                             Rôle
                         </span>
 
-                        <span
-                            class="font-bold"
-                            style="color:#FF6B00;"
-                        >
+                        <span class="font-bold text-brand">
                             {{ $roleLabel }}
                         </span>
 
@@ -417,21 +367,15 @@
                                 rounded-xl
                                 px-4
                                 py-3
+                                bg-[#EEF4FF]
                             "
-                            style="background:#EEF4FF;"
                         >
 
-                            <span class="text-gray-500">
+                            <span class="text-slate-500">
                                 Agence
                             </span>
 
-                            <span
-                                class="
-                                    font-bold
-                                    text-right
-                                "
-                                style="color:#0A2A66;"
-                            >
+                            <span class="font-bold text-right text-navy">
                                 {{ $agencyName }}
                             </span>
 
@@ -451,19 +395,17 @@
                             rounded-xl
                             px-4
                             py-3
+                            bg-emerald-50
                         "
-                        style="background:#F0FDF4;"
                     >
 
-                        <span class="text-gray-500">
+                        <span class="text-slate-500">
                             Statut
                         </span>
 
-                        <span
-                            class="font-bold"
-                            style="color:#16A34A;"
-                        >
-                            ✓ Actif
+                        <span class="font-bold text-emerald-600">
+                            <i class="fa-solid fa-check"></i>
+                            Actif
                         </span>
 
                     </div>
@@ -482,11 +424,11 @@
                         "
                     >
 
-                        <span class="text-gray-500">
+                        <span class="text-slate-500">
                             Créé le
                         </span>
 
-                        <span class="font-semibold text-gray-800">
+                        <span class="font-semibold text-slate-800">
                             {{ optional($user->created_at)->format('d/m/Y') }}
                         </span>
 
@@ -503,22 +445,15 @@
              SÉCURITÉ
         ========================================================== --}}
 
-        <div
-            class="
-                bg-white
-                rounded-2xl
-                shadow-sm
-                border
-                border-gray-100
-                overflow-hidden
-            "
-        >
+        <div class="tk-card overflow-hidden">
 
             <div
                 class="
                     px-6
                     py-5
                     border-b
+                    border-slate-200
+                    bg-slate-50
                     flex
                     flex-col
                     sm:flex-row
@@ -526,31 +461,26 @@
                     sm:justify-between
                     gap-4
                 "
-                style="background:#F6F8FC;"
             >
 
                 <h2
-                    class="text-xl font-bold"
-                    style="color:#0A2A66;"
+                    class="
+                        text-xl font-bold
+                        text-navy
+                        flex items-center gap-2.5
+                    "
                 >
-                    🔐 Sécurité
+                    <i class="fa-solid fa-lock text-brand"></i>
+                    Sécurité
                 </h2>
 
                 <button
                     type="button"
                     @click="passwordModal = true"
-                    class="
-                        px-4
-                        py-2
-                        rounded-lg
-                        font-semibold
-                    "
-                    style="
-                        background:#FF6B00;
-                        color:#FFFFFF;
-                    "
+                    class="tk-btn-accent"
                 >
-                    🔑 Modifier le mot de passe
+                    <i class="fa-solid fa-key"></i>
+                    Modifier le mot de passe
                 </button>
 
             </div>
@@ -571,7 +501,7 @@
 
                     <div>
 
-                        <p class="text-sm text-gray-500">
+                        <p class="text-sm text-slate-500">
                             Mot de passe
                         </p>
 
@@ -581,8 +511,8 @@
                                 text-2xl
                                 tracking-[6px]
                                 font-bold
+                                text-navy
                             "
-                            style="color:#0A2A66;"
                         >
                             ••••••••••••
                         </p>
@@ -590,21 +520,9 @@
                     </div>
 
 
-                    <span
-                        class="
-                            inline-flex
-                            items-center
-                            px-4
-                            py-2
-                            rounded-full
-                            font-semibold
-                        "
-                        style="
-                            background:#DCFCE7;
-                            color:#15803D;
-                        "
-                    >
-                        🔒 Sécurisé
+                    <span class="tk-badge tk-badge-green">
+                        <i class="fa-solid fa-lock"></i>
+                        Sécurisé
                     </span>
 
                 </div>
@@ -620,11 +538,7 @@
 
         <div
             class="
-                bg-white
-                rounded-2xl
-                shadow-sm
-                border-l-4
-                border-red-500
+                tk-card
                 overflow-hidden
             "
         >
@@ -634,6 +548,7 @@
                     px-6
                     py-5
                     border-b
+                    border-slate-200
                     flex
                     flex-col
                     sm:flex-row
@@ -645,11 +560,18 @@
 
                 <div>
 
-                    <h2 class="text-xl font-bold text-red-600">
-                        ⚠️ Zone dangereuse
+                    <h2
+                        class="
+                            text-xl font-bold
+                            text-red-600
+                            flex items-center gap-2.5
+                        "
+                    >
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Zone dangereuse
                     </h2>
 
-                    <p class="text-sm text-gray-500 mt-1">
+                    <p class="text-sm text-slate-500 mt-1">
                         La suppression du compte est définitive.
                     </p>
 
@@ -659,17 +581,10 @@
                 <button
                     type="button"
                     @click="deleteModal = true"
-                    class="
-                        bg-red-600
-                        hover:bg-red-700
-                        text-white
-                        px-5
-                        py-2
-                        rounded-lg
-                        font-semibold
-                    "
+                    class="tk-btn bg-red-600 text-white hover:bg-red-700"
                 >
-                    🗑️ Supprimer
+                    <i class="fa-solid fa-trash"></i>
+                    Supprimer
                 </button>
 
             </div>
@@ -677,7 +592,7 @@
 
             <div class="p-6">
 
-                <p class="text-gray-600">
+                <p class="text-slate-600">
                     Cette action supprimera définitivement votre compte
                     ainsi que toutes les données associées.
                 </p>
@@ -687,36 +602,37 @@
         </div>
 
 
-       
+
 {{-- =========================================================
      MODAL MODIFICATION PROFIL
-========================================================= --}}
+========================================================== --}}
 
 <div
     x-show="profileModal"
     x-transition.opacity
-    style="
-        display:none;
-        position:fixed;
-        inset:0;
-        z-index:2000;
-        background:rgba(0,0,0,0.60);
-        align-items:center;
-        justify-content:center;
-        padding:20px;
+    style="display:none;"
+    class="
+        fixed
+        inset-0
+        z-50
+        flex
+        items-center
+        justify-center
+        bg-slate-900/60
+        p-4
     "
 >
 
     <div
         @click.outside="profileModal = false"
-        style="
-            width:520px;
-            max-width:calc(100vw - 40px);
-            max-height:85vh;
-            background:#FFFFFF;
-            border-radius:18px;
-            box-shadow:0 25px 60px rgba(0,0,0,0.25);
-            overflow:hidden;
+        class="
+            tk-card
+            w-full
+            max-w-lg
+            max-h-[85vh]
+            overflow-hidden
+            flex
+            flex-col
         "
     >
 
@@ -725,58 +641,36 @@
         ====================================================== --}}
 
         <div
-            style="
-                background:#0A2A66;
-                padding:18px 22px;
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
+            class="
+                bg-navy
+                px-6
+                py-4
+                flex
+                items-center
+                justify-between
             "
         >
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                "
-            >
+            <div class="flex items-center gap-3">
 
                 <div
-                    style="
-                        width:38px;
-                        height:38px;
-                        border-radius:50%;
-                        background:#163B80;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        color:#FFFFFF;
-                        font-size:18px;
+                    class="
+                        flex h-10 w-10 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-white/10
+                        text-white
                     "
                 >
-                    👤
+                    <i class="fa-solid fa-user"></i>
                 </div>
 
                 <div>
 
-                    <div
-                        style="
-                            color:#FFFFFF;
-                            font-size:18px;
-                            font-weight:700;
-                        "
-                    >
+                    <div class="text-lg font-bold text-white">
                         Modifier mes informations
                     </div>
 
-                    <div
-                        style="
-                            color:#DCE8FF;
-                            font-size:12px;
-                            margin-top:3px;
-                        "
-                    >
+                    <div class="text-xs text-[#DCE8FF] mt-1">
                         Nom et adresse e-mail
                     </div>
 
@@ -790,18 +684,14 @@
             <button
                 type="button"
                 @click="profileModal = false"
-                style="
-                    width:36px;
-                    height:36px;
-                    border:none;
-                    border-radius:50%;
-                    background:#163B80;
-                    color:#FFFFFF;
-                    font-size:20px;
-                    cursor:pointer;
+                class="
+                    flex h-9 w-9
+                    items-center justify-center
+                    rounded-lg bg-white/10
+                    text-white hover:bg-white/20
                 "
             >
-                ✕
+                <i class="fa-solid fa-xmark"></i>
             </button>
 
         </div>
@@ -811,27 +701,21 @@
              CONTENU
         ====================================================== --}}
 
-        <div
-            style="
-                padding:22px;
-                max-height:calc(85vh - 75px);
-                overflow-y:auto;
-            "
-        >
+        <div class="p-6 overflow-y-auto">
 
             {{-- PETITE INFO --}}
 
             <div
-                style="
-                    background:#EEF4FF;
-                    border-radius:12px;
-                    padding:12px 14px;
-                    margin-bottom:18px;
-                    color:#0A2A66;
-                    font-size:13px;
+                class="
+                    rounded-lg
+                    bg-[#EEF4FF]
+                    px-4 py-3
+                    mb-5
+                    text-sm text-navy
                 "
             >
-                ✏️ Modifiez uniquement les informations de votre profil.
+                <i class="fa-solid fa-pen"></i>
+                Modifiez uniquement les informations de votre profil.
             </div>
 
 
@@ -848,7 +732,7 @@
 </div>
        {{-- =========================================================
      MODAL MOT DE PASSE
-========================================================= --}}
+========================================================== --}}
 
 <div
     x-show="passwordModal"
@@ -856,11 +740,11 @@
     class="
         fixed
         inset-0
-        z-[100]
+        z-50
         flex
         items-center
         justify-center
-        bg-black/60
+        bg-slate-900/60
         p-4
     "
     style="display:none;"
@@ -869,9 +753,7 @@
     <div
         @click.outside="passwordModal = false"
         class="
-            bg-white
-            rounded-2xl
-            shadow-2xl
+            tk-card
             w-full
             max-w-xl
             max-h-[85vh]
@@ -883,6 +765,7 @@
 
         <div
             class="
+                bg-navy
                 px-6
                 py-4
                 flex
@@ -892,41 +775,28 @@
                 top-0
                 z-10
             "
-            style="background:#0A2A66;"
         >
 
             <div class="flex items-center gap-3">
 
                 <div
                     class="
-                        w-10
-                        h-10
-                        rounded-full
-                        flex
-                        items-center
-                        justify-center
-                    "
-                    style="
-                        background:#163B80;
-                        color:#FFFFFF;
+                        flex h-10 w-10 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-white/10
+                        text-white
                     "
                 >
-                    🔐
+                    <i class="fa-solid fa-lock"></i>
                 </div>
 
                 <div>
 
-                    <h2
-                        class="text-lg font-bold"
-                        style="color:#FFFFFF;"
-                    >
+                    <h2 class="text-lg font-bold text-white">
                         Modifier le mot de passe
                     </h2>
 
-                    <p
-                        class="text-xs mt-1"
-                        style="color:#DCE8FF;"
-                    >
+                    <p class="text-xs mt-1 text-[#DCE8FF]">
                         Sécurisez votre compte
                     </p>
 
@@ -941,20 +811,13 @@
                 type="button"
                 @click="passwordModal = false"
                 class="
-                    w-9
-                    h-9
-                    rounded-full
-                    flex
-                    items-center
-                    justify-center
-                    text-xl
-                "
-                style="
-                    background:#163B80;
-                    color:#FFFFFF;
+                    flex h-9 w-9
+                    items-center justify-center
+                    rounded-lg bg-white/10
+                    text-white hover:bg-white/20
                 "
             >
-                ✕
+                <i class="fa-solid fa-xmark"></i>
             </button>
 
         </div>
@@ -967,18 +830,16 @@
             <div
                 class="
                     rounded-xl
+                    bg-[#EEF4FF]
                     px-4
                     py-3
                     mb-5
                 "
-                style="background:#EEF4FF;"
             >
 
-                <p
-                    class="text-sm"
-                    style="color:#0A2A66;"
-                >
-                    🔒 Choisissez un mot de passe sécurisé d'au moins
+                <p class="text-sm text-navy">
+                    <i class="fa-solid fa-lock"></i>
+                    Choisissez un mot de passe sécurisé d'au moins
                     8 caractères.
                 </p>
 
@@ -1012,11 +873,11 @@
             class="
                 fixed
                 inset-0
-                z-[100]
+                z-50
                 flex
                 items-center
                 justify-center
-                bg-black/60
+                bg-slate-900/60
                 p-4
             "
             style="display:none;"
@@ -1025,9 +886,7 @@
             <div
                 @click.outside="deleteModal = false"
                 class="
-                    bg-white
-                    rounded-2xl
-                    shadow-2xl
+                    tk-card
                     w-full
                     max-w-2xl
                     overflow-hidden
@@ -1036,25 +895,31 @@
 
                 <div
                     class="
+                        bg-red-600
                         px-6
                         py-5
                         flex
                         items-center
                         justify-between
                     "
-                    style="background:#DC2626;"
                 >
 
-                    <h2 class="text-xl font-bold text-white">
-                        ⚠️ Confirmation
+                    <h2
+                        class="
+                            text-xl font-bold text-white
+                            flex items-center gap-2.5
+                        "
+                    >
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Confirmation
                     </h2>
 
                     <button
                         type="button"
                         @click="deleteModal = false"
-                        class="text-white text-2xl"
+                        class="text-white"
                     >
-                        ✕
+                        <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
 
                 </div>

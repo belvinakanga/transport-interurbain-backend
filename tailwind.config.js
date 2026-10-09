@@ -9,8 +9,17 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    darkMode: 'class',
+
     theme: {
         extend: {
+            colors: {
+                navy: '#0A2A66',
+                'navy-light': '#0C3780',
+                brand: '#FF6B00',
+                'brand-light': '#E85F00',
+                canvas: '#F6F7F9',
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },

@@ -1,25 +1,32 @@
-<x-layouts.agent
+<x-dynamic-component
+    :component="auth()->user()->role === 'admin' ? 'layouts.admin' : 'layouts.agent'"
     :header="'Paiement à TOKENDE'"
 >
 
-    <div class="max-w-2xl mx-auto">
+    <div class="tk-page">
 
         {{-- TITRE --}}
 
-        <div class="mb-6">
+        <div class="tk-page-head">
 
-            <h1
-                class="
-                    text-3xl
-                    md:text-4xl
-                    font-bold
-                "
-                style="color:#0A2A66;"
-            >
-                💳 Paiement à TOKENDE
+            <h1 class="tk-page-title">
+
+                <span
+                    class="
+                        flex h-11 w-11 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-orange-50
+                        text-lg text-brand
+                    "
+                >
+                    <i class="fa-solid fa-credit-card"></i>
+                </span>
+
+                Paiement à TOKENDE
+
             </h1>
 
-            <p class="text-gray-500 mt-2">
+            <p class="mt-2 text-sm text-slate-500">
                 Vérifiez les informations avant de confirmer votre paiement.
             </p>
 
@@ -28,41 +35,23 @@
 
         {{-- CARTE --}}
 
-        <div
-            class="
-                bg-white
-                rounded-2xl
-                shadow-lg
-                border
-                border-gray-100
-                overflow-hidden
-            "
-        >
+        <div class="tk-card overflow-hidden">
 
             {{-- HEADER --}}
 
-            <div
-                class="
-                    px-6
-                    py-5
-                "
-                style="background:#0A2A66;"
-            >
+            <div class="bg-navy px-6 py-5">
 
-                <p
-                    class="text-sm"
-                    style="color:#DCE8FF;"
-                >
+                <p class="text-sm text-[#DCE8FF]">
                     Agence
                 </p>
 
                 <h2
                     class="
+                        mt-1
                         text-2xl
                         font-bold
-                        mt-1
+                        text-white
                     "
-                    style="color:#FFFFFF;"
                 >
                     {{ $paiement->agence->nom_agence ?? '-' }}
                 </h2>
@@ -78,24 +67,24 @@
 
                 <div
                     class="
-                        rounded-2xl
+                        rounded-xl
                         p-5
                         text-center
+                        bg-[#FFF3E8]
                     "
-                    style="background:#FFF3E8;"
                 >
 
-                    <p class="text-sm text-gray-500">
+                    <p class="text-sm text-slate-500">
                         Montant à payer
                     </p>
 
                     <p
                         class="
+                            mt-2
                             text-4xl
                             font-bold
-                            mt-2
+                            text-brand
                         "
-                        style="color:#FF6B00;"
                     >
 
                         {{ number_format(
@@ -116,25 +105,19 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    <div
-                        class="
-                            rounded-xl
-                            p-4
-                        "
-                        style="background:#EEF4FF;"
-                    >
+                    <div class="rounded-xl bg-[#EEF4FF] p-4">
 
-                        <p class="text-xs text-gray-500">
+                        <p class="text-xs text-slate-500">
                             Référence
                         </p>
 
                         <p
                             class="
+                                mt-1
                                 font-mono
                                 font-bold
-                                mt-1
+                                text-navy
                             "
-                            style="color:#0A2A66;"
                         >
                             {{ $paiement->reference }}
                         </p>
@@ -142,24 +125,18 @@
                     </div>
 
 
-                    <div
-                        class="
-                            rounded-xl
-                            p-4
-                        "
-                        style="background:#EEF4FF;"
-                    >
+                    <div class="rounded-xl bg-[#EEF4FF] p-4">
 
-                        <p class="text-xs text-gray-500">
+                        <p class="text-xs text-slate-500">
                             Date d’échéance
                         </p>
 
                         <p
                             class="
-                                font-bold
                                 mt-1
+                                font-bold
+                                text-navy
                             "
-                            style="color:#0A2A66;"
                         >
 
                             {{ $paiement->date_prevue
@@ -181,28 +158,22 @@
                     <div
                         class="
                             rounded-xl
+                            border border-slate-100
                             p-4
-                            border
-                            border-gray-100
                         "
                     >
 
-                        <p
-                            class="
-                                text-sm
-                                text-gray-500
-                            "
-                        >
+                        <p class="text-sm text-slate-500">
                             Abonnement
                         </p>
 
                         <p
                             class="
+                                mt-1
                                 text-lg
                                 font-bold
-                                mt-1
+                                text-navy
                             "
-                            style="color:#0A2A66;"
                         >
                             {{ $paiement->abonnement->type }}
                         </p>
@@ -217,19 +188,21 @@
                 <div
                     class="
                         rounded-xl
+                        bg-[#EEF4FF]
                         p-4
-                    "
-                    style="
-                        background:#EEF4FF;
-                        color:#0A2A66;
+                        text-navy
                     "
                 >
 
-                    <p class="font-semibold">
-                        ℹ️ Paiement de démonstration
+                    <p class="flex items-center gap-2 font-semibold">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                        Paiement de démonstration
+
                     </p>
 
-                    <p class="text-sm mt-2 text-gray-600">
+                    <p class="mt-2 text-sm text-slate-600">
 
                         En confirmant, le paiement sera enregistré dans
                         l’application comme effectué et sa date de paiement
@@ -254,24 +227,12 @@
 
                     <button
                         type="submit"
-                        class="
-                            w-full
-                            py-4
-                            rounded-xl
-                            text-white
-                            font-bold
-                            text-lg
-                            shadow-md
-                        "
-                        style="background:#FF6B00;"
-                        onclick="
-                            return confirm(
-                                'Confirmer le paiement de {{ number_format($paiement->montant, 0, ',', ' ') }} FCFA ?'
-                            )
-                        "
+                        class="tk-btn-accent w-full"
+                        onclick="event.preventDefault(); tkConfirm('Confirmer le paiement de {{ number_format($paiement->montant, 0, ',', ' ') }} FCFA ?', () => this.form.submit())"
                     >
 
-                        💳
+                        <i class="fa-solid fa-credit-card"></i>
+
                         Confirmer le paiement
 
                     </button>
@@ -285,18 +246,13 @@
                     href="{{ route(
                         'paiements-agences.index'
                     ) }}"
-                    class="
-                        block
-                        text-center
-                        py-3
-                        rounded-xl
-                        bg-gray-100
-                        hover:bg-gray-200
-                        text-gray-700
-                        font-semibold
-                    "
+                    class="tk-btn-ghost w-full"
                 >
-                    ← Retour à mes paiements
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Retour à mes paiements
+
                 </a>
 
             </div>
@@ -305,4 +261,4 @@
 
     </div>
 
-</x-layouts.agent>
+</x-dynamic-component>

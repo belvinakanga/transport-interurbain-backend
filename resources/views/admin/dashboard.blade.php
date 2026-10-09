@@ -61,114 +61,96 @@
     @endphp
 
 
-    <div class="w-full max-w-7xl mx-auto space-y-6">
+    <div class="tk-page">
 
 
         {{-- =========================================================
-     EN-TÊTE
-========================================================== --}}
+             EN-TÊTE
+        ========================================================== --}}
 
-<div
-    class="
-        bg-white
-        rounded-2xl
-        border
-        border-gray-100
-        shadow-sm
-        px-6
-        py-4
-    "
-    style="border-left:5px solid #FF6B00;"
->
+        <div class="tk-page-head">
 
-    <div
-        class="
-            flex
-            flex-col
-            md:flex-row
-            md:items-center
-            md:justify-between
-            gap-4
-        "
-    >
-
-        {{-- TEXTE --}}
-
-        <div>
-
-            <p
+            <div
                 class="
-                    text-sm
-                    font-bold
-                "
-                style="color:#FF6B00;"
-            >
-                TOKENDE
-            </p>
-
-            <h1
-                class="
-                    text-3xl
-                    font-extrabold
-                    mt-1
-                "
-                style="color:#0A2A66;"
-            >
-                Bonjour {{ auth()->user()->name }} 👋
-            </h1>
-
-            <p
-                class="
-                    text-sm
-                    text-gray-500
-                    mt-1
+                    flex flex-col
+                    md:flex-row md:items-center
+                    md:justify-between gap-4
                 "
             >
-                Gérez la plateforme, les agences, les abonnements, les commissions et les règlements.
-            </p>
+
+                {{-- TEXTE --}}
+
+                <div>
+
+                    <p
+                        class="
+                            text-xs font-bold
+                            uppercase tracking-wider
+                            text-brand
+                        "
+                    >
+                        TOKENDE
+                    </p>
+
+                    <h1
+                        class="
+                            mt-1 text-2xl sm:text-[28px]
+                            font-extrabold
+                            text-navy tracking-tight
+                        "
+                    >
+                        Bonjour {{ auth()->user()->name }}
+                    </h1>
+
+                    <p
+                        class="
+                            mt-1 text-sm
+                            text-slate-500
+                        "
+                    >
+                        Gérez la plateforme, les agences, les abonnements, les commissions et les règlements.
+                    </p>
+
+                </div>
+
+
+                {{-- DATE --}}
+
+                <div
+                    class="
+                        rounded-lg
+                        bg-navy px-4 py-2.5
+                        text-white
+                        md:min-w-[150px]
+                    "
+                >
+
+                    <p
+                        class="
+                            text-[11px] font-semibold
+                            uppercase tracking-wider
+                            text-white/60
+                        "
+                    >
+                        Aujourd'hui
+                    </p>
+
+                    <p
+                        class="
+                            mt-0.5 text-base
+                            font-bold text-white
+                            tabular-nums
+                        "
+                    >
+                        {{ now()->format('d/m/Y') }}
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
-
-        {{-- DATE --}}
-
-        <div
-            class="
-                rounded-xl
-                px-5
-                py-3
-                text-white
-                shadow-sm
-                md:min-w-[155px]
-            "
-            style="background:#FF6B00;"
-        >
-
-            <p
-                class="
-                    text-xs
-                    font-medium
-                    opacity-90
-                "
-            >
-                Aujourd'hui
-            </p>
-
-            <p
-                class="
-                    text-xl
-                    font-extrabold
-                    mt-1
-                "
-            >
-                {{ now()->format('d/m/Y') }}
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
 
         {{-- =========================================================
              STATISTIQUES PRINCIPALES
@@ -176,10 +158,9 @@
 
         <div
             class="
-                grid
-                grid-cols-2
-                lg:grid-cols-4
-                gap-5
+                grid grid-cols-1
+                sm:grid-cols-2
+                xl:grid-cols-4 gap-4
             "
         >
 
@@ -188,28 +169,12 @@
                  AGENCES
             ====================================================== --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    border
-                    border-gray-100
-                    shadow-sm
-                    p-5
-                    min-h-[190px]
-                    flex
-                    flex-col
-                    justify-between
-                "
-                style="border-top:5px solid #FF6B00;"
-            >
+            <div class="tk-kpi">
 
                 <div
                     class="
-                        flex
-                        items-start
-                        justify-between
-                        gap-3
+                        flex items-start
+                        justify-between gap-3
                     "
                 >
 
@@ -217,56 +182,41 @@
 
                         <p
                             class="
-                                text-base
-                                font-semibold
-                                text-gray-500
+                                text-sm font-medium
+                                text-slate-500
                             "
                         >
                             Agences
                         </p>
 
-                        <p
-                            class="
-                                text-4xl
-                                font-extrabold
-                                mt-3
-                            "
-                            style="color:#0A2A66;"
-                        >
+                        <p class="tk-kpi-value mt-3">
                             {{ $nombreAgences }}
                         </p>
 
                     </div>
 
 
-                    <div
+                    <span
                         class="
-                            w-14
-                            h-14
-                            rounded-2xl
-                            flex
-                            items-center
-                            justify-center
-                            text-2xl
-                            flex-shrink-0
+                            tk-kpi-icon
+                            bg-orange-50 text-brand
                         "
-                        style="background:#FFF3E8;"
                     >
-                        🏢
-                    </div>
+                        <i class="fa-solid fa-building"></i>
+                    </span>
 
                 </div>
 
 
                 <p
                     class="
-                        text-sm
-                        font-semibold
-                        mt-4
+                        flex items-center gap-2
+                        text-xs font-semibold
+                        text-brand
                     "
-                    style="color:#FF6B00;"
                 >
-                    🏢 Agences enregistrées
+                    <i class="fa-solid fa-building text-brand/40"></i>
+                    Agences enregistrées
                 </p>
 
             </div>
@@ -277,28 +227,12 @@
                  UTILISATEURS
             ====================================================== --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    border
-                    border-gray-100
-                    shadow-sm
-                    p-5
-                    min-h-[190px]
-                    flex
-                    flex-col
-                    justify-between
-                "
-                style="border-top:5px solid #0A2A66;"
-            >
+            <div class="tk-kpi">
 
                 <div
                     class="
-                        flex
-                        items-start
-                        justify-between
-                        gap-3
+                        flex items-start
+                        justify-between gap-3
                     "
                 >
 
@@ -306,56 +240,41 @@
 
                         <p
                             class="
-                                text-base
-                                font-semibold
-                                text-gray-500
+                                text-sm font-medium
+                                text-slate-500
                             "
                         >
                             Utilisateurs
                         </p>
 
-                        <p
-                            class="
-                                text-4xl
-                                font-extrabold
-                                mt-3
-                            "
-                            style="color:#0A2A66;"
-                        >
+                        <p class="tk-kpi-value mt-3">
                             {{ $nombreUtilisateurs }}
                         </p>
 
                     </div>
 
 
-                    <div
+                    <span
                         class="
-                            w-14
-                            h-14
-                            rounded-2xl
-                            flex
-                            items-center
-                            justify-center
-                            text-2xl
-                            flex-shrink-0
+                            tk-kpi-icon
+                            bg-[#EEF4FF] text-navy
                         "
-                        style="background:#EEF4FF;"
                     >
-                        👥
-                    </div>
+                        <i class="fa-solid fa-users"></i>
+                    </span>
 
                 </div>
 
 
                 <p
                     class="
-                        text-sm
-                        font-semibold
-                        text-gray-500
-                        mt-4
+                        flex items-center gap-2
+                        text-xs font-semibold
+                        text-navy
                     "
                 >
-                    👥 Comptes de la plateforme
+                    <i class="fa-solid fa-users text-navy/40"></i>
+                    Comptes de la plateforme
                 </p>
 
             </div>
@@ -366,28 +285,12 @@
                  ABONNEMENTS
             ====================================================== --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    border
-                    border-gray-100
-                    shadow-sm
-                    p-5
-                    min-h-[190px]
-                    flex
-                    flex-col
-                    justify-between
-                "
-                style="border-top:5px solid #FF6B00;"
-            >
+            <div class="tk-kpi">
 
                 <div
                     class="
-                        flex
-                        items-start
-                        justify-between
-                        gap-3
+                        flex items-start
+                        justify-between gap-3
                     "
                 >
 
@@ -395,56 +298,41 @@
 
                         <p
                             class="
-                                text-base
-                                font-semibold
-                                text-gray-500
+                                text-sm font-medium
+                                text-slate-500
                             "
                         >
                             Abonnements actifs
                         </p>
 
-                        <p
-                            class="
-                                text-4xl
-                                font-extrabold
-                                mt-3
-                            "
-                            style="color:#0A2A66;"
-                        >
+                        <p class="tk-kpi-value mt-3">
                             {{ $abonnementsActifs }}
                         </p>
 
                     </div>
 
 
-                    <div
+                    <span
                         class="
-                            w-14
-                            h-14
-                            rounded-2xl
-                            flex
-                            items-center
-                            justify-center
-                            text-2xl
-                            flex-shrink-0
+                            tk-kpi-icon
+                            bg-orange-50 text-brand
                         "
-                        style="background:#FFF3E8;"
                     >
-                        📋
-                    </div>
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </span>
 
                 </div>
 
 
                 <p
                     class="
-                        text-sm
-                        font-semibold
-                        mt-4
+                        flex items-center gap-2
+                        text-xs font-semibold
+                        text-brand
                     "
-                    style="color:#FF6B00;"
                 >
-                    📋 Abonnements en cours
+                    <i class="fa-solid fa-clipboard-list text-brand/40"></i>
+                    Abonnements en cours
                 </p>
 
             </div>
@@ -455,30 +343,12 @@
                  PAIEMENTS EN RETARD
             ====================================================== --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    border
-                    shadow-sm
-                    p-5
-                    min-h-[190px]
-                    flex
-                    flex-col
-                    justify-between
-                "
-                style="
-                    border-top:5px solid #DC2626;
-                    border-color:#FECACA;
-                "
-            >
+            <div class="tk-kpi">
 
                 <div
                     class="
-                        flex
-                        items-start
-                        justify-between
-                        gap-3
+                        flex items-start
+                        justify-between gap-3
                     "
                 >
 
@@ -486,9 +356,8 @@
 
                         <p
                             class="
-                                text-base
-                                font-semibold
-                                text-gray-500
+                                text-sm font-medium
+                                text-slate-500
                             "
                         >
                             Paiements en retard
@@ -496,11 +365,9 @@
 
                         <p
                             class="
-                                text-4xl
-                                font-extrabold
-                                mt-3
+                                tk-kpi-value
+                                mt-3 text-red-600
                             "
-                            style="color:#DC2626;"
                         >
                             {{ $paiementsEnRetard }}
                         </p>
@@ -508,34 +375,27 @@
                     </div>
 
 
-                    <div
+                    <span
                         class="
-                            w-14
-                            h-14
-                            rounded-2xl
-                            flex
-                            items-center
-                            justify-center
-                            text-2xl
-                            flex-shrink-0
+                            tk-kpi-icon
+                            bg-red-50 text-red-600
                         "
-                        style="background:#FEF2F2;"
                     >
-                        ⚠️
-                    </div>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </span>
 
                 </div>
 
 
                 <p
                     class="
-                        text-sm
-                        font-semibold
-                        mt-4
+                        flex items-center gap-2
+                        text-xs font-semibold
+                        text-red-500
                     "
-                    style="color:#DC2626;"
                 >
-                    🔴 Échéances dépassées
+                    <i class="fa-solid fa-circle text-[6px]"></i>
+                    Échéances dépassées
                 </p>
 
             </div>
@@ -550,10 +410,8 @@
 
         <div
             class="
-                grid
-                grid-cols-1
-                xl:grid-cols-5
-                gap-5
+                grid grid-cols-1
+                xl:grid-cols-5 gap-4
             "
         >
 
@@ -565,44 +423,36 @@
             <div
                 class="
                     xl:col-span-3
-                    bg-white
-                    rounded-2xl
-                    border
-                    border-gray-100
-                    shadow-sm
-                    overflow-hidden
+                    tk-card overflow-hidden
                 "
             >
 
                 <div
                     class="
-                        px-6
-                        py-5
-                        flex
-                        items-center
-                        justify-between
-                        border-b
+                        flex items-center
+                        justify-between gap-3
+                        border-b border-slate-200
+                        px-6 py-4
                     "
-                    style="background:#F8FAFD;"
                 >
 
                     <div>
 
                         <h2
                             class="
-                                text-xl
-                                font-extrabold
+                                flex items-center gap-2.5
+                                text-base font-bold
+                                text-navy
                             "
-                            style="color:#0A2A66;"
                         >
-                            💰 Paiements agences
+                            <i class="fa-solid fa-money-bill-wave text-brand"></i>
+                            Paiements agences
                         </h2>
 
                         <p
                             class="
-                                text-sm
-                                text-gray-500
-                                mt-1
+                                mt-1 text-xs
+                                text-slate-500
                             "
                         >
                             Suivi des règlements des agences vers TOKENDE.
@@ -615,16 +465,7 @@
 
                         <a
                             href="{{ route('paiements-agences.index') }}"
-                            class="
-                                px-5
-                                py-2.5
-                                rounded-xl
-                                text-white
-                                text-sm
-                                font-bold
-                                shadow-sm
-                            "
-                            style="background:#FF6B00;"
+                            class="tk-btn-accent shrink-0"
                         >
                             Voir tout
                         </a>
@@ -636,63 +477,25 @@
 
                 <div class="overflow-x-auto">
 
-                    <table class="w-full">
+                    <table class="tk-table">
 
-                        <thead
-                            style="background:#EEF4FF;"
-                        >
+                        <thead>
 
                             <tr>
 
-                                <th
-                                    class="
-                                        px-6
-                                        py-4
-                                        text-left
-                                        text-sm
-                                        font-extrabold
-                                    "
-                                    style="color:#0A2A66;"
-                                >
+                                <th class="text-left">
                                     Agence
                                 </th>
 
-                                <th
-                                    class="
-                                        px-6
-                                        py-4
-                                        text-right
-                                        text-sm
-                                        font-extrabold
-                                    "
-                                    style="color:#0A2A66;"
-                                >
+                                <th class="text-right">
                                     Montant
                                 </th>
 
-                                <th
-                                    class="
-                                        px-6
-                                        py-4
-                                        text-center
-                                        text-sm
-                                        font-extrabold
-                                    "
-                                    style="color:#0A2A66;"
-                                >
+                                <th class="text-center">
                                     Échéance
                                 </th>
 
-                                <th
-                                    class="
-                                        px-6
-                                        py-4
-                                        text-center
-                                        text-sm
-                                        font-extrabold
-                                    "
-                                    style="color:#0A2A66;"
-                                >
+                                <th class="text-center">
                                     Statut
                                 </th>
 
@@ -720,22 +523,16 @@
                                 @endphp
 
 
-                                <tr
-                                    class="
-                                        border-t
-                                        border-gray-100
-                                        hover:bg-gray-50
-                                    "
-                                >
+                                <tr>
 
-                                    <td class="px-6 py-4">
+                                    <td>
 
                                         <p
                                             class="
-                                                text-base
-                                                font-bold
+                                                text-sm
+                                                font-semibold
+                                                text-navy
                                             "
-                                            style="color:#0A2A66;"
                                         >
                                             {{
                                                 $paiement->agence->nom_agence
@@ -747,9 +544,9 @@
 
                                             <p
                                                 class="
-                                                    text-sm
-                                                    text-gray-500
-                                                    mt-1
+                                                    mt-0.5
+                                                    text-xs
+                                                    text-slate-400
                                                 "
                                             >
                                                 {{
@@ -764,13 +561,11 @@
 
                                     <td
                                         class="
-                                            px-6
-                                            py-4
                                             text-right
-                                            text-base
-                                            font-extrabold
+                                            text-sm font-bold
+                                            text-slate-800
+                                            tabular-nums
                                         "
-                                        style="color:#FF6B00;"
                                     >
 
                                         {{
@@ -789,11 +584,10 @@
 
                                     <td
                                         class="
-                                            px-6
-                                            py-4
                                             text-center
                                             text-sm
-                                            text-gray-600
+                                            text-slate-500
+                                            tabular-nums
                                         "
                                     >
 
@@ -806,72 +600,30 @@
                                     </td>
 
 
-                                    <td
-                                        class="
-                                            px-6
-                                            py-4
-                                            text-center
-                                        "
-                                    >
+                                    <td class="text-center">
 
                                         @if(
                                             $paiement->statut
                                             === 'payé'
                                         )
 
-                                            <span
-                                                class="
-                                                    inline-flex
-                                                    px-3
-                                                    py-1.5
-                                                    rounded-full
-                                                    text-xs
-                                                    font-extrabold
-                                                "
-                                                style="
-                                                    background:#DCFCE7;
-                                                    color:#15803D;
-                                                "
-                                            >
-                                                ✅ Payé
+                                            <span class="tk-badge tk-badge-green">
+                                                <i class="fa-solid fa-circle-check"></i>
+                                                Payé
                                             </span>
 
                                         @elseif($retard)
 
-                                            <span
-                                                class="
-                                                    inline-flex
-                                                    px-3
-                                                    py-1.5
-                                                    rounded-full
-                                                    text-xs
-                                                    font-extrabold
-                                                "
-                                                style="
-                                                    background:#FEE2E2;
-                                                    color:#DC2626;
-                                                "
-                                            >
-                                                🔴 En retard
+                                            <span class="tk-badge tk-badge-red">
+                                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                                En retard
                                             </span>
 
                                         @else
 
-                                            <span
-                                                class="
-                                                    inline-flex
-                                                    px-3
-                                                    py-1.5
-                                                    rounded-full
-                                                    text-xs
-                                                    font-extrabold
-                                                "
-                                                style="
-                                                    background:#FFF3E8;
-                                                    color:#FF6B00;
-                                                "
-                                            >
-                                                ⏳ En attente
+                                            <span class="tk-badge tk-badge-orange">
+                                                <i class="fa-solid fa-hourglass-half"></i>
+                                                En attente
                                             </span>
 
                                         @endif
@@ -886,13 +638,7 @@
 
                                     <td
                                         colspan="4"
-                                        class="
-                                            px-6
-                                            py-12
-                                            text-center
-                                            text-sm
-                                            text-gray-500
-                                        "
+                                        class="tk-empty"
                                     >
                                         Aucun paiement agence enregistré.
                                     </td>
@@ -918,39 +664,32 @@
             <div
                 class="
                     xl:col-span-2
-                    bg-white
-                    rounded-2xl
-                    border
-                    border-gray-100
-                    shadow-sm
-                    overflow-hidden
+                    tk-card overflow-hidden
                 "
             >
 
                 <div
                     class="
-                        px-6
-                        py-5
-                        border-b
+                        border-b border-slate-200
+                        px-6 py-4
                     "
-                    style="background:#F8FAFD;"
                 >
 
                     <h2
                         class="
-                            text-xl
-                            font-extrabold
+                            flex items-center gap-2.5
+                            text-base font-bold
+                            text-navy
                         "
-                        style="color:#0A2A66;"
                     >
-                        ⭐ Avis récents
+                        <i class="fa-solid fa-star text-brand"></i>
+                        Avis récents
                     </h2>
 
                     <p
                         class="
-                            text-sm
-                            text-gray-500
-                            mt-1
+                            mt-1 text-xs
+                            text-slate-500
                         "
                     >
                         Retours des utilisateurs.
@@ -968,29 +707,27 @@
 
                         <div
                             class="
-                                py-5
                                 border-b
-                                border-gray-100
+                                border-slate-100
+                                py-4 last:border-b-0
                             "
                         >
 
                             <div
                                 class="
-                                    flex
-                                    items-center
-                                    justify-between
-                                    gap-3
+                                    flex items-center
+                                    justify-between gap-3
                                 "
                             >
 
-                                <div>
+                                <div class="min-w-0">
 
                                     <p
                                         class="
-                                            text-base
-                                            font-bold
+                                            truncate text-sm
+                                            font-semibold
+                                            text-navy
                                         "
-                                        style="color:#0A2A66;"
                                     >
                                         {{
                                             $avis->user->name
@@ -1000,9 +737,9 @@
 
                                     <p
                                         class="
-                                            text-sm
-                                            text-gray-500
-                                            mt-1
+                                            mt-0.5 text-xs
+                                            text-slate-400
+                                            tabular-nums
                                         "
                                     >
                                         {{
@@ -1015,21 +752,12 @@
                                 </div>
 
 
-                                <div
-                                    class="
-                                        px-3
-                                        py-1.5
-                                        rounded-xl
-                                        text-sm
-                                        font-extrabold
-                                    "
-                                    style="
-                                        background:#FFF3E8;
-                                        color:#FF6B00;
-                                    "
+                                <span
+                                    class="tk-badge tk-badge-orange"
                                 >
-                                    ⭐ {{ $avis->note ?? '-' }}
-                                </div>
+                                    <i class="fa-solid fa-star"></i>
+                                    {{ $avis->note ?? '-' }}
+                                </span>
 
                             </div>
 
@@ -1038,9 +766,8 @@
 
                                 <p
                                     class="
-                                        text-sm
-                                        text-gray-600
-                                        mt-3
+                                        mt-2 text-sm
+                                        text-slate-600
                                     "
                                 >
 
@@ -1059,14 +786,7 @@
 
                     @empty
 
-                        <div
-                            class="
-                                py-12
-                                text-center
-                                text-sm
-                                text-gray-500
-                            "
-                        >
+                        <div class="tk-empty">
                             Aucun avis récent.
                         </div>
 
@@ -1077,21 +797,18 @@
 
                 <div
                     class="
-                        px-6
-                        py-5
-                        border-t
+                        border-t border-slate-200
+                        px-6 py-4
                     "
                 >
 
                     <a
                         href="{{ url('/admin/avis') }}"
                         class="
-                            text-sm
-                            font-bold
-                        "
-                        style="
-                            color:#FF6B00;
-                            text-decoration:none;
+                            inline-flex items-center
+                            gap-2 text-sm
+                            font-semibold text-brand
+                            hover:underline
                         "
                     >
                         Voir tous les avis →
@@ -1111,39 +828,40 @@
 
         <div
             class="
-                grid
-                grid-cols-1
-                md:grid-cols-3
-                gap-5
+                grid grid-cols-1
+                md:grid-cols-3 gap-4
             "
         >
 
             {{-- AVIS --}}
 
-            <div
-                class="
-                    rounded-2xl
-                    p-6
-                    text-white
-                "
-                style="background:#0A2A66;"
-            >
+            <div class="tk-stat-navy">
 
-                <p
+                <div
                     class="
-                        text-sm
-                        font-semibold
+                        flex items-center
+                        justify-between gap-3
                     "
-                    style="color:#DCE8FF;"
                 >
-                    Avis enregistrés
-                </p>
+
+                    <p
+                        class="
+                            text-sm font-semibold
+                            text-[#DCE8FF]
+                        "
+                    >
+                        Avis enregistrés
+                    </p>
+
+                    <i class="fa-solid fa-star text-brand"></i>
+
+                </div>
 
                 <p
                     class="
-                        text-3xl
+                        mt-2 text-3xl
                         font-extrabold
-                        mt-2
+                        text-white tabular-nums
                     "
                 >
                     {{ $nombreAvis }}
@@ -1151,12 +869,13 @@
 
                 <p
                     class="
-                        text-sm
-                        mt-2
+                        mt-2 flex items-center
+                        gap-2 text-xs
+                        text-[#DCE8FF]
                     "
-                    style="color:#DCE8FF;"
                 >
-                    ⭐ Retours des utilisateurs
+                    <i class="fa-solid fa-star text-brand"></i>
+                    Retours des utilisateurs
                 </p>
 
             </div>
@@ -1164,30 +883,33 @@
 
             {{-- PAIEMENTS --}}
 
-            <div
-                class="
-                    rounded-2xl
-                    p-6
-                    text-white
-                "
-                style="background:#FF6B00;"
-            >
+            <div class="tk-stat-brand">
 
-                <p
+                <div
                     class="
-                        text-sm
-                        font-semibold
+                        flex items-center
+                        justify-between gap-3
                     "
-                    style="color:#FFF3E8;"
                 >
-                    Paiements voyageurs
-                </p>
+
+                    <p
+                        class="
+                            text-sm font-semibold
+                            text-[#FFF3E8]
+                        "
+                    >
+                        Paiements voyageurs
+                    </p>
+
+                    <i class="fa-solid fa-credit-card text-white/50"></i>
+
+                </div>
 
                 <p
                     class="
-                        text-3xl
+                        mt-2 text-3xl
                         font-extrabold
-                        mt-2
+                        text-white tabular-nums
                     "
                 >
                     {{ $nombrePaiements }}
@@ -1195,10 +917,9 @@
 
                 <p
                     class="
-                        text-sm
-                        mt-2
+                        mt-2 text-xs
+                        text-[#FFF3E8]
                     "
-                    style="color:#FFF3E8;"
                 >
                     Suivi global de la plateforme
                 </p>
@@ -1208,46 +929,47 @@
 
             {{-- STATUT --}}
 
-            <div
-                class="
-                    rounded-2xl
-                    p-6
-                "
-                style="
-                    background:#FFF3E8;
-                    border:1px solid #FFD7B8;
-                "
-            >
+            <div class="tk-stat-tint">
 
-                <p
+                <div
                     class="
-                        text-sm
-                        font-semibold
+                        flex items-center
+                        justify-between gap-3
                     "
-                    style="color:#9A3412;"
                 >
-                    Statut plateforme
-                </p>
+
+                    <p
+                        class="
+                            text-sm font-semibold
+                            text-[#9A3412]
+                        "
+                    >
+                        Statut plateforme
+                    </p>
+
+                    <i class="fa-solid fa-signal text-[#9A3412]/40"></i>
+
+                </div>
 
                 <p
                     class="
-                        text-3xl
+                        mt-2 text-3xl
                         font-extrabold
-                        mt-2
+                        text-navy
                     "
-                    style="color:#0A2A66;"
                 >
                     En ligne
                 </p>
 
                 <p
                     class="
-                        text-sm
-                        mt-2
+                        mt-2 flex items-center
+                        gap-2 text-xs
+                        text-[#9A3412]
                     "
-                    style="color:#9A3412;"
                 >
-                    🟠 TOKENDE fonctionne normalement
+                    <i class="fa-solid fa-circle text-[6px] text-brand"></i>
+                    TOKENDE fonctionne normalement
                 </p>
 
             </div>
@@ -1262,19 +984,14 @@
 
         <div
             class="
-                text-center
-                text-sm
-                text-gray-400
-                pb-3
+                pb-3 text-center
+                text-xs text-slate-400
             "
         >
 
             © {{ date('Y') }}
 
-            <span
-                class="font-bold"
-                style="color:#FF6B00;"
-            >
+            <span class="font-bold text-brand">
                 TOKENDE
             </span>
 

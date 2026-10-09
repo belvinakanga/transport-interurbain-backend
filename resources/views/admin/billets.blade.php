@@ -1,321 +1,439 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des billets'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <!-- Titre -->
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-        <div class="flex justify-between items-center mb-6">
+        <h1 class="tk-page-title">
 
-            <h1 class="text-3xl font-bold text-slate-800">
-                🎟 Gestion des billets
-            </h1>
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-ticket"></i>
+            </span>
 
-        </div>
+            Gestion des billets
 
-        <!-- Barre de recherche -->
+        </h1>
 
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
+    </div>
 
-            <form action="/admin/billets" method="GET">
 
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    {{-- Barre de recherche --}}
 
-                    <!-- Recherche -->
+    <div class="tk-card p-6">
 
-                    <input
-                        type="text"
-                        name="recherche"
-                        value="{{ request('recherche') }}"
-                        placeholder="🔍 Numéro de billet ou voyageur..."
-                        class="border rounded-xl px-4 py-3">
+        <form action="/admin/billets" method="GET">
 
-                    <!-- Agence -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-                    <select
-                        name="agence"
-                        class="border rounded-xl px-4 py-3">
+                {{-- Recherche --}}
 
-                        <option value="">
-                            Toutes les agences
+                <input
+                    type="text"
+                    name="recherche"
+                    value="{{ request('recherche') }}"
+                    placeholder="Numéro de billet ou voyageur..."
+                    class="tk-input">
+
+
+                {{-- Agence --}}
+
+                <select
+                    name="agence"
+                    class="tk-input">
+
+                    <option value="">
+                        Toutes les agences
+                    </option>
+
+                    @foreach($listeAgences as $agence)
+
+                        <option
+                            value="{{ $agence->id }}"
+                            {{ request('agence') == $agence->id ? 'selected' : '' }}>
+
+                            {{ $agence->nom_agence }}
+
                         </option>
 
-                        @foreach($listeAgences as $agence)
+                    @endforeach
 
-                            <option
-                                value="{{ $agence->id }}"
-                                {{ request('agence') == $agence->id ? 'selected' : '' }}>
+                </select>
 
-                                {{ $agence->nom_agence }}
 
-                            </option>
+                {{-- Date --}}
 
-                        @endforeach
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ request('date') }}"
+                    class="tk-input">
 
-                    </select>
 
-                    <!-- Date -->
+                {{-- Pagination --}}
 
-                    <input
-                        type="date"
-                        name="date"
-                        value="{{ request('date') }}"
-                        class="border rounded-xl px-4 py-3">
+                <select
+                    name="par_page"
+                    class="tk-input">
 
-                    <!-- Pagination -->
+                    @foreach([10,25,50,100] as $nb)
 
-                    <select
-                        name="par_page"
-                        class="border rounded-xl px-4 py-3">
+                        <option
+                            value="{{ $nb }}"
+                            {{ request('par_page',10)==$nb ? 'selected' : '' }}>
 
-                        @foreach([10,25,50,100] as $nb)
+                            {{ $nb }} lignes
 
-                            <option
-                                value="{{ $nb }}"
-                                {{ request('par_page',10)==$nb ? 'selected' : '' }}>
+                        </option>
 
-                                {{ $nb }} lignes
+                    @endforeach
 
-                            </option>
+                </select>
 
-                        @endforeach
 
-                    </select>
+                {{-- Boutons --}}
 
-                    <!-- Boutons -->
+                <div class="flex gap-2">
 
-                    <div class="flex gap-2">
+                    <button
+                        type="submit"
+                        class="tk-btn-accent flex-1">
 
-                        <button
-                            type="submit"
-                            class="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl">
+                        Filtrer
 
-                            Filtrer
+                    </button>
 
-                        </button>
+                    <a
+                        href="/admin/billets"
+                        class="tk-btn-ghost flex-1">
 
-                        <a
-                            href="/admin/billets"
-                            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-xl flex items-center justify-center">
+                        Réinitialiser
 
-                            Réinitialiser
-
-                        </a>
-
-                    </div>
+                    </a>
 
                 </div>
 
-                <div class="mt-5 text-gray-600">
+            </div>
 
-                    Total :
-                    <span class="font-bold text-orange-600">
 
+            {{-- Informations --}}
+
+            <div class="mt-5 text-sm text-slate-500">
+
+                Total :
+
+                <span class="font-bold text-brand">
+
+                    {{ $billets->total() }}
+
+                </span>
+
+                billet(s)
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- Vérification d'un billet --}}
+
+    <div class="tk-card p-6">
+
+        <h2 class="mb-4 flex items-center gap-2.5 text-base font-bold text-navy">
+
+            <i class="fa-solid fa-search text-brand"></i>
+
+            Vérifier un billet
+
+        </h2>
+
+        <form action="{{ route('admin.billets.verifier') }}" method="POST">
+
+            @csrf
+
+            <div class="flex flex-col md:flex-row gap-3">
+
+                <input
+                    type="text"
+                    name="numero_billet"
+                    placeholder="Exemple : TOK-2026-000157"
+                    class="tk-input flex-1"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="tk-btn-accent px-6">
+
+                    Vérifier le billet
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- Tableau --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
+
+                    <tr>
+
+                        <th class="text-left whitespace-nowrap">
+                            N° Billet
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Voyageur
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Agence
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Départ
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Arrivée
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            QR Code
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                {{-- CORPS DU TABLEAU --}}
+
+                <tbody>
+
+                    @forelse($billets as $billet)
+
+                        <tr>
+
+                            {{-- N° BILLET --}}
+
+                            <td class="font-semibold whitespace-nowrap">
+
+                                {{ $billet->numero_billet }}
+
+                            </td>
+
+
+                            {{-- VOYAGEUR --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $billet->reservation?->user?->name ?? 'Utilisateur supprimé' }}
+
+                            </td>
+
+
+                            {{-- AGENCE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $billet->reservation?->trajet?->agence?->nom_agence ?? '-' }}
+
+                            </td>
+
+
+                            {{-- DÉPART --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $billet->reservation?->trajet?->depart ?? '-' }}
+
+                            </td>
+
+
+                            {{-- ARRIVÉE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $billet->reservation?->trajet?->arrivee ?? '-' }}
+
+                            </td>
+
+
+                            {{-- QR CODE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $billet->qr_code }}
+
+                            </td>
+
+
+                            {{-- ACTIONS --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                <div class="flex justify-center items-center gap-2">
+
+                                    {{-- VOIR --}}
+
+                                    <a
+                                        href="/admin/billets/{{ $billet->id }}"
+                                        title="Voir"
+                                        class="tk-icon-btn tk-icon-btn-navy"
+                                    >
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    </a>
+
+
+                                    {{-- IMPRIMER --}}
+
+                                    <a
+                                        href="/admin/billets/{{ $billet->id }}"
+                                        target="_blank"
+                                        title="Imprimer"
+                                        class="tk-icon-btn bg-emerald-600 hover:bg-emerald-700"
+                                    >
+
+                                        <i class="fa-solid fa-print"></i>
+
+                                    </a>
+
+
+                                    {{-- SUPPRIMER --}}
+
+                                    <form
+                                        action="/admin/billets/{{ $billet->id }}"
+                                        method="POST"
+                                        class="m-0"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            title="Supprimer"
+                                            onclick="event.preventDefault(); tkConfirm('Voulez-vous vraiment supprimer ce billet ?', () => this.form.submit())"
+                                            class="tk-icon-btn tk-icon-btn-red"
+                                        >
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="tk-empty"
+                            >
+
+                                Aucun billet trouvé.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+
+        <div class="border-t border-slate-200 px-6 py-4">
+
+            <div
+                class="
+                    flex flex-col gap-3
+                    sm:flex-row sm:items-center
+                    sm:justify-between
+                "
+            >
+
+                <div class="text-sm text-slate-500">
+
+                    Affichage de
+
+                    <span class="font-semibold">
+                        {{ $billets->firstItem() ?? 0 }}
+                    </span>
+
+                    à
+
+                    <span class="font-semibold">
+                        {{ $billets->lastItem() ?? 0 }}
+                    </span>
+
+                    sur
+
+                    <span class="font-bold text-brand">
                         {{ $billets->total() }}
-
                     </span>
 
                     billet(s)
 
                 </div>
 
-            </form>
+                {{ $billets->links() }}
+
+            </div>
 
         </div>
-
-        <!-- Vérification d'un billet -->
-
-<div class="bg-white rounded-xl shadow p-6 mb-6">
-
-    <h2 class="text-xl font-bold text-slate-800 mb-4">
-        🔎 Vérifier un billet
-    </h2>
-
-    <form action="{{ route('admin.billets.verifier') }}" method="POST">
-
-        @csrf
-
-        <div class="flex flex-col md:flex-row gap-3">
-
-            <input
-                type="text"
-                name="numero_billet"
-                placeholder="Exemple : TOK-2026-000157"
-                class="flex-1 border rounded-xl px-4 py-3"
-                required
-            >
-
-            <button
-                type="submit"
-                class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl">
-
-                Vérifier le billet
-
-            </button>
-
-        </div>
-
-    </form>
-
-</div>
-
-        <!-- Tableau -->
-
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-
-            <table class="min-w-full">
-
-                <thead class="bg-slate-100">
-
-                    <tr>
-
-                        <th class="p-4 text-left">N° Billet</th>
-                        <th class="p-4 text-left">Voyageur</th>
-                        <th class="p-4 text-left">Agence</th>
-                        <th class="p-4 text-left">Départ</th>
-                        <th class="p-4 text-left">Arrivée</th>
-                        <th class="p-4 text-left">QR Code</th>
-                        <th class="p-4 text-center">Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @forelse($billets as $billet)
-                    <tr class="border-t hover:bg-orange-50 transition">
-
-    <td class="p-4 font-semibold">
-        {{ $billet->numero_billet }}
-    </td>
-
-    <td class="p-4">
-        {{ $billet->reservation?->user?->name ?? 'Utilisateur supprimé' }}
-    </td>
-
-    <td class="p-4">
-        {{ $billet->reservation?->trajet?->agence?->nom_agence ?? '-' }}
-    </td>
-
-    <td class="p-4">
-        {{ $billet->reservation?->trajet?->depart ?? '-' }}
-    </td>
-
-    <td class="p-4">
-        {{ $billet->reservation?->trajet?->arrivee ?? '-' }}
-    </td>
-
-    <td class="p-4">
-        {{ $billet->qr_code }}
-    </td>
-
-    <td class="p-4">
-
-        <div class="flex justify-center gap-2">
-
-            <!-- Voir -->
-
-            <a
-                href="/admin/billets/{{ $billet->id }}"
-                class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg">
-
-                👁️
-
-            </a>
-
-            <!-- Imprimer -->
-
-            <a
-                href="/admin/billets/{{ $billet->id }}"
-                target="_blank"
-                class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg">
-
-                🖨️
-
-            </a>
-
-            <!-- Supprimer -->
-
-            <form
-                action="/admin/billets/{{ $billet->id }}"
-                method="POST">
-
-                @csrf
-                @method('DELETE')
-
-                <button
-                    type="submit"
-                    onclick="return confirm('Voulez-vous vraiment supprimer ce billet ?')"
-                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg">
-
-                    🗑️
-
-                </button>
-
-            </form>
-
-        </div>
-
-    </td>
-
-</tr>
-
-@empty
-
-<tr>
-
-    <td
-        colspan="7"
-        class="text-center py-10 text-gray-500">
-
-        Aucun billet trouvé.
-
-    </td>
-
-</tr>
-
-@endforelse
-</tbody>
-
-</table>
-
-<!-- Pagination -->
-
-<div class="p-6 border-t flex justify-between items-center">
-
-    <div class="text-gray-600">
-
-        Affichage de
-
-        <span class="font-semibold">
-            {{ $billets->firstItem() ?? 0 }}
-        </span>
-
-        à
-
-        <span class="font-semibold">
-            {{ $billets->lastItem() ?? 0 }}
-        </span>
-
-        sur
-
-        <span class="font-semibold text-orange-600">
-            {{ $billets->total() }}
-        </span>
-
-        billet(s)
 
     </div>
-
-    {{ $billets->links() }}
-
-</div>
-
-</div>
-
-</div>
 
 </div>
 

@@ -2,11 +2,18 @@
 
     <header class="mb-8">
 
-        <h2 class="text-3xl font-bold text-slate-800">
-            🔒 Modifier le mot de passe
+        <h2
+            class="
+                text-xl font-bold
+                text-navy
+                flex items-center gap-2.5
+            "
+        >
+            <i class="fa-solid fa-lock text-brand"></i>
+            Modifier le mot de passe
         </h2>
 
-        <p class="mt-2 text-gray-500">
+        <p class="mt-2 text-sm text-slate-500">
             Choisissez un mot de passe sécurisé afin de protéger votre compte.
         </p>
 
@@ -25,7 +32,7 @@
 
             <label
                 for="current_password"
-                class="block mb-2 text-sm font-semibold text-slate-700">
+                class="tk-form-label">
 
                 Mot de passe actuel
 
@@ -38,22 +45,19 @@
                     name="current_password"
                     type="password"
                     autocomplete="current-password"
-                    class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-orange-500 focus:border-orange-500 pr-12">
+                    class="tk-input pr-12">
 
                 <button
                     type="button"
                     onclick="togglePassword('current_password', this)"
-                    class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-orange-500">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-navy">
 
-                    👁️
+                    <i class="fa-solid fa-eye"></i>
 
                 </button>
 
             </div>
 
-            <x-input-error
-                :messages="$errors->updatePassword->get('current_password')"
-                class="mt-2"/>
 
         </div>
 
@@ -63,7 +67,7 @@
 
             <label
                 for="password"
-                class="block mb-2 text-sm font-semibold text-slate-700">
+                class="tk-form-label">
 
                 Nouveau mot de passe
 
@@ -76,22 +80,19 @@
                     name="password"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-orange-500 focus:border-orange-500 pr-12">
+                    class="tk-input pr-12">
 
                 <button
                     type="button"
                     onclick="togglePassword('password', this)"
-                    class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-orange-500">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-navy">
 
-                    👁️
+                    <i class="fa-solid fa-eye"></i>
 
                 </button>
 
             </div>
 
-            <x-input-error
-                :messages="$errors->updatePassword->get('password')"
-                class="mt-2"/>
 
         </div>
 
@@ -101,7 +102,7 @@
 
             <label
                 for="password_confirmation"
-                class="block mb-2 text-sm font-semibold text-slate-700">
+                class="tk-form-label">
 
                 Confirmer le mot de passe
 
@@ -114,22 +115,19 @@
                     name="password_confirmation"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-orange-500 focus:border-orange-500 pr-12">
+                    class="tk-input pr-12">
 
                 <button
                     type="button"
                     onclick="togglePassword('password_confirmation', this)"
-                    class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-orange-500">
+                    class="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-navy">
 
-                    👁️
+                    <i class="fa-solid fa-eye"></i>
 
                 </button>
 
             </div>
 
-            <x-input-error
-                :messages="$errors->updatePassword->get('password_confirmation')"
-                class="mt-2"/>
 
         </div>
 
@@ -137,26 +135,14 @@
 
             <button
                 type="submit"
-                class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition">
+                class="tk-btn-accent">
 
-                🔒 Modifier le mot de passe
+                <i class="fa-solid fa-lock"></i>
+
+                Modifier le mot de passe
 
             </button>
 
-            @if (session('status') === 'password-updated')
-
-                <span
-                    x-data="{ show:true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show=false,2000)"
-                    class="text-green-600 font-semibold">
-
-                    ✔ Mot de passe modifié avec succès.
-
-                </span>
-
-            @endif
 
         </div>
 
@@ -173,12 +159,12 @@ function togglePassword(id, button)
     if (input.type === "password") {
 
         input.type = "text";
-        button.innerHTML = "🙈";
+        button.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
 
     } else {
 
         input.type = "password";
-        button.innerHTML = "👁️";
+        button.innerHTML = '<i class="fa-solid fa-eye"></i>';
 
     }
 }

@@ -8,15 +8,6 @@
                 🎫 Mes billets
             </h1>
 
-            @if(session('success'))
-
-                <div class="bg-green-100 border border-green-400 text-green-700 p-4 rounded mb-6">
-
-                    {{ session('success') }}
-
-                </div>
-
-            @endif
 
             @forelse($billets as $billet)
 

@@ -1,21 +1,842 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* Scrollbar */
+
+/* =====================================================
+   THEME TOKENS — MODE CLAIR (sobre)
+===================================================== */
+
+:root {
+
+    --tk-canvas: #F6F7F9;
+    --tk-surface: #FFFFFF;
+    --tk-surface-2: #F8FAFC;
+    --tk-surface-3: #F1F5F9;
+    --tk-border: #E2E8F0;
+    --tk-border-soft: #EFF2F6;
+
+    --tk-text: #1E293B;
+    --tk-text-2: #475569;
+    --tk-text-3: #64748B;
+    --tk-text-4: #94A3B8;
+
+    --tk-heading: #0A2A66;
+    --tk-primary: #0A2A66;
+    --tk-primary-hover: #0C3780;
+    --tk-accent: #FF6B00;
+    --tk-accent-hover: #E85F00;
+    --tk-accent-text: #FF6B00;
+    --tk-accent-text-hover: #E85F00;
+    --tk-focus: #0A2A66;
+
+    --tk-success-bg: #ECFDF5;
+    --tk-success-fg: #047857;
+    --tk-success-bd: #A7F3D0;
+    --tk-danger-bg: #FEF2F2;
+    --tk-danger-fg: #B91C1C;
+    --tk-danger-bd: #FECACA;
+    --tk-warning-bg: #FFF7ED;
+    --tk-warning-fg: #EA580C;
+    --tk-warning-bd: #FFEDD5;
+    --tk-info-bg: #EEF4FF;
+    --tk-info-fg: #0A2A66;
+    --tk-info-bd: #D8E6FF;
+    --tk-orange-tint-bg: #FFF3E8;
+    --tk-orange-tint-bd: #FFD7B8;
+
+    --tk-stat-navy-bg: #0A2A66;
+    --tk-stat-accent-bg: #FF6B00;
+
+    --tk-selection: rgba(10, 42, 102, 0.12);
+    --tk-scrollbar: #CBD5E1;
+    --tk-scrollbar-hover: #94A3B8;
+    --tk-ring-offset: #FFFFFF;
+
+}
+
+/* =====================================================
+   THEME TOKENS — MODE SOMBRE
+===================================================== */
+
+html.dark {
+
+    --tk-canvas: #0B1220;
+    --tk-surface: #111B2E;
+    --tk-surface-2: #16223A;
+    --tk-surface-3: #1D2B47;
+    --tk-border: #2A3B5C;
+    --tk-border-soft: #1E2C48;
+
+    --tk-text: #E2E8F0;
+    --tk-text-2: #B6C2D4;
+    --tk-text-3: #8FA0B8;
+    --tk-text-4: #7E90AB;
+
+    --tk-heading: #DCE8FF;
+    --tk-primary: #1B4FA8;
+    --tk-primary-hover: #235FC4;
+    --tk-accent: #FF7A1F;
+    --tk-accent-hover: #FF8F42;
+    --tk-accent-text: #FF8A3D;
+    --tk-accent-text-hover: #FFA05C;
+    --tk-focus: #6D9BFF;
+
+    --tk-success-bg: rgba(16, 185, 129, 0.12);
+    --tk-success-fg: #34D399;
+    --tk-success-bd: rgba(52, 211, 153, 0.32);
+    --tk-danger-bg: rgba(239, 68, 68, 0.12);
+    --tk-danger-fg: #F87171;
+    --tk-danger-bd: rgba(248, 113, 113, 0.32);
+    --tk-warning-bg: rgba(255, 138, 45, 0.10);
+    --tk-warning-fg: #FFB37A;
+    --tk-warning-bd: rgba(255, 160, 92, 0.32);
+    --tk-info-bg: rgba(59, 130, 246, 0.13);
+    --tk-info-fg: #A9C6FF;
+    --tk-info-bd: rgba(96, 165, 250, 0.30);
+    --tk-orange-tint-bg: rgba(255, 138, 45, 0.10);
+    --tk-orange-tint-bd: rgba(255, 160, 92, 0.35);
+
+    --tk-stat-navy-bg: #12275E;
+    --tk-stat-accent-bg: #C2410C;
+
+    --tk-selection: rgba(109, 155, 255, 0.25);
+    --tk-scrollbar: #33446B;
+    --tk-scrollbar-hover: #46598A;
+    --tk-ring-offset: #0B1220;
+
+}
+
+@layer base {
+
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        background-color: var(--tk-canvas);
+        color: var(--tk-text);
+    }
+
+    ::selection {
+        background: var(--tk-selection);
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 2px solid var(--tk-focus);
+        outline-offset: 2px;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+}
+
+@layer components {
+
+    /* ----------------------------------------------------
+       DARK MODE — règles de base
+       (dans la couche components : perdent face aux
+       utilitaires explicites, gagnent face au preflight)
+    ---------------------------------------------------- */
+
+    .dark *,
+    .dark ::before,
+    .dark ::after {
+        border-color: var(--tk-border-soft);
+        --tw-ring-offset-color: var(--tk-ring-offset);
+    }
+
+    /* ----------------------------------------------------
+       SIDEBAR
+    ---------------------------------------------------- */
+
+    .tk-nav-link {
+        @apply flex items-center gap-3 h-11 px-3 rounded-lg
+            text-[15px] font-semibold
+            transition-colors duration-150;
+        color: var(--tk-text-2);
+    }
+
+    .tk-nav-link:hover {
+        background-color: var(--tk-surface-3);
+        color: var(--tk-heading);
+    }
+
+    .tk-nav-link.is-active {
+        background-color: var(--tk-primary);
+        color: #FFFFFF;
+    }
+
+    .tk-nav-link.is-active:hover {
+        background-color: var(--tk-primary-hover);
+        color: #FFFFFF;
+    }
+
+    .tk-nav-label {
+        @apply block px-3 mb-2 text-[11px] font-bold uppercase
+            tracking-[0.12em];
+        color: var(--tk-text-4);
+    }
+
+    /* Sidebar réduit (desktop) */
+
+    @media (min-width: 1024px) {
+
+        aside.tk-sidebar-collapsed {
+            width: 76px;
+        }
+
+        aside.tk-sidebar-collapsed .tk-nav-label,
+        aside.tk-sidebar-collapsed .tk-nav-link > span:last-child,
+        aside.tk-sidebar-collapsed .tk-brand,
+        aside.tk-sidebar-collapsed .tk-collaps-hide {
+            display: none;
+        }
+
+        aside.tk-sidebar-collapsed .tk-nav-link {
+            @apply justify-center px-0;
+        }
+
+        aside.tk-sidebar-collapsed .tk-logo-box {
+            @apply justify-center px-0;
+        }
+
+    }
+
+    /* ----------------------------------------------------
+       SURFACES
+    ---------------------------------------------------- */
+
+    .tk-card {
+        @apply rounded-xl;
+        background-color: var(--tk-surface);
+        border: 1px solid var(--tk-border);
+    }
+
+    /* ----------------------------------------------------
+       BUTTONS
+    ---------------------------------------------------- */
+
+    .tk-btn {
+        @apply inline-flex items-center justify-center gap-2 h-10 px-4
+            rounded-lg text-sm font-semibold
+            transition-colors duration-150;
+    }
+
+    .tk-btn-navy {
+        @apply inline-flex items-center justify-center gap-2 h-10 px-4
+            rounded-lg text-sm font-semibold
+            transition-colors duration-150;
+        background-color: var(--tk-primary);
+        color: #FFFFFF;
+    }
+
+    .tk-btn-navy:hover {
+        background-color: var(--tk-primary-hover);
+    }
+
+    .tk-btn-accent {
+        @apply inline-flex items-center justify-center gap-2 h-10 px-4
+            rounded-lg text-sm font-semibold
+            transition-colors duration-150;
+        background-color: var(--tk-accent);
+        color: #FFFFFF;
+    }
+
+    .tk-btn-accent:hover {
+        background-color: var(--tk-accent-hover);
+    }
+
+    .tk-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 h-10 px-4
+            rounded-lg text-sm font-semibold
+            transition-colors duration-150;
+        background-color: var(--tk-surface);
+        border: 1px solid var(--tk-border);
+        color: var(--tk-text-2);
+    }
+
+    .tk-btn-ghost:hover {
+        background-color: var(--tk-surface-3);
+        color: var(--tk-heading);
+    }
+
+    /* ----------------------------------------------------
+       TABLES
+    ---------------------------------------------------- */
+
+    .tk-table {
+        @apply w-full text-sm;
+    }
+
+    .tk-table thead {
+        background-color: var(--tk-surface-2);
+    }
+
+    .tk-table thead th {
+        @apply px-5 py-3 text-xs font-semibold uppercase
+            tracking-wider;
+        color: var(--tk-text-3);
+        border-bottom: 1px solid var(--tk-border);
+    }
+
+    .tk-table tbody td {
+        @apply px-5 py-3.5;
+        border-bottom: 1px solid var(--tk-border-soft);
+    }
+
+    .tk-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .tk-table tbody tr {
+        transition: background-color 150ms;
+    }
+
+    .tk-table tbody tr:hover {
+        background-color: var(--tk-surface-2);
+    }
+
+    .tk-table .tk-empty {
+        @apply px-6 py-14 text-center text-sm;
+        color: var(--tk-text-4);
+    }
+
+    /* ----------------------------------------------------
+       BADGES
+    ---------------------------------------------------- */
+
+    .tk-badge {
+        @apply inline-flex items-center gap-1.5 px-2.5 py-1
+            rounded-full text-xs font-semibold whitespace-nowrap;
+    }
+
+    .tk-badge-green {
+        background-color: var(--tk-success-bg);
+        color: var(--tk-success-fg);
+    }
+
+    .tk-badge-red {
+        background-color: var(--tk-danger-bg);
+        color: var(--tk-danger-fg);
+    }
+
+    .tk-badge-orange {
+        background-color: var(--tk-warning-bg);
+        color: var(--tk-warning-fg);
+    }
+
+    .tk-badge-slate {
+        background-color: var(--tk-surface-3);
+        color: var(--tk-text-2);
+    }
+
+    .tk-badge-navy {
+        background-color: var(--tk-info-bg);
+        color: var(--tk-info-fg);
+    }
+
+    /* ----------------------------------------------------
+       LABELS & FLASH ALERTS
+    ---------------------------------------------------- */
+
+    .tk-label {
+        @apply text-[11px] font-bold uppercase tracking-wider;
+    }
+
+    .tk-alert {
+        @apply rounded-xl px-4 py-3 text-sm;
+        border: 1px solid var(--tk-border);
+    }
+
+    .tk-alert-success {
+        @apply px-4 py-3 text-sm flex items-center gap-2 font-semibold;
+        border: 1px solid var(--tk-success-bd);
+        background-color: var(--tk-success-bg);
+        color: var(--tk-success-fg);
+    }
+
+    .tk-alert-danger {
+        @apply px-4 py-3 text-sm;
+        border: 1px solid var(--tk-danger-bd);
+        background-color: var(--tk-danger-bg);
+        color: var(--tk-danger-fg);
+    }
+
+    /* ----------------------------------------------------
+       DASHBOARD
+    ---------------------------------------------------- */
+
+    .tk-kpi {
+        @apply rounded-xl p-5
+            flex flex-col justify-between gap-4 min-h-[168px];
+        background-color: var(--tk-surface);
+        border: 1px solid var(--tk-border);
+    }
+
+    .tk-kpi-value {
+        @apply text-3xl font-extrabold tabular-nums leading-none;
+        color: var(--tk-heading);
+    }
+
+    .tk-kpi-icon {
+        @apply flex h-11 w-11 shrink-0 items-center justify-center
+            rounded-lg text-lg;
+    }
+
+    .tk-empty {
+        @apply px-6 py-14 text-center text-sm;
+        color: var(--tk-text-4);
+    }
+
+    /* ----------------------------------------------------
+       PAGE STRUCTURE (full width)
+    ---------------------------------------------------- */
+
+    .tk-page {
+        @apply w-full space-y-5;
+    }
+
+    .tk-page-head {
+        @apply px-6 py-5 rounded-xl;
+        background-color: var(--tk-surface);
+        border: 1px solid var(--tk-border);
+    }
+
+    .tk-page-title {
+        @apply flex items-center gap-3 text-2xl font-extrabold
+            tracking-tight;
+        color: var(--tk-heading);
+    }
+
+    /* ----------------------------------------------------
+       FORMS
+    ---------------------------------------------------- */
+
+    .tk-input {
+        @apply w-full h-11 rounded-lg px-3.5 text-sm
+            outline-none transition-colors;
+        border: 1px solid var(--tk-border);
+        background-color: var(--tk-surface);
+        color: var(--tk-text);
+    }
+
+    .tk-input::placeholder {
+        color: var(--tk-text-4);
+    }
+
+    .tk-input:focus {
+        border-color: var(--tk-focus);
+    }
+
+    .tk-form-label {
+        @apply block mb-1.5 text-xs font-bold uppercase
+            tracking-wider;
+        color: var(--tk-text-3);
+    }
+
+    /* ----------------------------------------------------
+       ICON ACTION BUTTONS
+    ---------------------------------------------------- */
+
+    .tk-icon-btn {
+        @apply inline-flex h-9 w-9 items-center justify-center
+            rounded-lg text-sm text-white transition-colors;
+    }
+
+    .tk-icon-btn-navy {
+        background-color: var(--tk-primary);
+    }
+
+    .tk-icon-btn-navy:hover {
+        background-color: var(--tk-primary-hover);
+    }
+
+    .tk-icon-btn-brand {
+        background-color: var(--tk-accent);
+    }
+
+    .tk-icon-btn-brand:hover {
+        background-color: var(--tk-accent-hover);
+    }
+
+    .tk-icon-btn-red {
+        @apply bg-red-600 hover:bg-red-700;
+    }
+
+    /* ----------------------------------------------------
+       COLORED STAT CARDS
+    ---------------------------------------------------- */
+
+    .tk-stat-navy {
+        @apply rounded-xl p-6;
+        background-color: var(--tk-stat-navy-bg);
+        color: #FFFFFF;
+    }
+
+    .tk-stat-brand {
+        @apply rounded-xl p-6;
+        background-color: var(--tk-stat-accent-bg);
+        color: #FFFFFF;
+    }
+
+    .tk-stat-tint {
+        @apply rounded-xl p-6;
+        background-color: var(--tk-orange-tint-bg);
+        border: 1px solid var(--tk-orange-tint-bd);
+        color: var(--tk-text);
+    }
+
+}
+
+/* ----------------------------------------------------
+   SCROLLBAR
+---------------------------------------------------- */
 
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f8fafc;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: var(--tk-scrollbar);
     border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: var(--tk-scrollbar-hover);
+}
+
+/* =====================================================
+   DARK MODE — surcharge des utilitaires Tailwind
+   (hors @layer : l'emporte sur la couche utilities)
+===================================================== */
+
+/* ---- Fonds ---- */
+
+.dark .bg-canvas {
+    background-color: var(--tk-canvas);
+}
+
+.dark .bg-white {
+    background-color: var(--tk-surface);
+}
+
+.dark .bg-gray-50,
+.dark .bg-slate-50 {
+    background-color: var(--tk-surface-2);
+}
+
+.dark .bg-gray-100 {
+    background-color: var(--tk-canvas);
+}
+
+.dark .bg-slate-100,
+.dark .bg-gray-200 {
+    background-color: var(--tk-surface-3);
+}
+
+.dark .bg-gray-800 {
+    background-color: var(--tk-surface-3);
+}
+
+.dark .bg-orange-50 {
+    background-color: var(--tk-warning-bg);
+}
+
+.dark .bg-emerald-50 {
+    background-color: var(--tk-success-bg);
+}
+
+.dark .bg-red-50 {
+    background-color: var(--tk-danger-bg);
+}
+
+.dark .bg-yellow-50 {
+    background-color: rgba(234, 179, 8, 0.10);
+}
+
+.dark .bg-indigo-50 {
+    background-color: rgba(99, 102, 241, 0.14);
+}
+
+.dark .bg-\[\#EEF4FF\] {
+    background-color: var(--tk-info-bg);
+}
+
+.dark .bg-\[\#FFF3E8\] {
+    background-color: var(--tk-orange-tint-bg);
+}
+
+.dark .bg-\[\#fff2f2\] {
+    background-color: var(--tk-danger-bg);
+}
+
+.dark .bg-navy {
+    background-color: var(--tk-primary);
+}
+
+.dark .bg-navy\/10 {
+    background-color: rgba(96, 165, 250, 0.14);
+}
+
+.dark .bg-brand {
+    background-color: var(--tk-accent);
+}
+
+.dark .bg-brand\/10 {
+    background-color: rgba(255, 138, 45, 0.14);
+}
+
+/* ---- Fonds au survol / focus ---- */
+
+.dark .hover\:bg-slate-50:hover {
+    background-color: var(--tk-surface-2);
+}
+
+.dark .hover\:bg-slate-100:hover {
+    background-color: var(--tk-surface-3);
+}
+
+.dark .hover\:bg-gray-50:hover {
+    background-color: var(--tk-surface-2);
+}
+
+.dark .hover\:bg-gray-100:hover {
+    background-color: var(--tk-surface-3);
+}
+
+.dark .hover\:bg-white:hover {
+    background-color: var(--tk-surface-2);
+}
+
+.dark .hover\:bg-red-50:hover {
+    background-color: var(--tk-danger-bg);
+}
+
+.dark .hover\:bg-gray-700:hover,
+.dark .focus\:bg-gray-700:focus {
+    background-color: #334155;
+}
+
+.dark .focus\:bg-gray-50:focus {
+    background-color: var(--tk-surface-2);
+}
+
+.dark .focus\:bg-gray-100:focus {
+    background-color: var(--tk-surface-3);
+}
+
+.dark .focus\:bg-indigo-100:focus {
+    background-color: rgba(99, 102, 241, 0.14);
+}
+
+.dark .hover\:bg-red-700:hover,
+.dark .active\:bg-red-700:active {
+    background-color: #EF4444;
+}
+
+.dark .hover\:bg-emerald-700:hover {
+    background-color: #10B981;
+}
+
+.dark .hover\:bg-green-700:hover {
+    background-color: #16A34A;
+}
+
+/* ---- Textes ---- */
+
+.dark .text-slate-700,
+.dark .text-slate-800 {
+    color: var(--tk-text);
+}
+
+.dark .text-slate-600 {
+    color: var(--tk-text-2);
+}
+
+.dark .text-slate-500 {
+    color: var(--tk-text-3);
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700 {
+    color: var(--tk-text);
+}
+
+.dark .text-gray-600 {
+    color: var(--tk-text-2);
+}
+
+.dark .text-gray-500 {
+    color: var(--tk-text-3);
+}
+
+.dark .text-navy {
+    color: var(--tk-heading);
+}
+
+.dark .hover\:text-navy:hover {
+    color: var(--tk-heading);
+}
+
+.dark .hover\:text-gray-700:hover,
+.dark .hover\:text-gray-800:hover,
+.dark .focus\:text-gray-700:focus,
+.dark .focus\:text-gray-800:focus {
+    color: var(--tk-text);
+}
+
+.dark .text-navy\/40 {
+    color: rgba(220, 232, 255, 0.45);
+}
+
+.dark .text-brand {
+    color: var(--tk-accent-text);
+}
+
+.dark .text-brand\/40 {
+    color: rgba(255, 138, 45, 0.45);
+}
+
+.dark .hover\:text-brand:hover {
+    color: var(--tk-accent-text-hover);
+}
+
+/* ---- Textes sémantiques (badges / statuts) ---- */
+
+.dark .text-emerald-600 {
+    color: var(--tk-success-fg);
+}
+
+.dark .text-red-600 {
+    color: var(--tk-danger-fg);
+}
+
+.dark .text-red-500 {
+    color: #F87171;
+}
+
+.dark .text-green-600 {
+    color: #4ADE80;
+}
+
+.dark .text-yellow-800 {
+    color: #FCD34D;
+}
+
+.dark .text-blue-700 {
+    color: #60A5FA;
+}
+
+.dark .text-indigo-700 {
+    color: #818CF8;
+}
+
+.dark .focus\:text-indigo-800:focus {
+    color: #C7D2FE;
+}
+
+.dark .text-orange-500 {
+    color: #FB923C;
+}
+
+.dark .text-\[\#9A3412\] {
+    color: var(--tk-warning-fg);
+}
+
+.dark .text-\[\#9A3412\]\/40 {
+    color: rgba(255, 179, 122, 0.5);
+}
+
+.dark .text-\[\#733000\] {
+    color: #FFC79E;
+}
+
+.dark .text-\[\#391800\] {
+    color: #FFCF9E;
+}
+
+.dark .text-\[\#4B0600\] {
+    color: #FFA9A0;
+}
+
+.dark .text-\[\#FF4433\],
+.dark .text-\[\#F53003\],
+.dark .text-\[\#f53003\],
+.dark .text-\[\#F61500\] {
+    color: #FF6B63;
+}
+
+.dark .text-\[\#F8B803\] {
+    color: #FFD54A;
+}
+
+/* ---- Bordures ---- */
+
+.dark .border-slate-200 {
+    border-color: var(--tk-border);
+}
+
+.dark .border-slate-100 {
+    border-color: var(--tk-border-soft);
+}
+
+.dark .border-gray-100 {
+    border-color: var(--tk-border-soft);
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300,
+.dark .border-gray-400,
+.dark .border-gray-600 {
+    border-color: var(--tk-border);
+}
+
+.dark .border-\[\#FFD7B8\] {
+    border-color: var(--tk-orange-tint-bd);
+}
+
+.dark .border-\[\#D8E6FF\],
+.dark .border-\[\#DCE8FF\] {
+    border-color: var(--tk-info-bd);
+}
+
+.dark .border-navy\/20 {
+    border-color: rgba(96, 165, 250, 0.30);
+}
+
+.dark .border-blue-700,
+.dark .border-blue-800 {
+    border-color: rgba(96, 165, 250, 0.55);
+}
+
+.dark .hover\:border-gray-300:hover {
+    border-color: #3D5178;
+}
+
+.dark .focus\:border-gray-300:focus {
+    border-color: var(--tk-border);
+}
+
+.dark .focus\:border-indigo-500:focus,
+.dark .focus\:border-indigo-700:focus {
+    border-color: var(--tk-focus);
+}
+
+/* ---- Rings ---- */
+
+.dark .ring-white {
+    --tw-ring-color: var(--tk-surface);
 }

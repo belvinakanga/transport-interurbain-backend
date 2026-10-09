@@ -1,64 +1,78 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des utilisateurs'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <!-- Titre -->
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-        <div class="flex justify-between items-center mb-6">
+        <h1 class="tk-page-title">
 
-        <div class="flex justify-between items-center mb-6">
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-users"></i>
+            </span>
 
-<h1 class="text-3xl font-bold text-slate-800">
-    👥 Gestion des utilisateurs
-</h1>
+            Gestion des utilisateurs
 
-<a href="{{ route('voyageurs.create') }}"
-   class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl shadow">
+        </h1>
 
-    ➕ Ajouter un utilisateur
+        <a
+            href="{{ route('voyageurs.create') }}"
+            class="tk-btn-accent shrink-0"
+        >
 
-</a>
+            <i class="fa-solid fa-plus"></i>
 
-</div>
+            <span>Ajouter un utilisateur</span>
 
-        </div>
+        </a>
 
-        <!-- Message de succès -->
+    </div>
 
-        @if(session('success'))
 
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-6">
+    {{-- Barre de recherche et filtres --}}
 
-                {{ session('success') }}
+    <div class="tk-card p-6">
 
-            </div>
+        <form action="/admin/voyageurs" method="GET">
 
-        @endif
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-        <!-- Barre de recherche -->
+                {{-- Recherche --}}
 
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
-
-            <form action="/admin/voyageurs" method="GET">
-
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-
-                    <!-- Recherche -->
+                <div>
 
                     <input
                         type="text"
                         name="recherche"
                         value="{{ request('recherche') }}"
-                        placeholder="🔍 Rechercher un utilisateur..."
-                        class="border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                        placeholder="Rechercher un utilisateur..."
+                        class="tk-input">
 
-                    <!-- Rôle -->
+                </div>
+
+
+                {{-- Rôle --}}
+
+                <div>
 
                     <select
                         name="role"
-                        class="border rounded-xl px-4 py-3">
+                        class="tk-input">
 
                         <option value="">
                             Tous les rôles
@@ -82,11 +96,16 @@
 
                     </select>
 
-                    <!-- Pagination -->
+                </div>
+
+
+                {{-- Pagination --}}
+
+                <div>
 
                     <select
                         name="par_page"
-                        class="border rounded-xl px-4 py-3">
+                        class="tk-input">
 
                         @foreach([10,25,50,100] as $nb)
 
@@ -102,69 +121,84 @@
 
                     </select>
 
-                    <!-- Filtrer -->
-
-                    <button
-                        type="submit"
-                        class="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold">
-
-                        🔍 Filtrer
-
-                    </button>
-
-                    <!-- Réinitialiser -->
-
-                    <a
-                        href="/admin/voyageurs"
-                        class="bg-slate-600 hover:bg-slate-700 text-white rounded-xl flex items-center justify-center font-semibold">
-
-                        Réinitialiser
-
-                    </a>
-
                 </div>
 
-                <div class="mt-5 text-gray-600">
 
-                    Total :
+                {{-- Filtrer --}}
 
-                    <span class="font-bold text-orange-600">
+                <button
+                    type="submit"
+                    class="tk-btn-accent"
+                >
 
-                        {{ $voyageurs->total() }}
+                    <i class="fa-solid fa-search"></i>
 
-                    </span>
+                    Filtrer
 
-                    utilisateur(s)
+                </button>
 
-                </div>
 
-            </form>
+                {{-- Réinitialiser --}}
 
-        </div>
+                <a
+                    href="/admin/voyageurs"
+                    class="tk-btn-ghost"
+                >
+                    Réinitialiser
+                </a>
 
-        <!-- Tableau -->
+            </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
 
-            <table class="min-w-full">
+            {{-- Informations --}}
 
-                <thead class="bg-slate-100">
+            <div class="mt-5 text-sm text-slate-500">
+
+                Total :
+
+                <span class="font-bold text-brand">
+
+                    {{ $voyageurs->total() }}
+
+                </span>
+
+                utilisateur(s)
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- Tableau des utilisateurs --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
 
                     <tr>
 
-                        <th class="p-4 text-left">
-                            👤 Utilisateur
+                        <th class="text-left whitespace-nowrap">
+                            <i class="fa-solid fa-user"></i>
+                            Utilisateur
                         </th>
 
-                        <th class="p-4 text-left">
+                        <th class="text-left whitespace-nowrap">
                             Email
                         </th>
 
-                        <th class="p-4 text-center">
+                        <th class="text-center whitespace-nowrap">
                             Rôle
                         </th>
 
-                        <th class="p-4 text-center">
+                        <th class="text-center whitespace-nowrap">
                             Actions
                         </th>
 
@@ -172,188 +206,229 @@
 
                 </thead>
 
+
+                {{-- CORPS DU TABLEAU --}}
+
                 <tbody>
 
                     @forelse($voyageurs as $voyageur)
-                    <tr class="border-t hover:bg-orange-50 transition duration-200">
 
-    <!-- Nom -->
+                        <tr>
 
-    <td class="p-4 font-semibold text-slate-800">
 
-        {{ $voyageur->name }}
+                            {{-- NOM --}}
 
-    </td>
+                            <td class="font-semibold whitespace-nowrap">
 
-    <!-- Email -->
+                                {{ $voyageur->name }}
 
-    <td class="p-4 text-gray-700">
+                            </td>
 
-        {{ $voyageur->email }}
 
-    </td>
+                            {{-- EMAIL --}}
 
-    <!-- Rôle -->
+                            <td class="whitespace-nowrap">
 
-    <td class="p-4 text-center">
+                                {{ $voyageur->email }}
 
-    @if($voyageur->role == 'admin')
-        <span class="px-4 py-2 rounded-full bg-red-100 text-red-700">
-            👑 Administrateur
-        </span>
+                            </td>
 
-    @elseif($voyageur->role == 'agent')
-        <span class="px-4 py-2 rounded-full bg-blue-100 text-blue-700">
-            👨‍💼 Agent
-        </span>
 
-    @else
-        <span class="px-4 py-2 rounded-full bg-green-100 text-green-700">
-            👤 Voyageur
-        </span>
-    @endif
+                            {{-- RÔLE --}}
 
-</td>
+                            <td class="text-center">
 
-    <!-- Actions -->
+                                @if($voyageur->role == 'admin')
 
-    <td class="p-4">
+                                    <span class="tk-badge tk-badge-red">
 
-        <div class="flex justify-center gap-2">
+                                        <i class="fa-solid fa-crown"></i>
 
-            <!-- Voir -->
+                                        Administrateur
 
-            <a
-                href="{{ url('/admin/voyageurs/'.$voyageur->id) }}"
-                title="Voir"
+                                    </span>
 
-                class="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-600 hover:bg-slate-700 text-white">
+                                @elseif($voyageur->role == 'agent')
 
-                👁️
+                                    <span class="tk-badge tk-badge-navy">
 
-            </a>
+                                        <i class="fa-solid fa-user-tie"></i>
 
-            <!-- MODIFIER -->
+                                        Agent
 
-<a
-    href="{{ url('/admin/voyageurs/'.$voyageur->id.'/edit') }}"
-    title="Modifier"
-    class="w-10 h-10 flex items-center justify-center rounded-lg bg-orange-500 hover:bg-orange-600 text-white">
+                                    </span>
 
-    ✏️
+                                @else
 
-</a>
+                                    <span class="tk-badge tk-badge-green">
 
-            <!-- Supprimer -->
+                                        <i class="fa-solid fa-user"></i>
 
-            <form
-                action="{{ url('/admin/voyageurs/'.$voyageur->id) }}"
-                method="POST">
+                                        Voyageur
 
-                @csrf
-                @method('DELETE')
+                                    </span>
 
-                <button
-                    type="submit"
+                                @endif
 
-                    title="Supprimer"
+                            </td>
 
-                    onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')"
 
-                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-600 hover:bg-red-700 text-white">
+                            {{-- ACTIONS --}}
 
-                    🗑️
+                            <td class="text-center whitespace-nowrap">
 
-                </button>
+                                <div class="flex justify-center items-center gap-2">
 
-            </form>
+                                    {{-- VOIR --}}
+
+                                    <a
+                                        href="{{ url('/admin/voyageurs/'.$voyageur->id) }}"
+                                        title="Voir"
+                                        class="tk-icon-btn tk-icon-btn-navy"
+                                    >
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    </a>
+
+
+                                    {{-- MODIFIER --}}
+
+                                    <a
+                                        href="{{ url('/admin/voyageurs/'.$voyageur->id.'/edit') }}"
+                                        title="Modifier"
+                                        class="tk-icon-btn tk-icon-btn-brand"
+                                    >
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+
+                                    {{-- SUPPRIMER --}}
+
+                                    <form
+                                        action="{{ url('/admin/voyageurs/'.$voyageur->id) }}"
+                                        method="POST"
+                                        class="m-0"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            title="Supprimer"
+                                            onclick="event.preventDefault(); tkConfirm('Voulez-vous vraiment supprimer cet utilisateur ?', () => this.form.submit())"
+                                            class="tk-icon-btn tk-icon-btn-red"
+                                        >
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="tk-empty"
+                            >
+
+                                <div class="mb-3">
+
+                                    <i class="fa-solid fa-users text-4xl"></i>
+
+                                </div>
+
+                                <p class="text-lg font-semibold">
+
+                                    Aucun utilisateur trouvé.
+
+                                </p>
+
+                                <p class="mt-2 text-sm text-slate-400">
+
+                                    Modifiez vos filtres ou ajoutez de nouveaux utilisateurs.
+
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
 
         </div>
 
-    </td>
 
-</tr>
+        {{-- PAGINATION --}}
 
-@empty
+        <div
+            class="
+                border-t border-slate-200
+                px-6 py-4
+                flex flex-col md:flex-row
+                md:items-center md:justify-between
+                gap-4
+            "
+        >
 
-<tr>
+            <div class="text-sm text-slate-500">
 
-    <td
-        colspan="4"
-        class="text-center py-12 text-gray-500">
+                Affichage de
 
-        <div class="text-5xl mb-3">
+                <span class="font-semibold">
 
-            👥
+                    {{ $voyageurs->firstItem() ?? 0 }}
+
+                </span>
+
+                à
+
+                <span class="font-semibold">
+
+                    {{ $voyageurs->lastItem() ?? 0 }}
+
+                </span>
+
+                sur
+
+                <span class="font-bold text-brand">
+
+                    {{ $voyageurs->total() }}
+
+                </span>
+
+                utilisateur(s)
+
+            </div>
+
+
+            <div>
+
+                {{ $voyageurs->links() }}
+
+            </div>
 
         </div>
 
-        <p class="text-lg font-semibold">
-
-            Aucun utilisateur trouvé.
-
-        </p>
-
-        <p class="text-sm text-gray-400 mt-2">
-
-            Modifiez vos filtres ou ajoutez de nouveaux utilisateurs.
-
-        </p>
-
-    </td>
-
-</tr>
-
-@endforelse
-</tbody>
-
-</table>
-
-<!-- Pagination -->
-
-<div class="p-6 border-t flex flex-col md:flex-row justify-between items-center gap-4">
-
-    <div class="text-gray-600">
-
-        Affichage de
-
-        <span class="font-semibold">
-
-            {{ $voyageurs->firstItem() ?? 0 }}
-
-        </span>
-
-        à
-
-        <span class="font-semibold">
-
-            {{ $voyageurs->lastItem() ?? 0 }}
-
-        </span>
-
-        sur
-
-        <span class="font-bold text-orange-600">
-
-            {{ $voyageurs->total() }}
-
-        </span>
-
-        utilisateur(s)
-
     </div>
-
-    <div>
-
-        {{ $voyageurs->links() }}
-
-    </div>
-
-</div>
-
-</div>
-
-</div>
 
 </div>
 

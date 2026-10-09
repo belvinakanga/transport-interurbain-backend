@@ -1,37 +1,67 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des avis'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <!-- Titre -->
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-        <h1 class="text-3xl font-bold text-slate-800 mb-8">
-            ⭐ Gestion des avis
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-star"></i>
+            </span>
+
+            Gestion des avis
+
         </h1>
 
-        <!-- Barre de recherche -->
+    </div>
 
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-            <form action="/admin/avis" method="GET">
+    {{-- Barre de recherche et filtres --}}
 
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="tk-card p-6">
 
-                    <!-- Recherche -->
+        <form action="/admin/avis" method="GET">
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                {{-- Recherche --}}
+
+                <div>
 
                     <input
                         type="text"
                         name="recherche"
                         value="{{ request('recherche') }}"
-                        placeholder="🔍 Rechercher un voyageur..."
-                        class="border rounded-xl px-4 py-3">
+                        placeholder="Rechercher un voyageur..."
+                        class="tk-input">
 
-                    <!-- Note -->
+                </div>
+
+
+                {{-- Note --}}
+
+                <div>
 
                     <select
                         name="note"
-                        class="border rounded-xl px-4 py-3">
+                        class="tk-input">
 
                         <option value="">Toutes les notes</option>
 
@@ -41,7 +71,7 @@
                                 value="{{ $i }}"
                                 {{ request('note') == $i ? 'selected' : '' }}>
 
-                                {{ $i }} ⭐
+                                {{ $i }}
 
                             </option>
 
@@ -49,19 +79,29 @@
 
                     </select>
 
-                    <!-- Date -->
+                </div>
+
+
+                {{-- Date --}}
+
+                <div>
 
                     <input
                         type="date"
                         name="date"
                         value="{{ request('date') }}"
-                        class="border rounded-xl px-4 py-3">
+                        class="tk-input">
 
-                    <!-- Pagination -->
+                </div>
+
+
+                {{-- Pagination --}}
+
+                <div>
 
                     <select
                         name="par_page"
-                        class="border rounded-xl px-4 py-3">
+                        class="tk-input">
 
                         @foreach([10,25,50,100] as $nb)
 
@@ -77,214 +117,283 @@
 
                     </select>
 
-                    <!-- Boutons -->
+                </div>
 
-                    <div class="flex gap-2">
 
-                        <button
-                            type="submit"
-                            class="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl">
+                {{-- Boutons --}}
 
-                            Filtrer
+                <div class="flex gap-2">
 
-                        </button>
+                    <button
+                        type="submit"
+                        class="tk-btn-accent flex-1"
+                    >
 
-                        <a
-                            href="/admin/avis"
-                            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-xl flex items-center justify-center">
+                        Filtrer
 
-                            Réinitialiser
+                    </button>
 
-                        </a>
+                    <a
+                        href="/admin/avis"
+                        class="tk-btn-ghost flex-1"
+                    >
 
-                    </div>
+                        Réinitialiser
+
+                    </a>
 
                 </div>
 
-                <div class="mt-5 text-gray-600">
+            </div>
 
-                    Total :
-                    <span class="font-bold text-orange-600">
 
-                        {{ $avis->total() }}
+            {{-- Informations --}}
 
-                    </span>
+            <div class="mt-5 text-sm text-slate-500">
 
-                    avis
+                Total :
 
-                </div>
+                <span class="font-bold text-brand">
 
-            </form>
+                    {{ $avis->total() }}
 
-        </div>
+                </span>
 
-        <!-- Tableau -->
+                avis
 
-        <div class="bg-white rounded-xl shadow overflow-hidden">
+            </div>
 
-            <table class="min-w-full">
+        </form>
 
-                <thead class="bg-slate-100">
+    </div>
+
+
+    {{-- Tableau des avis --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
 
                     <tr>
 
-                        <th class="p-4 text-left">Voyageur</th>
-                        <th class="p-4 text-center">Note</th>
-                        <th class="p-4 text-left">Commentaire</th>
-                        <th class="p-4 text-center">Date</th>
-                        <th class="p-4 text-center">Actions</th>
+                        <th class="text-left whitespace-nowrap">
+                            Voyageur
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Note
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Commentaire
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Date
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Actions
+                        </th>
 
                     </tr>
 
                 </thead>
 
+
+                {{-- CORPS DU TABLEAU --}}
+
                 <tbody>
 
                     @forelse($avis as $a)
-                    <tr class="border-t hover:bg-orange-50 transition">
 
-    <td class="p-4 font-semibold">
-        {{ $a->user?->name ?? 'Utilisateur supprimé' }}
-    </td>
+                        <tr>
 
-    <td class="p-4 text-center">
 
-        @for($i = 1; $i <= 5; $i++)
+                            {{-- VOYAGEUR --}}
 
-            @if($i <= $a->note)
+                            <td class="font-semibold whitespace-nowrap">
 
-                ⭐
+                                {{ $a->user?->name ?? 'Utilisateur supprimé' }}
 
-            @else
+                            </td>
 
-                ☆
 
-            @endif
+                            {{-- NOTE --}}
 
-        @endfor
+                            <td class="text-center whitespace-nowrap">
 
-    </td>
+                                <span class="inline-flex gap-0.5">
 
-    <td class="p-4">
+                                    @for($i = 1; $i <= 5; $i++)
 
-        @if($a->commentaire)
+                                        @if($i <= $a->note)
 
-            {{ $a->commentaire }}
+                                            <i class="fa-solid fa-star text-brand"></i>
 
-        @else
+                                        @else
 
-            <span class="text-gray-400 italic">
-                Aucun commentaire
-            </span>
+                                            <i class="fa-solid fa-star text-slate-300"></i>
 
-        @endif
+                                        @endif
 
-    </td>
+                                    @endfor
 
-    <td class="p-4 text-center">
+                                </span>
 
-        {{ $a->created_at->format('d/m/Y') }}
+                            </td>
 
-    </td>
 
-    <td class="p-4">
+                            {{-- COMMENTAIRE --}}
 
-        <div class="flex justify-center gap-2">
+                            <td>
 
-            <!-- Voir -->
+                                @if($a->commentaire)
 
-            <a
-                href="/admin/avis/{{ $a->id }}"
-                class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg">
+                                    {{ $a->commentaire }}
 
-                👁️
+                                @else
 
-            </a>
+                                    <span class="text-slate-400 italic">
+                                        Aucun commentaire
+                                    </span>
 
-            <!-- Supprimer -->
+                                @endif
 
-            <form
-                action="/admin/avis/{{ $a->id }}"
-                method="POST">
+                            </td>
 
-                @csrf
-                @method('DELETE')
 
-                <button
-                    type="submit"
-                    onclick="return confirm('Voulez-vous vraiment supprimer cet avis ?')"
-                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg">
+                            {{-- DATE --}}
 
-                    🗑️
+                            <td class="text-center whitespace-nowrap tabular-nums">
 
-                </button>
+                                {{ $a->created_at->format('d/m/Y') }}
 
-            </form>
+                            </td>
+
+
+                            {{-- ACTIONS --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                <div class="flex justify-center items-center gap-2">
+
+                                    {{-- VOIR --}}
+
+                                    <a
+                                        href="/admin/avis/{{ $a->id }}"
+                                        class="tk-icon-btn tk-icon-btn-navy"
+                                    >
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    </a>
+
+
+                                    {{-- SUPPRIMER --}}
+
+                                    <form
+                                        action="/admin/avis/{{ $a->id }}"
+                                        method="POST"
+                                        class="m-0"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            onclick="event.preventDefault(); tkConfirm('Voulez-vous vraiment supprimer cet avis ?', () => this.form.submit())"
+                                            class="tk-icon-btn tk-icon-btn-red"
+                                        >
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="tk-empty"
+                            >
+
+                                Aucun avis trouvé.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
 
         </div>
 
-    </td>
 
-</tr>
+        {{-- PAGINATION --}}
 
-@empty
+        <div
+            class="
+                border-t border-slate-200 px-6 py-4
+                flex flex-col md:flex-row
+                justify-between items-center gap-4
+            "
+        >
 
-<tr>
+            <div class="text-sm text-slate-500">
 
-    <td
-        colspan="5"
-        class="text-center py-10 text-gray-500">
+                Affichage de
 
-        Aucun avis trouvé.
+                <span class="font-semibold">
+                    {{ $avis->firstItem() ?? 0 }}
+                </span>
 
-    </td>
+                à
 
-</tr>
+                <span class="font-semibold">
+                    {{ $avis->lastItem() ?? 0 }}
+                </span>
 
-@endforelse
-</tbody>
+                sur
 
-</table>
+                <span class="font-bold text-brand">
+                    {{ $avis->total() }}
+                </span>
 
-<!-- Pagination -->
+                avis
 
-<div class="p-6 border-t flex flex-col md:flex-row justify-between items-center gap-4">
+            </div>
 
-    <div class="text-gray-600">
+            <div>
 
-        Affichage de
+                {{ $avis->links() }}
 
-        <span class="font-semibold">
-            {{ $avis->firstItem() ?? 0 }}
-        </span>
+            </div>
 
-        à
-
-        <span class="font-semibold">
-            {{ $avis->lastItem() ?? 0 }}
-        </span>
-
-        sur
-
-        <span class="font-semibold text-orange-600">
-            {{ $avis->total() }}
-        </span>
-
-        avis
+        </div>
 
     </div>
-
-    <div>
-
-        {{ $avis->links() }}
-
-    </div>
-
-</div>
-
-</div>
-
-</div>
 
 </div>
 

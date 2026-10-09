@@ -1,48 +1,135 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Profil de l\'utilisateur'">
 
-<div class="max-w-3xl mx-auto">
+<div class="tk-page">
 
-    <div class="bg-white rounded-xl shadow p-8">
+    {{-- En-tête --}}
 
-        <h1 class="text-3xl font-bold mb-8">
-            👤 Profil de l'utilisateur
+    <div class="tk-page-head">
+
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-user"></i>
+            </span>
+
+            Profil de l'utilisateur
+
         </h1>
 
-        <div class="space-y-6">
+    </div>
 
 
-            <div>
-                <strong>Nom :</strong>
+    {{-- Informations --}}
+
+    <div class="tk-card p-6">
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0 text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Nom :
+            </span>
+
+            <span class="text-slate-600 text-right">
                 {{ $voyageur->name }}
-            </div>
-
-            <div>
-                <strong>Email :</strong>
-                {{ $voyageur->email }}
-            </div>
-
-            <div>
-                <strong>Rôle :</strong>
-                {{ ucfirst($voyageur->role) }}
-            </div>
-
-            <div>
-                <strong>Date d'inscription :</strong>
-                {{ $voyageur->created_at->format('d/m/Y H:i') }}
-            </div>
+            </span>
 
         </div>
 
-        <div class="mt-10 flex gap-4">
 
-            <a href="/admin/voyageurs"
-               class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-lg">
-                ⬅ Retour
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0 text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Email :
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $voyageur->email }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0 text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Rôle :
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ ucfirst($voyageur->role) }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0 text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Date d'inscription :
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $voyageur->created_at->format('d/m/Y H:i') }}
+            </span>
+
+        </div>
+
+
+        {{-- Actions --}}
+
+        <div class="mt-8 flex flex-wrap gap-3">
+
+            <a
+                href="/admin/voyageurs"
+                class="tk-btn-ghost"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Retour
+
             </a>
 
-            <button onclick="window.print()"
-                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
-                🖨 Imprimer
+            <button
+                onclick="window.print()"
+                class="tk-btn-navy"
+            >
+
+                <i class="fa-solid fa-print"></i>
+
+                Imprimer
+
             </button>
 
         </div>
