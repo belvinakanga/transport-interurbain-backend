@@ -13,466 +13,473 @@
     :header="$pageTitle"
 >
 
-    <div class="py-12">
+<div class="tk-page">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-            {{-- =========================================================
-                 TITRE
-            ========================================================== --}}
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-            <div class="mb-6">
+        <div class="min-w-0">
 
-                <h1 class="text-3xl font-bold text-slate-800">
+            <h1 class="tk-page-title">
 
-                    @if(auth()->user()->role === 'agent')
-                        🎫 Réservations de mon agence
-                    @else
-                        🎫 Gestion des réservations
-                    @endif
-
-                </h1>
+                <span
+                    class="
+                        flex h-11 w-11 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-orange-50
+                        text-lg text-brand
+                    "
+                >
+                    <i class="fa-solid fa-ticket"></i>
+                </span>
 
                 @if(auth()->user()->role === 'agent')
-
-                    <p class="text-gray-500 mt-2 whitespace-nowrap">
-
-                        Agence :
-
-                        <strong class="text-blue-700">
-                            {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
-                        </strong>
-
-                    </p>
-
+                    Réservations de mon agence
+                @else
+                    Gestion des réservations
                 @endif
 
-            </div>
+            </h1>
 
+            @if(auth()->user()->role === 'agent')
 
-            {{-- =========================================================
-                 RECHERCHE ET FILTRES
-            ========================================================== --}}
+                <p class="mt-3 text-sm text-slate-500">
 
-            <div class="bg-white rounded-xl shadow p-6 mb-6">
+                    Agence :
 
-                <form
-                    action="{{ route('admin.reservations') }}"
-                    method="GET"
-                >
+                    <strong class="font-semibold text-navy">
+                        {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+                    </strong>
 
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                </p>
 
-                        {{-- Recherche --}}
-
-                        <input
-                            type="text"
-                            name="recherche"
-                            value="{{ request('recherche') }}"
-                            placeholder="🔍 Rechercher un voyageur..."
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-
-                        {{-- Statut --}}
-
-                        <select
-                            name="statut"
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-                            <option value="">
-                                Tous les statuts
-                            </option>
-
-                            <option
-                                value="confirmée"
-                                {{ request('statut') == 'confirmée' ? 'selected' : '' }}
-                            >
-                                Confirmée
-                            </option>
-
-                            <option
-                                value="en attente"
-                                {{ request('statut') == 'en attente' ? 'selected' : '' }}
-                            >
-                                En attente
-                            </option>
-
-                            <option
-                                value="annulée"
-                                {{ request('statut') == 'annulée' ? 'selected' : '' }}
-                            >
-                                Annulée
-                            </option>
-
-                        </select>
-
-
-                        {{-- Date --}}
-
-                        <input
-                            type="date"
-                            name="date"
-                            value="{{ request('date') }}"
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-
-                        {{-- Pagination --}}
-
-                        <select
-                            name="par_page"
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-                            @foreach([10,25,50,100] as $nb)
-
-                                <option
-                                    value="{{ $nb }}"
-                                    {{ request('par_page', 10) == $nb ? 'selected' : '' }}
-                                >
-                                    {{ $nb }} lignes
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-
-                        {{-- Boutons --}}
-
-                        <div class="flex gap-2">
-
-                            <button
-                                type="submit"
-                                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-3"
-                            >
-                                Filtrer
-                            </button>
-
-                            <a
-                                href="{{ route('admin.reservations') }}"
-                                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-xl flex items-center justify-center"
-                            >
-                                Réinitialiser
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-
-            {{-- =========================================================
-                 TABLEAU
-            ========================================================== --}}
-
-            <div class="bg-white rounded-xl shadow overflow-hidden">
-
-                {{-- Défilement horizontal si nécessaire --}}
-
-                <div class="overflow-x-auto">
-
-                    <table class="min-w-max w-full">
-
-                        <thead class="bg-slate-100">
-
-                            <tr>
-
-                                {{-- Voyageur --}}
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Voyageur
-                                </th>
-
-
-                                {{-- Référence billet --}}
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Référence billet
-                                </th>
-
-
-                                {{-- Agence --}}
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Agence
-                                </th>
-
-
-                                {{-- Trajet --}}
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Trajet
-                                </th>
-
-
-                                {{-- Date --}}
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Date
-                                </th>
-
-
-                                {{-- Places --}}
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Places
-                                </th>
-
-
-                                {{-- Montant --}}
-
-                                <th class="p-4 text-right whitespace-nowrap">
-                                    Montant
-                                </th>
-
-
-                                {{-- Statut --}}
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Statut
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            @forelse($reservations as $reservation)
-
-                                <tr class="border-t hover:bg-orange-50 transition">
-
-
-                                    {{-- =================================================
-                                         VOYAGEUR
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap">
-
-    @if($reservation->voyageurs && $reservation->voyageurs->count())
-
-        @foreach($reservation->voyageurs as $voyageur)
-
-            <div class="font-semibold text-gray-800">
-                {{ $voyageur->prenom ?? '' }}
-                {{ $voyageur->nom ?? '' }}
-            </div>
-
-            @if(!empty($voyageur->telephone))
-                <div class="text-sm text-gray-600 mt-1">
-                    📞 {{ $voyageur->telephone }}
-                </div>
             @endif
-
-        @endforeach
-
-    @else
-
-        <div class="font-semibold text-gray-800">
-            Voyageur non renseigné
-        </div>
-
-    @endif
-
-
-
-                                    {{-- =================================================
-                                         RÉFÉRENCE BILLET
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap">
-
-                                        @if($reservation->billets && $reservation->billets->count())
-
-                                            @foreach($reservation->billets as $billet)
-
-                                                <div class="font-semibold text-blue-700 whitespace-nowrap mb-1">
-
-                                                    {{ $billet->numero_billet }}
-
-                                                </div>
-
-                                            @endforeach
-
-                                        @else
-
-                                            <span class="text-gray-400 whitespace-nowrap">
-                                                —
-                                            </span>
-
-                                        @endif
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         AGENCE
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap">
-
-                                        {{ $reservation->trajet->agence->nom_agence ?? '-' }}
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         TRAJET
-                                    ================================================== --}}
-
-                                    <td class="p-4 font-medium whitespace-nowrap">
-
-                                        {{ $reservation->trajet->depart ?? '-' }}
-
-                                        →
-
-                                        {{ $reservation->trajet->arrivee ?? '-' }}
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         DATE
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        {{ optional($reservation->created_at)->format('d/m/Y') }}
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         PLACES
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        {{ $reservation->nombre_places }}
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         MONTANT
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-right font-semibold text-green-600 whitespace-nowrap">
-
-                                        @if($reservation->trajet)
-
-                                            {{ number_format(
-                                                $reservation->trajet->prix * $reservation->nombre_places,
-                                                0,
-                                                ',',
-                                                ' '
-                                            ) }}
-
-                                            FCFA
-
-                                        @else
-
-                                            -
-
-                                        @endif
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         STATUT
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        @if($reservation->statut == 'confirmée')
-
-                                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap">
-
-                                                Confirmée
-
-                                            </span>
-
-                                        @elseif($reservation->statut == 'en attente')
-
-                                            <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap">
-
-                                                En attente
-
-                                            </span>
-
-                                        @elseif($reservation->statut == 'annulée')
-
-                                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap">
-
-                                                Annulée
-
-                                            </span>
-
-                                        @else
-
-                                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm whitespace-nowrap">
-
-                                                {{ ucfirst($reservation->statut) }}
-
-                                            </span>
-
-                                        @endif
-
-                                    </td>
-
-                                </tr>
-
-
-                            @empty
-
-                                <tr>
-
-                                    <td
-                                        colspan="8"
-                                        class="text-center py-10 text-gray-500"
-                                    >
-
-                                        🎫 Aucune réservation trouvée.
-
-                                    </td>
-
-                                </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-
-                {{-- =========================================================
-                     PAGINATION
-                ========================================================== --}}
-
-                @if(method_exists($reservations, 'links'))
-
-                    <div class="p-6 border-t">
-
-                        {{ $reservations->links() }}
-
-                    </div>
-
-                @endif
-
-            </div>
 
         </div>
 
     </div>
+
+
+    {{-- Barre de recherche et filtres --}}
+
+    <div class="tk-card p-6">
+
+        <form
+            action="{{ route('admin.reservations') }}"
+            method="GET"
+        >
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                {{-- Recherche --}}
+
+                <input
+                    type="text"
+                    name="recherche"
+                    value="{{ request('recherche') }}"
+                    placeholder="Rechercher un voyageur..."
+                    class="tk-input"
+                >
+
+
+                {{-- Statut --}}
+
+                <select
+                    name="statut"
+                    class="tk-input"
+                >
+
+                    <option value="">
+                        Tous les statuts
+                    </option>
+
+                    <option
+                        value="confirmée"
+                        {{ request('statut') == 'confirmée' ? 'selected' : '' }}
+                    >
+                        Confirmée
+                    </option>
+
+                    <option
+                        value="en attente"
+                        {{ request('statut') == 'en attente' ? 'selected' : '' }}
+                    >
+                        En attente
+                    </option>
+
+                    <option
+                        value="annulée"
+                        {{ request('statut') == 'annulée' ? 'selected' : '' }}
+                    >
+                        Annulée
+                    </option>
+
+                </select>
+
+
+                {{-- Date --}}
+
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ request('date') }}"
+                    class="tk-input"
+                >
+
+
+                {{-- Pagination --}}
+
+                <select
+                    name="par_page"
+                    class="tk-input"
+                >
+
+                    @foreach([10,25,50,100] as $nb)
+
+                        <option
+                            value="{{ $nb }}"
+                            {{ request('par_page', 10) == $nb ? 'selected' : '' }}
+                        >
+                            {{ $nb }} lignes
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+
+                {{-- Boutons --}}
+
+                <div class="flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="tk-btn-accent flex-1"
+                    >
+                        Filtrer
+                    </button>
+
+                    <a
+                        href="{{ route('admin.reservations') }}"
+                        class="tk-btn-ghost flex-1"
+                    >
+                        Réinitialiser
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- Tableau des réservations --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
+
+                    <tr>
+
+                        {{-- Voyageur --}}
+
+                        <th class="text-left whitespace-nowrap">
+                            Voyageur
+                        </th>
+
+
+                        {{-- Référence billet --}}
+
+                        <th class="text-left whitespace-nowrap">
+                            Référence billet
+                        </th>
+
+
+                        {{-- Agence --}}
+
+                        <th class="text-left whitespace-nowrap">
+                            Agence
+                        </th>
+
+
+                        {{-- Trajet --}}
+
+                        <th class="text-left whitespace-nowrap">
+                            Trajet
+                        </th>
+
+
+                        {{-- Date --}}
+
+                        <th class="text-center whitespace-nowrap">
+                            Date
+                        </th>
+
+
+                        {{-- Places --}}
+
+                        <th class="text-center whitespace-nowrap">
+                            Places
+                        </th>
+
+
+                        {{-- Montant --}}
+
+                        <th class="text-right whitespace-nowrap">
+                            Montant
+                        </th>
+
+
+                        {{-- Statut --}}
+
+                        <th class="text-center whitespace-nowrap">
+                            Statut
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                {{-- CORPS DU TABLEAU --}}
+
+                <tbody>
+
+                    @forelse($reservations as $reservation)
+
+                        <tr>
+
+                            {{-- VOYAGEUR --}}
+
+                            <td class="whitespace-nowrap">
+
+                                @if($reservation->voyageurs && $reservation->voyageurs->count())
+
+                                    @foreach($reservation->voyageurs as $voyageur)
+
+                                        <div class="font-semibold text-navy">
+                                            {{ $voyageur->prenom ?? '' }}
+                                            {{ $voyageur->nom ?? '' }}
+                                        </div>
+
+                                        @if(!empty($voyageur->telephone))
+
+                                            <div class="text-sm text-slate-500 mt-1">
+
+                                                <i class="fa-solid fa-phone"></i>
+
+                                                {{ $voyageur->telephone }}
+
+                                            </div>
+
+                                        @endif
+
+                                    @endforeach
+
+                                @else
+
+                                    <div class="font-semibold text-slate-600">
+                                        Voyageur non renseigné
+                                    </div>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- RÉFÉRENCE BILLET --}}
+
+                            <td class="whitespace-nowrap">
+
+                                @if($reservation->billets && $reservation->billets->count())
+
+                                    @foreach($reservation->billets as $billet)
+
+                                        <div class="font-semibold text-navy whitespace-nowrap mb-1">
+
+                                            {{ $billet->numero_billet }}
+
+                                        </div>
+
+                                    @endforeach
+
+                                @else
+
+                                    <span class="text-slate-400 whitespace-nowrap">
+                                        —
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- AGENCE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $reservation->trajet->agence->nom_agence ?? '-' }}
+
+                            </td>
+
+
+                            {{-- TRAJET --}}
+
+                            <td class="font-medium text-slate-700 whitespace-nowrap">
+
+                                {{ $reservation->trajet->depart ?? '-' }}
+
+                                →
+
+                                {{ $reservation->trajet->arrivee ?? '-' }}
+
+                            </td>
+
+
+                            {{-- DATE --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                {{ optional($reservation->created_at)->format('d/m/Y') }}
+
+                            </td>
+
+
+                            {{-- PLACES --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                {{ $reservation->nombre_places }}
+
+                            </td>
+
+
+                            {{-- MONTANT --}}
+
+                            <td class="text-right font-semibold text-navy whitespace-nowrap tabular-nums">
+
+                                @if($reservation->trajet)
+
+                                    {{ number_format(
+                                        $reservation->trajet->prix * $reservation->nombre_places,
+                                        0,
+                                        ',',
+                                        ' '
+                                    ) }}
+
+                                    FCFA
+
+                                @else
+
+                                    -
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- STATUT --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                @if($reservation->statut == 'confirmée')
+
+                                    <span class="tk-badge tk-badge-green">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Confirmée
+
+                                    </span>
+
+                                @elseif($reservation->statut == 'en attente')
+
+                                    <span class="tk-badge tk-badge-orange">
+
+                                        <i class="fa-solid fa-hourglass-half"></i>
+
+                                        En attente
+
+                                    </span>
+
+                                @elseif($reservation->statut == 'annulée')
+
+                                    <span class="tk-badge tk-badge-red">
+
+                                        <i class="fa-solid fa-xmark"></i>
+
+                                        Annulée
+
+                                    </span>
+
+                                @else
+
+                                    <span class="tk-badge tk-badge-slate">
+
+                                        {{ ucfirst($reservation->statut) }}
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="tk-empty"
+                            >
+
+                                Aucune réservation trouvée.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+
+        @if(method_exists($reservations, 'links'))
+
+            <div class="border-t border-slate-200 px-6 py-4">
+
+                {{ $reservations->links() }}
+
+            </div>
+
+        @endif
+
+    </div>
+
+</div>
 
 </x-dynamic-component>

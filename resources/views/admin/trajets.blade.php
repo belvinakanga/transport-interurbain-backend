@@ -13,433 +13,446 @@
     :header="$pageTitle"
 >
 
-    <div class="py-12">
+<div class="tk-page">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-            {{-- =========================================================
-                 TITRE
-            ========================================================== --}}
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        <div class="min-w-0">
 
-                <div>
+            <h1 class="tk-page-title">
 
-                    <h1 class="text-3xl font-bold text-slate-800">
-
-                        @if(auth()->user()->role === 'agent')
-                            🚌 Mes trajets
-                        @else
-                            🚌 Gestion des trajets
-                        @endif
-
-                    </h1>
-
-                    @if(auth()->user()->role === 'agent')
-
-                        <p class="text-gray-500 mt-2">
-                            Trajets de votre agence :
-                            <strong class="text-blue-700">
-                                {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
-                            </strong>
-                        </p>
-
-                    @endif
-
-                </div>
-
-
-                {{-- Ajouter --}}
-
-                <a
-                    href="{{ url('/admin/trajets/create') }}"
-                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow inline-flex items-center justify-center"
+                <span
+                    class="
+                        flex h-11 w-11 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-orange-50
+                        text-lg text-brand
+                    "
                 >
-                    ➕ Ajouter un trajet
-                </a>
+                    <i class="fa-solid fa-bus"></i>
+                </span>
 
-            </div>
+                @if(auth()->user()->role === 'agent')
+                    Mes trajets
+                @else
+                    Gestion des trajets
+                @endif
 
+            </h1>
 
-            {{-- =========================================================
-                 MESSAGE SUCCÈS
-            ========================================================== --}}
+            @if(auth()->user()->role === 'agent')
 
-            @if(session('success'))
+                <p class="mt-3 text-sm text-slate-500">
 
-                <div class="bg-green-100 text-green-700 p-4 rounded-xl mb-6">
-                    {{ session('success') }}
-                </div>
+                    Trajets de votre agence :
+
+                    <strong class="font-semibold text-navy">
+                        {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+                    </strong>
+
+                </p>
 
             @endif
 
+        </div>
 
-            {{-- =========================================================
-                 RECHERCHE ET FILTRES
-            ========================================================== --}}
 
-            <div class="bg-white rounded-xl shadow p-6 mb-6">
+        {{-- Ajouter --}}
 
-                <form
-                    action="{{ route('admin.trajets') }}"
-                    method="GET"
+        <a
+            href="{{ url('/admin/trajets/create') }}"
+            class="tk-btn-accent shrink-0"
+        >
+
+            <i class="fa-solid fa-plus"></i>
+
+            <span>Ajouter un trajet</span>
+
+        </a>
+
+    </div>
+
+
+    {{-- Barre de recherche et filtres --}}
+
+    <div class="tk-card p-6">
+
+        <form
+            action="{{ route('admin.trajets') }}"
+            method="GET"
+        >
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                {{-- Recherche --}}
+
+                <input
+                    type="text"
+                    name="recherche"
+                    value="{{ request('recherche') }}"
+                    placeholder="Départ ou arrivée..."
+                    class="tk-input"
                 >
 
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-                        {{-- Recherche --}}
+                {{-- Agence --}}
 
-                        <input
-                            type="text"
-                            name="recherche"
-                            value="{{ request('recherche') }}"
-                            placeholder="🔍 Départ ou arrivée..."
-                            class="border rounded-xl px-4 py-3"
-                        >
+                @if(auth()->user()->role === 'admin')
 
+                    <select
+                        name="agence"
+                        class="tk-input"
+                    >
 
-                        {{-- Agence --}}
+                        <option value="">
+                            Toutes les agences
+                        </option>
 
-                        @if(auth()->user()->role === 'admin')
+                        @foreach($listeAgences as $agence)
 
-                            <select
-                                name="agence"
-                                class="border rounded-xl px-4 py-3"
+                            <option
+                                value="{{ $agence->id }}"
+                                {{ request('agence') == $agence->id ? 'selected' : '' }}
                             >
-
-                                <option value="">
-                                    Toutes les agences
-                                </option>
-
-                                @foreach($listeAgences as $agence)
-
-                                    <option
-                                        value="{{ $agence->id }}"
-                                        {{ request('agence') == $agence->id ? 'selected' : '' }}
-                                    >
-                                        {{ $agence->nom_agence }}
-                                    </option>
-
-                                @endforeach
-
-                            </select>
-
-                        @else
-
-                            {{-- Agent : agence imposée --}}
-
-                            <div class="border rounded-xl px-4 py-3 bg-gray-100 text-gray-700">
-
-                                🏢
-                                {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
-
-                            </div>
-
-                        @endif
-
-
-                        {{-- Tri --}}
-
-                        <select
-                            name="tri"
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-                            <option value="recent"
-                                {{ request('tri', 'recent') == 'recent' ? 'selected' : '' }}>
-                                Plus récents
+                                {{ $agence->nom_agence }}
                             </option>
 
-                            <option value="ancien"
-                                {{ request('tri') == 'ancien' ? 'selected' : '' }}>
-                                Plus anciens
-                            </option>
+                        @endforeach
 
-                            <option value="depart"
-                                {{ request('tri') == 'depart' ? 'selected' : '' }}>
-                                Départ A → Z
-                            </option>
+                    </select>
 
-                            <option value="arrivee"
-                                {{ request('tri') == 'arrivee' ? 'selected' : '' }}>
-                                Arrivée A → Z
-                            </option>
+                @else
 
-                            <option value="prix"
-                                {{ request('tri') == 'prix' ? 'selected' : '' }}>
-                                Prix
-                            </option>
+                    {{-- Agent : agence imposée --}}
 
-                        </select>
+                    <div class="tk-input flex items-center gap-2 text-slate-600">
 
+                        <i class="fa-solid fa-building"></i>
 
-                        {{-- Pagination --}}
-
-                        <select
-                            name="par_page"
-                            class="border rounded-xl px-4 py-3"
-                        >
-
-                            @foreach([10,25,50,100] as $nb)
-
-                                <option
-                                    value="{{ $nb }}"
-                                    {{ request('par_page', 10) == $nb ? 'selected' : '' }}
-                                >
-                                    {{ $nb }} lignes
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-
-                        {{-- Boutons --}}
-
-                        <div class="flex gap-2">
-
-                            <button
-                                type="submit"
-                                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-3"
-                            >
-                                Filtrer
-                            </button>
-
-                            <a
-                                href="{{ route('admin.trajets') }}"
-                                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-xl flex items-center justify-center"
-                            >
-                                Réinitialiser
-                            </a>
-
-                        </div>
+                        {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
 
                     </div>
 
-                </form>
+                @endif
 
-            </div>
 
+                {{-- Tri --}}
 
-            {{-- =========================================================
-                 TABLEAU
-            ========================================================== --}}
+                <select
+                    name="tri"
+                    class="tk-input"
+                >
 
-            <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <option value="recent"
+                        {{ request('tri', 'recent') == 'recent' ? 'selected' : '' }}>
+                        Plus récents
+                    </option>
 
-                <div class="overflow-x-auto">
+                    <option value="ancien"
+                        {{ request('tri') == 'ancien' ? 'selected' : '' }}>
+                        Plus anciens
+                    </option>
 
-                    <table class="min-w-full">
+                    <option value="depart"
+                        {{ request('tri') == 'depart' ? 'selected' : '' }}>
+                        Départ A → Z
+                    </option>
 
-                        <thead class="bg-slate-100">
+                    <option value="arrivee"
+                        {{ request('tri') == 'arrivee' ? 'selected' : '' }}>
+                        Arrivée A → Z
+                    </option>
 
-                            <tr>
+                    <option value="prix"
+                        {{ request('tri') == 'prix' ? 'selected' : '' }}>
+                        Prix
+                    </option>
 
-                                <th class="p-4 text-left">
-                                    Agence
-                                </th>
-
-                                <th class="p-4 text-left">
-                                    Départ
-                                </th>
-
-                                <th class="p-4 text-left">
-                                    Arrivée
-                                </th>
-
-                                <th class="p-4 text-left">
-                                    Date
-                                </th>
-
-                                <th class="p-4 text-left">
-                                    Heure
-                                </th>
-
-                                <th class="p-4 text-left">
-                                    Prix
-                                </th>
-
-                                <th class="p-4 text-center">
-                                    Places
-                                </th>
-
-                                <th class="p-4 text-center">
-                                    Actions
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-                            @forelse($trajets as $trajet)
-
-                                <tr class="border-t hover:bg-orange-50 transition">
-
-                                    {{-- Agence --}}
-
-                                    <td class="p-4">
-
-                                        {{ $trajet->agence->nom_agence ?? '-' }}
-
-                                    </td>
-
-
-                                    {{-- Départ --}}
-
-                                    <td class="p-4 font-medium">
-
-                                        {{ $trajet->depart }}
-
-                                    </td>
-
-
-                                    {{-- Arrivée --}}
-
-                                    <td class="p-4 font-medium">
-
-                                        {{ $trajet->arrivee }}
-
-                                    </td>
-
-
-                                    {{-- Date --}}
-
-                                    <td class="p-4">
-
-                                        {{ $trajet->date_depart }}
-
-                                    </td>
-
-
-                                    {{-- Heure --}}
-
-                                    <td class="p-4">
-
-                                        {{ $trajet->heure_depart }}
-
-                                    </td>
-
-
-                                    {{-- Prix --}}
-
-                                    <td class="p-4 font-semibold text-green-600">
-
-                                        {{ number_format($trajet->prix, 0, ',', ' ') }}
-                                        FCFA
-
-                                    </td>
-
-
-                                    {{-- Places --}}
-
-                                    <td class="p-4 text-center">
-
-                                        <span class="font-semibold">
-                                            {{ $trajet->places_disponibles }}
-                                        </span>
-
-                                        /
-
-                                        {{ $trajet->places_totales }}
-
-                                    </td>
-
-
-                                    {{-- Actions --}}
-
-                                    <td class="p-4">
-
-                                        <div class="flex justify-center gap-2">
-
-                                            {{-- Voir --}}
-
-                                            <a
-                                                href="{{ url('/admin/trajets/' . $trajet->id) }}"
-                                                class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded-lg"
-                                                title="Voir"
-                                            >
-                                                👁️
-                                            </a>
-
-
-                                            {{-- Modifier --}}
-
-                                            <a
-                                                href="{{ url('/admin/trajets/' . $trajet->id . '/edit') }}"
-                                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg"
-                                                title="Modifier"
-                                            >
-                                                ✏️
-                                            </a>
-
-
-                                            {{-- Supprimer --}}
-
-                                            <form
-                                                action="{{ url('/admin/trajets/' . $trajet->id) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Supprimer ce trajet ?')"
-                                            >
-
-                                                @csrf
-
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg"
-                                                    title="Supprimer"
-                                                >
-                                                    🗑️
-                                                </button>
-
-                                            </form>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
-                                <tr>
-
-                                    <td
-                                        colspan="8"
-                                        class="text-center py-10 text-gray-500"
-                                    >
-
-                                        🚍 Aucun trajet trouvé.
-
-                                    </td>
-
-                                </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                </select>
 
 
                 {{-- Pagination --}}
 
-                <div class="p-6 border-t">
+                <select
+                    name="par_page"
+                    class="tk-input"
+                >
 
-                    {{ $trajets->links() }}
+                    @foreach([10,25,50,100] as $nb)
+
+                        <option
+                            value="{{ $nb }}"
+                            {{ request('par_page', 10) == $nb ? 'selected' : '' }}
+                        >
+                            {{ $nb }} lignes
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+
+                {{-- Boutons --}}
+
+                <div class="flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="tk-btn-accent flex-1"
+                    >
+                        Filtrer
+                    </button>
+
+                    <a
+                        href="{{ route('admin.trajets') }}"
+                        class="tk-btn-ghost flex-1"
+                    >
+                        Réinitialiser
+                    </a>
 
                 </div>
 
             </div>
 
+        </form>
+
+    </div>
+
+
+    {{-- Tableau des trajets --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
+
+                    <tr>
+
+                        <th class="text-left whitespace-nowrap">
+                            Agence
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Départ
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Arrivée
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Date
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Heure
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Prix
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Places
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                {{-- CORPS DU TABLEAU --}}
+
+                <tbody>
+
+                    @forelse($trajets as $trajet)
+
+                        <tr>
+
+                            {{-- Agence --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $trajet->agence->nom_agence ?? '-' }}
+
+                            </td>
+
+
+                            {{-- Départ --}}
+
+                            <td class="font-semibold text-navy whitespace-nowrap">
+
+                                {{ $trajet->depart }}
+
+                            </td>
+
+
+                            {{-- Arrivée --}}
+
+                            <td class="font-semibold text-navy whitespace-nowrap">
+
+                                {{ $trajet->arrivee }}
+
+                            </td>
+
+
+                            {{-- Date --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $trajet->date_depart }}
+
+                            </td>
+
+
+                            {{-- Heure --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $trajet->heure_depart }}
+
+                            </td>
+
+
+                            {{-- Prix --}}
+
+                            <td class="font-semibold text-navy whitespace-nowrap">
+
+                                {{ number_format($trajet->prix, 0, ',', ' ') }}
+                                FCFA
+
+                            </td>
+
+
+                            {{-- Places --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                <span class="font-semibold text-navy">
+                                    {{ $trajet->places_disponibles }}
+                                </span>
+
+                                /
+
+                                {{ $trajet->places_totales }}
+
+                            </td>
+
+
+                            {{-- Actions --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                <div class="flex justify-center items-center gap-2">
+
+                                    {{-- Voir --}}
+
+                                    <a
+                                        href="{{ url('/admin/trajets/' . $trajet->id) }}"
+                                        title="Voir"
+                                        class="tk-icon-btn tk-icon-btn-navy"
+                                    >
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    </a>
+
+
+                                    {{-- Modifier --}}
+
+                                    <a
+                                        href="{{ url('/admin/trajets/' . $trajet->id . '/edit') }}"
+                                        title="Modifier"
+                                        class="tk-icon-btn tk-icon-btn-brand"
+                                    >
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+
+                                    {{-- Supprimer --}}
+
+                                    <form
+                                        action="{{ url('/admin/trajets/' . $trajet->id) }}"
+                                        method="POST"
+                                        onsubmit="event.preventDefault(); tkConfirm('Supprimer ce trajet ?', () => this.submit())"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            title="Supprimer"
+                                            class="tk-icon-btn tk-icon-btn-red"
+                                        >
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="tk-empty"
+                            >
+
+                                Aucun trajet trouvé.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+
+        <div class="border-t border-slate-200 px-6 py-4">
+
+            {{ $trajets->links() }}
+
         </div>
 
     </div>
+
+</div>
 
 </x-dynamic-component>

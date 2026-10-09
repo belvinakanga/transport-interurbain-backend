@@ -14,39 +14,72 @@
         {{ $title ?? 'TOKENDE | Administration' }}
     </title>
 
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('tk-theme');
+                if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+
+            window.tkToggleTheme = function () {
+                var dark = document.documentElement.classList.toggle('dark');
+                try { localStorage.setItem('tk-theme', dark ? 'dark' : 'light'); } catch (e) {}
+                window.tkSyncTheme();
+            };
+
+            window.tkSyncTheme = function () {
+                var dark = document.documentElement.classList.contains('dark');
+                document.querySelectorAll('[data-theme-icon]').forEach(function (el) {
+                    el.className = 'fa-solid ' + (dark ? 'fa-sun' : 'fa-moon');
+                });
+                document.querySelectorAll('[data-theme-toggle]').forEach(function (el) {
+                    el.setAttribute('aria-label', dark ? 'Passer en mode clair' : 'Passer en mode sombre');
+                    el.setAttribute('title', dark ? 'Mode clair' : 'Mode sombre');
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', window.tkSyncTheme);
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap"
+    >
+
     @vite([
         'resources/css/app.css',
         'resources/js/app.js'
     ])
 
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    >
-
 </head>
 
 
 <body
-    style="
-        margin:0;
-        padding:0;
-        background:#F8F9FB;
-        color:#1F2937;
-        font-family:Arial,sans-serif;
-        overflow:hidden;
-    "
+    class="m-0 bg-canvas text-slate-800 overflow-hidden antialiased"
 >
 
 
 <div
-    style="
-        display:flex;
-        width:100%;
-        height:100vh;
-    "
+    x-data="{
+        sidebarOpen: false,
+        collapsed: localStorage.getItem('tk-collapsed') === '1',
+        toggleCollapse() {
+            this.collapsed = !this.collapsed;
+            localStorage.setItem('tk-collapsed', this.collapsed ? '1' : '0');
+        }
+    }"
+    class="flex w-full h-screen"
 >
 
 
@@ -55,18 +88,19 @@
     ========================================================== --}}
 
     <aside
-    style="
-        width:310px;
-        min-width:310px;
-        height:100vh;
-        background:#FFFFFF;
-        border-right:2px solid #E5E7EB;
-        box-sizing:border-box;
-        display:flex;
-        flex-direction:column;
-        flex-shrink:0;
-    "
->
+        :class="[
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+            collapsed ? 'tk-sidebar-collapsed' : '',
+        ]"
+        class="
+            fixed inset-y-0 left-0 z-40
+            flex w-[264px] shrink-0
+            flex-col
+            bg-white border-r border-slate-200
+            transition-[transform,width] duration-200 ease-out
+            lg:static lg:z-auto lg:translate-x-0
+        "
+    >
 
 
         {{-- =====================================================
@@ -74,60 +108,41 @@
         ====================================================== --}}
 
         <div
-    style="
-        height:78px;
-        min-height:78px;
-        box-sizing:border-box;
-        padding:15px 20px;
-        border-bottom:1px solid #E5E7EB;
-        display:flex;
-        align-items:center;
-    "
->
+            class="
+                tk-logo-box flex h-16 min-h-16 items-center
+                px-5 border-b border-slate-200
+            "
+        >
 
-            <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:12px;
-                "
-            >
+            <div class="flex items-center gap-3">
 
                 <div
-                    style="
-                        width:48px;
-                        height:48px;
-                        border-radius:14px;
-                        background:#0A2A66;
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        color:#FFFFFF;
-                        font-size:22px;
+                    class="
+                        flex h-10 w-10 shrink-0 items-center
+                        justify-center rounded-xl
+                        bg-navy text-white text-lg
                     "
                 >
-                    🚌
+                    <i class="fa-solid fa-bus"></i>
                 </div>
 
 
-                <div>
+                <div class="tk-brand">
 
                     <div
-                        style="
-                            font-size:25px;
-                            font-weight:800;
-                            color:#0A2A66;
-                            line-height:1;
+                        class="
+                            text-[19px] font-extrabold
+                            leading-none text-navy
+                            tracking-tight
                         "
                     >
                         TOKENDE
                     </div>
 
                     <div
-                        style="
-                            margin-top:5px;
-                            font-size:12px;
-                            color:#6B7280;
+                        class="
+                            mt-1 text-xs
+                            text-slate-500
                         "
                     >
                         Congo Administration
@@ -145,60 +160,26 @@
         ====================================================== --}}
 
         <nav
-            style="
-                flex:1;
-                padding:18px 14px;
-                overflow-y:auto;
-            "
+            class="flex-1 overflow-y-auto px-3 py-4"
         >
 
-            <div
-                style="
-                    padding:0 12px;
-                    margin-bottom:10px;
-                    font-size:11px;
-                    font-weight:800;
-                    text-transform:uppercase;
-                    letter-spacing:1.5px;
-                    color:#9CA3AF;
-                "
-            >
+            <span class="tk-nav-label">
                 Navigation
-            </div>
+            </span>
 
 
             {{-- DASHBOARD --}}
 
             <a
-                href="{{ url('/admin') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:20px;
-                    font-weight:700;
-                    transition:.2s;
-
-                    {{ request()->is('admin')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ url('/admin') }}" title="Dashboard"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    📊
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-gauge-high"></i>
                 </span>
 
                 <span>
@@ -211,34 +192,15 @@
             {{-- AGENCES --}}
 
             <a
-                href="{{ url('/admin/agences') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/agences*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ url('/admin/agences') }}" title="Agences"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/agences*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    🏢
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-building"></i>
                 </span>
 
                 <span>
@@ -251,34 +213,15 @@
             {{-- UTILISATEURS --}}
 
             <a
-                href="{{ url('/admin/voyageurs') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/voyageurs*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ url('/admin/voyageurs') }}" title="Utilisateurs"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/voyageurs*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    👥
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-users"></i>
                 </span>
 
                 <span>
@@ -291,34 +234,15 @@
             {{-- ABONNEMENTS --}}
 
             <a
-                href="{{ route('admin.abonnements') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/abonnements*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ route('admin.abonnements') }}" title="Abonnements"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/abonnements*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    📋
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-clipboard-list"></i>
                 </span>
 
                 <span>
@@ -333,34 +257,15 @@
             @if(Route::has('paiements-agences.index'))
 
                 <a
-                    href="{{ route('paiements-agences.index') }}"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:13px;
-                        height:46px;
-                        padding:0 14px;
-                        margin-bottom:5px;
-                        border-radius:11px;
-                        text-decoration:none;
-                        font-size:18px;
-                        font-weight:700;
-
-                        {{ request()->is('paiements-agences*')
-                            ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                            : 'color:#0A2A66;background:transparent;'
-                        }}
-                    "
+                    href="{{ route('paiements-agences.index') }}" title="Paiements agences"
+                    @class([
+                        'tk-nav-link',
+                        'is-active' => request()->is('paiements-agences*'),
+                    ])
                 >
 
-                    <span
-                        style="
-                            width:21px;
-                            text-align:center;
-                            font-size:17px;
-                        "
-                    >
-                        💰
+                    <span class="flex w-5 justify-center text-[15px]">
+                        <i class="fa-solid fa-wallet"></i>
                     </span>
 
                     <span>
@@ -371,37 +276,19 @@
 
             @endif
 
-                        {{-- COMMISSIONS --}}
+
+            {{-- COMMISSIONS --}}
 
             <a
-                href="{{ route('admin.commissions') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/commissions*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ route('admin.commissions') }}" title="Commissions"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/commissions*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    💰
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-percent"></i>
                 </span>
 
                 <span>
@@ -414,34 +301,15 @@
             {{-- AVIS --}}
 
             <a
-                href="{{ url('/admin/avis') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/avis*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ url('/admin/avis') }}" title="Avis"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/avis*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    ⭐
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-star"></i>
                 </span>
 
                 <span>
@@ -451,40 +319,18 @@
             </a>
 
 
-                        </a>
-
-
             {{-- CONVERSATIONS --}}
 
             <a
-                href="{{ route('admin.support.index') }}"
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:13px;
-                    height:46px;
-                    padding:0 14px;
-                    margin-bottom:5px;
-                    border-radius:11px;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:700;
-
-                    {{ request()->is('admin/support*')
-                        ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                        : 'color:#0A2A66;background:transparent;'
-                    }}
-                "
+                href="{{ route('admin.support.index') }}" title="Conversations"
+                @class([
+                    'tk-nav-link',
+                    'is-active' => request()->is('admin/support*'),
+                ])
             >
 
-                <span
-                    style="
-                        width:21px;
-                        text-align:center;
-                        font-size:17px;
-                    "
-                >
-                    💬
+                <span class="flex w-5 justify-center text-[15px]">
+                    <i class="fa-solid fa-comments"></i>
                 </span>
 
                 <span>
@@ -494,103 +340,24 @@
             </a>
 
 
-            {{-- ESPACE --}}
-
-            <div style="height:18px;"></div>
-
-
-            {{-- PROFIL --}}
-
-            @if(Route::has('profile.edit'))
-
-                <a
-                    href="{{ route('profile.edit') }}"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:13px;
-                        height:46px;
-                        padding:0 14px;
-                        margin-bottom:5px;
-                        border-radius:11px;
-                        text-decoration:none;
-                        font-size:18px;
-                        font-weight:700;
-
-                        {{ request()->is('profile*')
-                            ? 'background:#0A2A66;color:#FFFFFF;box-shadow:0 4px 10px rgba(10,42,102,.15);'
-                            : 'color:#0A2A66;background:transparent;'
-                        }}
-                    "
-                >
-
-                    <span
-                        style="
-                            width:21px;
-                            text-align:center;
-                            font-size:17px;
-                        "
-                    >
-                        👤
-                    </span>
-
-                    <span>
-                        Profil
-                    </span>
-
-                </a>
-
-            @endif
-
         </nav>
 
-
-        {{-- =====================================================
-             DÉCONNEXION
-        ====================================================== --}}
-
-        <div
-            style="
-                padding:14px;
-                border-top:1px solid #E5E7EB;
-                background:#FFFFFF;
-            "
-        >
-
-            <form
-                method="POST"
-                action="{{ route('logout') }}"
-            >
-
-                @csrf
-
-                <button
-                    type="submit"
-                    style="
-                        width:100%;
-                        height:46px;
-                        border:none;
-                        border-radius:11px;
-                        background:#FF6B00;
-                        color:#FFFFFF;
-                        font-size:18px;
-                        font-weight:700;
-                        cursor:pointer;
-                        box-shadow:0 4px 10px rgba(255,107,0,.18);
-                    "
-                >
-
-                    🚪
-                    &nbsp;
-                    Déconnexion
-
-                </button>
-
-            </form>
-
-        </div>
-
     </aside>
+
+
+    {{-- OVERLAY MOBILE --}}
+
+    <div
+        x-show="sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="
+            fixed inset-0 z-30
+            bg-slate-900/40
+            lg:hidden
+        "
+        aria-hidden="true"
+    ></div>
 
 
     {{-- =========================================================
@@ -598,13 +365,10 @@
     ========================================================== --}}
 
     <div
-        style="
-            flex:1;
-            min-width:0;
-            height:100vh;
-            display:flex;
-            flex-direction:column;
-            overflow:hidden;
+        class="
+            flex h-screen min-w-0
+            flex-1 flex-col
+            overflow-hidden
         "
     >
 
@@ -614,81 +378,126 @@
         ====================================================== --}}
 
         <header
-            style="
-                height:78px;
-                min-height:78px;
-                background:#FFFFFF;
-                border-bottom:1px solid #E5E7EB;
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                padding:0 30px;
-                box-shadow:0 1px 5px rgba(0,0,0,.03);
+            class="
+                flex h-16 min-h-16 items-center
+                justify-between gap-4
+                border-b border-slate-200
+                bg-white px-4 sm:px-6
             "
         >
 
-            <div>
+            <div class="flex min-w-0 items-center gap-3">
 
-                <div
-                    style="
-                        font-size:25px;
-                        font-weight:800;
-                        color:#0A2A66;
+                <button
+                    type="button"
+                    @click="sidebarOpen = !sidebarOpen"
+                    class="
+                        flex h-10 w-10 items-center justify-center
+                        rounded-lg text-navy
+                        transition-colors hover:bg-slate-100
+                        lg:hidden
                     "
+                    aria-label="Menu"
                 >
-                    {{ $header ?? 'Administration' }}
-                </div>
 
-                <div
-                    style="
-                        margin-top:3px;
-                        font-size:13px;
-                        color:#6B7280;
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    @click="toggleCollapse()"
+                    class="
+                        hidden h-10 w-10 items-center justify-center
+                        rounded-lg text-navy
+                        transition-colors hover:bg-slate-100
+                        lg:flex
                     "
+                    :aria-label="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
+                    x-bind:title="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
                 >
-                    TOKENDE
+
+                    <i
+                        class="fa-solid"
+                        :class="collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"
+                    ></i>
+
+                </button>
+
+                <div class="min-w-0">
+
+                    <div
+                        class="
+                            truncate text-lg sm:text-xl
+                            font-bold text-navy
+                        "
+                    >
+                        {{ $header ?? 'Administration' }}
+                    </div>
+
+                    <div
+                        class="
+                            mt-0.5 text-xs
+                            text-slate-500
+                        "
+                    >
+                        TOKENDE
+                    </div>
+
                 </div>
 
             </div>
 
 
             <div
-                style="
-                    display:flex;
-                    align-items:center;
-                    gap:18px;
+                class="
+                    flex items-center
+                    gap-3 sm:gap-4
                 "
             >
+
+                {{-- THEME CLAIR / SOMBRE --}}
+
+                <button
+                    type="button"
+                    data-theme-toggle
+                    onclick="tkToggleTheme()"
+                    aria-label="Passer en mode sombre"
+                    title="Mode sombre"
+                    class="
+                        flex h-10 w-10 items-center justify-center
+                        rounded-lg border border-slate-200
+                        bg-white text-navy
+                        transition-colors hover:bg-slate-50
+                    "
+                >
+                    <i data-theme-icon class="fa-solid fa-moon"></i>
+                </button>
+
 
                 {{-- NOTIFICATION --}}
 
                 <button
                     type="button"
-                    style="
-                        width:42px;
-                        height:42px;
-                        border:none;
-                        border-radius:50%;
-                        background:#F8F9FB;
-                        color:#0A2A66;
-                        cursor:pointer;
-                        position:relative;
-                        font-size:16px;
+                    class="
+                        relative flex h-10 w-10
+                        items-center justify-center
+                        rounded-lg border border-slate-200
+                        bg-white text-navy
+                        transition-colors hover:bg-slate-50
                     "
+                    aria-label="Notifications"
                 >
 
-                    🔔
+                    <i class="fa-solid fa-bell text-[15px]"></i>
 
                     <span
-                        style="
-                            position:absolute;
-                            top:7px;
-                            right:7px;
-                            width:8px;
-                            height:8px;
-                            background:#FF6B00;
-                            border-radius:50%;
-                            border:2px solid #FFFFFF;
+                        class="
+                            absolute right-2 top-2
+                            h-2 w-2 rounded-full
+                            bg-brand
+                            ring-2 ring-white
                         "
                     ></span>
 
@@ -698,53 +507,159 @@
                 {{-- PROFIL ADMIN --}}
 
                 <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:10px;
-                    "
+                    class="relative"
+                    x-data="{ avatarOpen: false }"
+                    @click.outside="avatarOpen = false"
+                    @keydown.escape.window="avatarOpen = false"
                 >
 
+                    <button
+                        type="button"
+                        @click="avatarOpen = !avatarOpen"
+                        class="
+                            flex items-center gap-3
+                            rounded-lg p-1.5
+                            transition-colors hover:bg-slate-50
+                        "
+                        aria-label="Menu du compte"
+                        aria-haspopup="true"
+                        x-bind:aria-expanded="avatarOpen"
+                    >
+
+                        <span
+                            class="
+                                flex h-10 w-10 shrink-0
+                                items-center justify-center
+                                rounded-full bg-[#EEF4FF]
+                                text-navy text-sm
+                            "
+                        >
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+
+
+                        <span class="hidden sm:block text-left">
+
+                            <span
+                                class="
+                                    block text-sm font-semibold
+                                    text-slate-800
+                                "
+                            >
+
+                                {{ optional(Auth::user())->name ?? 'Administrateur' }}
+
+                            </span>
+
+                            <span
+                                class="
+                                    block mt-0.5 text-xs
+                                    text-slate-500
+                                "
+                            >
+                                Administrateur
+                            </span>
+
+                        </span>
+
+
+                        <i
+                            class="
+                                fa-solid fa-chevron-down
+                                text-xs text-slate-400
+                                transition-transform
+                            "
+                            :class="avatarOpen && 'rotate-180'"
+                        ></i>
+
+                    </button>
+
+
                     <div
-                        style="
-                            width:42px;
-                            height:42px;
-                            border-radius:50%;
-                            background:#EAF2FF;
-                            border:2px solid #D8E6FF;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            color:#0A2A66;
-                            font-size:17px;
+                        x-show="avatarOpen"
+                        x-transition.origin.top.right
+                        x-cloak
+                        class="
+                            absolute right-0 top-full z-50 mt-2
+                            w-56 overflow-hidden rounded-xl
+                            border border-slate-200 bg-white
+                            shadow-lg
                         "
                     >
-                        👤
-                    </div>
-
-
-                    <div>
 
                         <div
-                            style="
-                                font-size:18px;
-                                font-weight:700;
-                                color:#0A2A66;
+                            class="
+                                border-b border-slate-100
+                                bg-slate-50 px-4 py-3
                             "
                         >
 
-                            {{ optional(Auth::user())->name ?? 'Administrateur' }}
+                            <div
+                                class="
+                                    truncate text-sm
+                                    font-bold text-navy
+                                "
+                            >
+                                {{ optional(Auth::user())->name ?? 'Administrateur' }}
+                            </div>
+
+                            <div
+                                class="
+                                    mt-0.5 truncate text-xs
+                                    text-slate-500
+                                "
+                            >
+                                Administrateur
+                            </div>
 
                         </div>
 
-                        <div
-                            style="
-                                margin-top:2px;
-                                font-size:12px;
-                                color:#6B7280;
+
+                        <a
+                            href="{{ route('profile.edit') }}"
+                            class="
+                                flex items-center gap-3
+                                px-4 py-3 text-sm
+                                font-semibold text-slate-600
+                                transition-colors hover:bg-slate-50
+                                hover:text-navy
                             "
                         >
-                            Administrateur
+
+                            <i class="fa-solid fa-user w-4 text-center"></i>
+
+                            Mon profil
+
+                        </a>
+
+
+                        <div class="border-t border-slate-100">
+
+                            <form
+                                method="POST"
+                                action="{{ route('logout') }}"
+                            >
+
+                                @csrf
+
+                                <button
+                                    type="submit"
+                                    class="
+                                        flex w-full items-center gap-3
+                                        px-4 py-3 text-sm
+                                        font-semibold text-red-600
+                                        transition-colors hover:bg-red-50
+                                    "
+                                >
+
+                                    <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+
+                                    Se déconnecter
+
+                                </button>
+
+                            </form>
+
                         </div>
 
                     </div>
@@ -761,12 +676,10 @@
         ====================================================== --}}
 
         <main
-            style="
-                flex:1;
-                overflow-y:auto;
-                overflow-x:hidden;
-                background:#F8F9FB;
-                padding:30px;
+            class="
+                flex-1 overflow-y-auto
+                overflow-x-hidden
+                bg-canvas p-4 sm:p-6
             "
         >
 
@@ -778,6 +691,10 @@
 
 </div>
 
+
+<x-confirm-modal />
+
+<x-flash-modal />
 
 </body>
 

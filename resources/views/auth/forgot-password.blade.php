@@ -15,7 +15,7 @@
             <div class="hidden lg:block text-white">
 
                 <h1 class="text-7xl font-extrabold drop-shadow-lg">
-    TOK<span class="text-orange-500">ÊNDE</span>
+    TOK<span class="text-orange-500">ENDE</span>
 </h1>
 
 <h2 class="text-2xl tracking-[12px] mt-2 font-light">
@@ -35,7 +35,7 @@
                     <div class="flex items-center gap-5">
 
                         <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-3xl shadow-lg">
-                            🔒
+                            <i class="fa-solid fa-lock"></i>
                         </div>
 
                         <div>
@@ -55,7 +55,7 @@
                     <div class="flex items-center gap-5">
 
                         <div class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
-                            📧
+                            <i class="fa-solid fa-envelope"></i>
                         </div>
 
                         <div>
@@ -97,9 +97,6 @@
 
                 </div>
 
-                <x-auth-session-status
-                    class="mb-4 text-green-300"
-                    :status="session('status')" />
 
                 <form method="POST"
                       action="{{ route('password.email') }}"
@@ -123,24 +120,25 @@
                             required
                             autofocus/>
 
-                        <x-input-error
-                            :messages="$errors->get('email')"
-                            class="mt-2"/>
 
                     </div>
 
                     <button
                         type="submit"
-                        class="w-full py-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-105 duration-300 text-white text-xl font-bold shadow-xl">
+                        class="w-full py-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-105 duration-300 text-white text-xl font-bold shadow-xl flex items-center justify-center gap-3">
 
-                        📩 Envoyer le lien de réinitialisation
+                        Envoyer le lien de réinitialisation
+
+                        <i class="fa-solid fa-paper-plane"></i>
 
                     </button>
 
                     <a href="{{ route('login') }}"
-                       class="block text-center text-orange-300 hover:text-orange-400 font-semibold">
+                       class="flex items-center justify-center gap-2 text-center text-orange-300 hover:text-orange-400 font-semibold">
 
-                        ← Retour à la connexion
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Retour à la connexion
 
                     </a>
 

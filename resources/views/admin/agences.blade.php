@@ -1,532 +1,526 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des agences'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        {{-- En-tête --}}
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-        <div class="flex justify-between items-center mb-6">
+        <h1 class="tk-page-title">
 
-            <h1 class="text-3xl font-bold text-slate-800">
-                🏢 Gestion des agences
-            </h1>
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-building"></i>
+            </span>
 
-            <a
-                href="/admin/agences/create"
-                class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow">
+            Gestion des agences
 
-                ➕ Ajouter
+        </h1>
 
-            </a>
+        <a
+            href="/admin/agences/create"
+            class="tk-btn-accent shrink-0"
+        >
 
-        </div>
+            <i class="fa-solid fa-plus"></i>
 
+            <span>Ajouter</span>
 
-        {{-- Barre de recherche et filtres --}}
+        </a>
 
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
+    </div>
 
-            <form action="/admin/agences" method="GET">
 
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+    {{-- Barre de recherche et filtres --}}
 
-                    {{-- Recherche --}}
+    <div class="tk-card p-6">
 
-                    <div class="md:col-span-2">
+        <form action="/admin/agences" method="GET">
 
-                        <input
-                            type="text"
-                            name="recherche"
-                            value="{{ request('recherche') }}"
-                            placeholder="🔍 Nom ou téléphone..."
-                            class="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-orange-500">
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
 
-                    </div>
+                {{-- Recherche --}}
 
+                <div class="md:col-span-2">
 
-                    {{-- Filtre Agence --}}
-
-                    <div>
-
-                        <select
-                            name="agence"
-                            class="w-full border rounded-xl px-4 py-3">
-
-                            <option value="">
-                                Toutes les agences
-                            </option>
-
-                            @foreach($listeAgences as $item)
-
-                                <option
-                                    value="{{ $item->id }}"
-                                    {{ request('agence') == $item->id ? 'selected' : '' }}>
-
-                                    {{ $item->nom_agence }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    {{-- Filtre Ville --}}
-
-                    <div>
-
-                        <select
-                            name="ville"
-                            class="w-full border rounded-xl px-4 py-3">
-
-                            <option value="">
-                                Toutes les villes
-                            </option>
-
-                            @foreach($listeVilles as $ville)
-
-                                <option
-                                    value="{{ $ville }}"
-                                    {{ request('ville') == $ville ? 'selected' : '' }}>
-
-                                    {{ $ville }}
-
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-
-                    {{-- Tri --}}
-
-                    <div>
-
-                        <select
-                            name="tri"
-                            class="w-full border rounded-xl px-4 py-3">
-
-                            <option
-                                value="recent"
-                                {{ request('tri') == 'recent' ? 'selected' : '' }}>
-
-                                Plus récent
-
-                            </option>
-
-                            <option
-                                value="ancien"
-                                {{ request('tri') == 'ancien' ? 'selected' : '' }}>
-
-                                Plus ancien
-
-                            </option>
-
-                            <option
-                                value="nom_asc"
-                                {{ request('tri') == 'nom_asc' ? 'selected' : '' }}>
-
-                                Nom A → Z
-
-                            </option>
-
-                            <option
-                                value="nom_desc"
-                                {{ request('tri') == 'nom_desc' ? 'selected' : '' }}>
-
-                                Nom Z → A
-
-                            </option>
-
-                            <option
-                                value="ville"
-                                {{ request('tri') == 'ville' ? 'selected' : '' }}>
-
-                                Ville
-
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    {{-- Pagination --}}
-
-                    <div>
-
-                        <select
-                            name="par_page"
-                            class="w-full border rounded-xl px-4 py-3">
-
-                            <option
-                                value="10"
-                                {{ request('par_page', 10) == 10 ? 'selected' : '' }}>
-
-                                10
-
-                            </option>
-
-                            <option
-                                value="25"
-                                {{ request('par_page') == 25 ? 'selected' : '' }}>
-
-                                25
-
-                            </option>
-
-                            <option
-                                value="50"
-                                {{ request('par_page') == 50 ? 'selected' : '' }}>
-
-                                50
-
-                            </option>
-
-                            <option
-                                value="100"
-                                {{ request('par_page') == 100 ? 'selected' : '' }}>
-
-                                100
-
-                            </option>
-
-                        </select>
-
-                    </div>
+                    <input
+                        type="text"
+                        name="recherche"
+                        value="{{ request('recherche') }}"
+                        placeholder="Nom ou téléphone..."
+                        class="tk-input">
 
                 </div>
 
 
-                {{-- Informations et boutons --}}
+                {{-- Filtre Agence --}}
 
-                <div class="flex justify-between items-center mt-6">
+                <div>
 
-                    <div class="text-gray-600">
+                    <select
+                        name="agence"
+                        class="tk-input">
 
-                        Total :
+                        <option value="">
+                            Toutes les agences
+                        </option>
 
-                        <span class="font-bold text-orange-600">
-                            {{ $agences->total() }}
-                        </span>
+                        @foreach($listeAgences as $item)
 
-                        agence(s)
+                            <option
+                                value="{{ $item->id }}"
+                                {{ request('agence') == $item->id ? 'selected' : '' }}>
 
-                    </div>
+                                {{ $item->nom_agence }}
 
+                            </option>
 
-                    <div class="flex gap-3">
+                        @endforeach
 
-                        <a
-                            href="/admin/agences"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-3 rounded-xl">
-
-                            Réinitialiser
-
-                        </a>
-
-                        <button
-                            type="submit"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl">
-
-                            Filtrer
-
-                        </button>
-
-                    </div>
+                    </select>
 
                 </div>
 
-            </form>
 
-        </div>
+                {{-- Filtre Ville --}}
 
+                <div>
 
-        {{-- Tableau des agences --}}
+                    <select
+                        name="ville"
+                        class="tk-input">
 
-<div class="bg-white rounded-xl shadow overflow-hidden">
+                        <option value="">
+                            Toutes les villes
+                        </option>
 
-    <div class="overflow-x-auto">
+                        @foreach($listeVilles as $ville)
 
-        <table
-    class="w-full"
-    style="min-width:1350px; width:max-content;"
->
+                            <option
+                                value="{{ $ville }}"
+                                {{ request('ville') == $ville ? 'selected' : '' }}>
 
-            {{-- Largeur des colonnes --}}
+                                {{ $ville }}
 
-            <colgroup>
+                            </option>
 
-                <col style="width:220px;">
-                <col style="width:170px;">
-                <col style="width:220px;">
-                <col style="width:220px;">
-                <col style="width:120px;">
-                <col style="width:160px;">
-                <col style="width:150px;">
-                <col style="width:190px;">
+                        @endforeach
 
-            </colgroup>
+                    </select>
 
+                </div>
 
-            {{-- EN-TÊTE --}}
 
-            <thead class="bg-slate-100">
+                {{-- Tri --}}
 
-                <tr>
+                <div>
 
-                    <th class="p-4 text-left whitespace-nowrap">
-                        Agence
-                    </th>
+                    <select
+                        name="tri"
+                        class="tk-input">
 
-                    <th class="p-4 text-left whitespace-nowrap">
-                        Ville
-                    </th>
+                        <option
+                            value="recent"
+                            {{ request('tri') == 'recent' ? 'selected' : '' }}>
 
-                    <th class="p-4 text-left whitespace-nowrap">
-                        Adresse
-                    </th>
+                            Plus récent
 
-                    <th class="p-4 text-left whitespace-nowrap">
-                        Téléphone
-                    </th>
+                        </option>
 
-                    <th class="p-4 text-center whitespace-nowrap">
-                        Trajets
-                    </th>
+                        <option
+                            value="ancien"
+                            {{ request('tri') == 'ancien' ? 'selected' : '' }}>
 
-                    <th class="p-4 text-center whitespace-nowrap">
-                        Réservations
-                    </th>
+                            Plus ancien
 
-                    <th class="p-4 text-center whitespace-nowrap">
-                        CA
-                    </th>
+                        </option>
 
-                    <th class="p-4 text-center whitespace-nowrap">
-                        Actions
-                    </th>
+                        <option
+                            value="nom_asc"
+                            {{ request('tri') == 'nom_asc' ? 'selected' : '' }}>
 
-                </tr>
+                            Nom A → Z
 
-            </thead>
+                        </option>
 
+                        <option
+                            value="nom_desc"
+                            {{ request('tri') == 'nom_desc' ? 'selected' : '' }}>
 
-            {{-- CORPS DU TABLEAU --}}
+                            Nom Z → A
 
-            <tbody>
+                        </option>
 
-                @forelse($agences as $agence)
+                        <option
+                            value="ville"
+                            {{ request('tri') == 'ville' ? 'selected' : '' }}>
 
-                    <tr class="border-t hover:bg-orange-50 transition">
+                            Ville
 
+                        </option>
 
-                        {{-- AGENCE --}}
+                    </select>
 
-                        <td
-                          class="p-4 font-semibold"
-                          style="white-space:nowrap;"
-                         >
+                </div>
 
-                            {{ $agence->nom_agence }}
 
-                        </td>
+                {{-- Pagination --}}
 
+                <div>
 
-                        {{-- VILLE --}}
+                    <select
+                        name="par_page"
+                        class="tk-input">
 
-                        <td
-                          class="p-4"
-                          style="white-space:nowrap;"
-                       >
+                        <option
+                            value="10"
+                            {{ request('par_page', 10) == 10 ? 'selected' : '' }}>
+                            10
+                        </option>
 
-                            {{ $agence->ville }}
+                        <option
+                            value="25"
+                            {{ request('par_page') == 25 ? 'selected' : '' }}>
+                            25
+                        </option>
 
-                        </td>
+                        <option
+                            value="50"
+                            {{ request('par_page') == 50 ? 'selected' : '' }}>
+                            50
+                        </option>
 
+                        <option
+                            value="100"
+                            {{ request('par_page') == 100 ? 'selected' : '' }}>
+                            100
+                        </option>
 
-                        {{-- ADRESSE --}}
+                    </select>
 
-                        <td
-                          class="p-4"
-                          style="white-space:nowrap;"
-                          >
+                </div>
 
-                            @if($agence->adresse)
+            </div>
 
-                                <span class="font-medium text-slate-700 whitespace-nowrap">
 
-                                    📍 {{ $agence->adresse }}
+            {{-- Informations et boutons --}}
 
-                                </span>
+            <div
+                class="
+                    mt-6 flex flex-col gap-3
+                    sm:flex-row sm:items-center
+                    sm:justify-between
+                "
+            >
 
-                            @else
+                <div class="text-sm text-slate-500">
 
-                                <span
-    class="font-medium text-slate-700"
-    style="white-space:nowrap;"
->
+                    Total :
 
-                                    Non renseignée
+                    <span class="font-bold text-brand">
+                        {{ $agences->total() }}
+                    </span>
 
-                                </span>
+                    agence(s)
 
-                            @endif
+                </div>
 
-                        </td>
 
+                <div class="flex gap-3">
 
-                        {{-- TÉLÉPHONE --}}
+                    <a
+                        href="/admin/agences"
+                        class="tk-btn-ghost"
+                    >
+                        Réinitialiser
+                    </a>
 
-                        <td
-    class="p-4"
-    style="white-space:nowrap;"
->
+                    <button
+                        type="submit"
+                        class="tk-btn-accent"
+                    >
+                        Filtrer
+                    </button>
 
-                            {{ $agence->telephone }}
+                </div>
 
-                        </td>
+            </div>
 
+        </form>
 
-                        {{-- TRAJETS --}}
+    </div>
 
-                        <td class="p-4 text-center whitespace-nowrap">
 
-                            0
+    {{-- Tableau des agences --}}
 
-                        </td>
+    <div class="tk-card overflow-hidden">
 
+        <div class="overflow-x-auto">
 
-                        {{-- RÉSERVATIONS --}}
+            <table
+                class="tk-table"
+                style="min-width:1350px;"
+            >
 
-                        <td class="p-4 text-center whitespace-nowrap">
+                {{-- Largeur des colonnes --}}
 
-                            0
+                <colgroup>
 
-                        </td>
+                    <col style="width:220px;">
+                    <col style="width:170px;">
+                    <col style="width:220px;">
+                    <col style="width:220px;">
+                    <col style="width:120px;">
+                    <col style="width:160px;">
+                    <col style="width:150px;">
+                    <col style="width:190px;">
 
+                </colgroup>
 
-                        {{-- CHIFFRE D'AFFAIRES --}}
 
-                        <td class="p-4 text-center whitespace-nowrap">
+                {{-- EN-TÊTE --}}
 
-                            0 FCFA
-
-                        </td>
-
-
-                        {{-- ACTIONS --}}
-
-                        <td class="p-4 text-center whitespace-nowrap">
-
-                            <div class="flex justify-center items-center gap-2">
-
-                                {{-- VOIR --}}
-
-                                <a
-                                    href="/admin/agences/{{ $agence->id }}"
-                                    title="Voir"
-                                    class="w-10 h-10 flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white rounded-lg"
-                                >
-
-                                    👁️
-
-                                </a>
-
-
-                                {{-- MODIFIER --}}
-
-                                <a
-                                    href="/admin/agences/{{ $agence->id }}/edit"
-                                    title="Modifier"
-                                    class="w-10 h-10 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                                >
-
-                                    ✏️
-
-                                </a>
-
-
-                                {{-- SUPPRIMER --}}
-
-                                <form
-                                    action="/admin/agences/{{ $agence->id }}"
-                                    method="POST"
-                                    class="m-0"
-                                >
-
-                                    @csrf
-
-                                    @method('DELETE')
-
-                                    <button
-                                        type="submit"
-                                        title="Supprimer"
-                                        onclick="return confirm('Supprimer cette agence ?')"
-                                        class="w-10 h-10 flex items-center justify-center bg-red-600 hover:bg-red-700 text-white rounded-lg"
-                                    >
-
-                                        🗑️
-
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                @empty
+                <thead>
 
                     <tr>
 
-                        <td
-                            colspan="8"
-                            class="text-center py-10 text-gray-500"
-                        >
+                        <th class="text-left whitespace-nowrap">
+                            Agence
+                        </th>
 
-                            Aucune agence trouvée.
+                        <th class="text-left whitespace-nowrap">
+                            Ville
+                        </th>
 
-                        </td>
+                        <th class="text-left whitespace-nowrap">
+                            Adresse
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Téléphone
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Trajets
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Réservations
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            CA
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Actions
+                        </th>
 
                     </tr>
 
-                @endforelse
+                </thead>
 
-            </tbody>
 
-        </table>
+                {{-- CORPS DU TABLEAU --}}
+
+                <tbody>
+
+                    @forelse($agences as $agence)
+
+                        <tr>
+
+
+                            {{-- AGENCE --}}
+
+                            <td class="font-semibold whitespace-nowrap">
+
+                                {{ $agence->nom_agence }}
+
+                            </td>
+
+
+                            {{-- VILLE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $agence->ville }}
+
+                            </td>
+
+
+                            {{-- ADRESSE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                @if($agence->adresse)
+
+                                    <span class="font-medium text-slate-700 whitespace-nowrap">
+
+                                        <i class="fa-solid fa-location-dot text-slate-400"></i>
+
+                                        {{ $agence->adresse }}
+
+                                    </span>
+
+                                @else
+
+                                    <span class="font-medium text-slate-700 whitespace-nowrap">
+
+                                        Non renseignée
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- TÉLÉPHONE --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $agence->telephone }}
+
+                            </td>
+
+
+                            {{-- TRAJETS --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                0
+
+                            </td>
+
+
+                            {{-- RÉSERVATIONS --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                0
+
+                            </td>
+
+
+                            {{-- CHIFFRE D'AFFAIRES --}}
+
+                            <td class="text-center whitespace-nowrap font-semibold text-navy">
+
+                                0 FCFA
+
+                            </td>
+
+
+                            {{-- ACTIONS --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                <div class="flex justify-center items-center gap-2">
+
+                                    {{-- VOIR --}}
+
+                                    <a
+                                        href="/admin/agences/{{ $agence->id }}"
+                                        title="Voir"
+                                        class="tk-icon-btn tk-icon-btn-navy"
+                                    >
+
+                                        <i class="fa-solid fa-eye"></i>
+
+                                    </a>
+
+
+                                    {{-- MODIFIER --}}
+
+                                    <a
+                                        href="/admin/agences/{{ $agence->id }}/edit"
+                                        title="Modifier"
+                                        class="tk-icon-btn tk-icon-btn-brand"
+                                    >
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+
+                                    {{-- SUPPRIMER --}}
+
+                                    <form
+                                        action="/admin/agences/{{ $agence->id }}"
+                                        method="POST"
+                                        class="m-0"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            title="Supprimer"
+                                            onclick="event.preventDefault(); tkConfirm('Supprimer cette agence ?', () => this.form.submit())"
+                                            class="tk-icon-btn tk-icon-btn-red"
+                                        >
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="tk-empty"
+                            >
+
+                                Aucune agence trouvée.
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {{-- PAGINATION --}}
+
+        <div class="border-t border-slate-200 px-6 py-4">
+
+            {{ $agences->links() }}
+
+        </div>
 
     </div>
-
-
-    {{-- PAGINATION --}}
-
-    <div class="p-6 border-t">
-
-        {{ $agences->links() }}
-
-    </div>
-
-    {{-- PAGINATION --}}
-
-    <div class="p-6 border-t">
-
-        {{ $agences->links() }}
-
-    </div>
-
-</div>
-
-</div>
 
 </div>
 

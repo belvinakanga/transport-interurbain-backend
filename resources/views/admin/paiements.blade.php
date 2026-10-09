@@ -1,185 +1,288 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des paiements'">
 
-    <div class="py-12">
+<div class="tk-page">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-            <h1 class="text-3xl font-bold mb-6">
-                Gestion des paiements
-            </h1>
+    <div class="tk-page-head">
 
-            <!-- Barre de recherche et filtres -->
+        <h1 class="tk-page-title">
 
-<div class="bg-white rounded-xl shadow p-6 mb-6">
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-credit-card"></i>
+            </span>
 
-<form action="/admin/paiements" method="GET">
+            Gestion des paiements
 
-    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-
-        <!-- Recherche -->
-
-        <input
-            type="text"
-            name="recherche"
-            value="{{ request('recherche') }}"
-            placeholder="🔍 Rechercher un voyageur..."
-            class="border rounded-xl px-4 py-3">
-
-        <!-- Statut -->
-
-        <select
-            name="statut"
-            class="border rounded-xl px-4 py-3">
-
-            <option value="">Tous les statuts</option>
-
-            <option value="Payé"
-                {{ request('statut') == 'Payé' ? 'selected' : '' }}>
-                Payé
-            </option>
-
-            <option value="En attente"
-                {{ request('statut') == 'En attente' ? 'selected' : '' }}>
-                En attente
-            </option>
-
-            <option value="Échoué"
-                {{ request('statut') == 'Échoué' ? 'selected' : '' }}>
-                Échoué
-            </option>
-
-        </select>
-
-        <!-- Date -->
-
-        <input
-            type="date"
-            name="date"
-            value="{{ request('date') }}"
-            class="border rounded-xl px-4 py-3">
-
-        <!-- Nombre de lignes -->
-
-        <select
-            name="par_page"
-            class="border rounded-xl px-4 py-3">
-
-            @foreach([10,25,50,100] as $nb)
-
-                <option
-                    value="{{ $nb }}"
-                    {{ request('par_page',10) == $nb ? 'selected' : '' }}>
-
-                    {{ $nb }} lignes
-
-                </option>
-
-            @endforeach
-
-        </select>
-
-        <!-- Boutons -->
-
-        <div class="md:col-span-2 flex gap-2">
-
-            <button
-                type="submit"
-                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl">
-
-                Filtrer
-
-            </button>
-
-            <a
-                href="/admin/paiements"
-                class="flex-1 bg-gray-600 hover:bg-gray-700 text-white rounded-xl flex items-center justify-center">
-
-                Réinitialiser
-
-            </a>
-
-        </div>
+        </h1>
 
     </div>
 
-</form>
 
-</div>
+    {{-- Barre de recherche et filtres --}}
+
+    <div class="tk-card p-6">
+
+        <form action="/admin/paiements" method="GET">
+
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+
+                {{-- Recherche --}}
+
+                <input
+                    type="text"
+                    name="recherche"
+                    value="{{ request('recherche') }}"
+                    placeholder="Rechercher un voyageur..."
+                    class="tk-input">
 
 
-            <div class="bg-white p-6 rounded shadow">
+                {{-- Statut --}}
 
-                <table class="table-auto w-full border">
+                <select
+                    name="statut"
+                    class="tk-input">
 
-                    <thead>
+                    <option value="">Tous les statuts</option>
 
-                        <tr>
+                    <option value="Payé"
+                        {{ request('statut') == 'Payé' ? 'selected' : '' }}>
+                        Payé
+                    </option>
 
-                            
-                            <th class="border p-2">Voyageur</th>
-                            <th class="border p-2">Trajet</th>
-                            <th class="border p-2">Montant</th>
-                            <th class="border p-2">Statut</th>
-                            <th class="border p-2">Date</th>
+                    <option value="En attente"
+                        {{ request('statut') == 'En attente' ? 'selected' : '' }}>
+                        En attente
+                    </option>
 
-                        </tr>
+                    <option value="Échoué"
+                        {{ request('statut') == 'Échoué' ? 'selected' : '' }}>
+                        Échoué
+                    </option>
 
-                    </thead>
+                </select>
 
-                    <tbody>
 
-                        @forelse($paiements as $paiement)
+                {{-- Date --}}
 
-                            <tr>
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ request('date') }}"
+                    class="tk-input">
 
-                    
 
-                                <td class="border p-2">
-                                    {{ $paiement->reservation->user->name ?? '---' }}
-                                </td>
+                {{-- Nombre de lignes --}}
 
-                                <td class="border p-2">
-                                    {{ $paiement->reservation->trajet->depart ?? '' }}
-                                    →
-                                    {{ $paiement->reservation->trajet->arrivee ?? '' }}
-                                </td>
+                <select
+                    name="par_page"
+                    class="tk-input">
 
-                                <td class="border p-2">
-                                    {{ $paiement->montant }} FCFA
-                                </td>
+                    @foreach([10,25,50,100] as $nb)
 
-                                <td class="border p-2">
-                                    {{ $paiement->statut }}
-                                </td>
+                        <option
+                            value="{{ $nb }}"
+                            {{ request('par_page',10) == $nb ? 'selected' : '' }}>
 
-                                <td class="border p-2">
-                                    {{ $paiement->created_at }}
-                                </td>
+                            {{ $nb }} lignes
 
-                            </tr>
+                        </option>
 
-                        @empty
+                    @endforeach
 
-                            <tr>
+                </select>
 
-                                <td colspan="6" class="border p-4 text-center">
 
-                                    Aucun paiement enregistré
+                {{-- Boutons --}}
 
-                                </td>
+                <div class="md:col-span-2 flex gap-2">
 
-                            </tr>
+                    <button
+                        type="submit"
+                        class="tk-btn-accent flex-1">
 
-                        @endforelse
+                        Filtrer
 
-                    </tbody>
+                    </button>
 
-                </table>
+                    <a
+                        href="/admin/paiements"
+                        class="tk-btn-ghost flex-1">
+
+                        Réinitialiser
+
+                    </a>
+
+                </div>
 
             </div>
 
+        </form>
+
+    </div>
+
+
+    {{-- Tableau --}}
+
+    <div class="tk-card overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="tk-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th class="text-left whitespace-nowrap">
+                            Voyageur
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Trajet
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Montant
+                        </th>
+
+                        <th class="text-center whitespace-nowrap">
+                            Statut
+                        </th>
+
+                        <th class="text-left whitespace-nowrap">
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @forelse($paiements as $paiement)
+
+                        <tr>
+
+                            {{-- VOYAGEUR --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $paiement->reservation->user->name ?? '---' }}
+
+                            </td>
+
+
+                            {{-- TRAJET --}}
+
+                            <td class="whitespace-nowrap">
+
+                                {{ $paiement->reservation->trajet->depart ?? '' }}
+                                →
+                                {{ $paiement->reservation->trajet->arrivee ?? '' }}
+
+                            </td>
+
+
+                            {{-- MONTANT --}}
+
+                            <td class="whitespace-nowrap font-semibold text-navy">
+
+                                {{ $paiement->montant }} FCFA
+
+                            </td>
+
+
+                            {{-- STATUT --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                @if($paiement->statut === 'Payé')
+
+                                    <span class="tk-badge tk-badge-green">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        {{ $paiement->statut }}
+
+                                    </span>
+
+                                @elseif($paiement->statut === 'En attente')
+
+                                    <span class="tk-badge tk-badge-orange">
+
+                                        <i class="fa-solid fa-hourglass-half"></i>
+
+                                        {{ $paiement->statut }}
+
+                                    </span>
+
+                                @elseif($paiement->statut === 'Échoué')
+
+                                    <span class="tk-badge tk-badge-red">
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                        {{ $paiement->statut }}
+
+                                    </span>
+
+                                @else
+
+                                    <span class="tk-badge tk-badge-slate">
+
+                                        {{ $paiement->statut }}
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- DATE --}}
+
+                            <td class="whitespace-nowrap tabular-nums text-slate-500">
+
+                                {{ $paiement->created_at }}
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="tk-empty"
+                            >
+
+                                Aucun paiement enregistré
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
         </div>
 
     </div>
+
+</div>
 
 </x-layouts.admin>

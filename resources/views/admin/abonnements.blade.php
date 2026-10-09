@@ -1,80 +1,81 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Gestion des abonnements'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <!-- Titre -->
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-        <div class="flex justify-between items-center mb-6">
+        <h1 class="tk-page-title">
 
-            <h1 class="text-3xl font-bold text-slate-800">
-                💼 Gestion des abonnements
-            </h1>
-
-            <a
-                href="{{ route('admin.abonnements.create') }}"
-                class="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-white font-bold shadow-md transition hover:opacity-90"
-                style="background:#FF6B00;"
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
             >
-                ➕
-                Créer un abonnement
-            </a>
+                <i class="fa-solid fa-clipboard-list"></i>
+            </span>
 
-        </div>
+            Gestion des abonnements
 
+        </h1>
 
-        <!-- Message succès -->
+        <a
+            href="{{ route('admin.abonnements.create') }}"
+            class="tk-btn-accent shrink-0"
+        >
 
-        @if(session('success'))
+            <i class="fa-solid fa-plus"></i>
 
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-6">
+            <span>Créer un abonnement</span>
 
-                {{ session('success') }}
+        </a>
 
-            </div>
-
-        @endif
-
-
-        <!-- Message erreur -->
-
-        @if(session('error'))
-
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6">
-
-                {{ session('error') }}
-
-            </div>
-
-        @endif
+    </div>
 
 
-        <!-- Recherche -->
+    {{-- Message erreur --}}
 
-        <div class="bg-white rounded-xl shadow p-6 mb-6">
 
-            <form action="/admin/abonnements" method="GET">
+    {{-- Recherche et filtres --}}
 
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="tk-card p-6">
 
-                    <!-- Recherche -->
+        <form action="/admin/abonnements" method="GET">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {{-- Recherche --}}
+
+                <div>
 
                     <input
                         type="text"
                         name="recherche"
                         value="{{ request('recherche') }}"
-                        placeholder="🔍 Rechercher une agence..."
-                        class="border rounded-xl px-4 py-3"
-                    >
+                        placeholder="Rechercher une agence..."
+                        class="tk-input">
+
+                </div>
 
 
-                    <!-- Statut -->
+                {{-- Statut --}}
+
+                <div>
 
                     <select
                         name="statut"
-                        class="border rounded-xl px-4 py-3"
-                    >
+                        class="tk-input">
 
                         <option value="">
                             Tous les statuts
@@ -103,13 +104,16 @@
 
                     </select>
 
+                </div>
 
-                    <!-- Nombre de lignes -->
+
+                {{-- Nombre de lignes --}}
+
+                <div>
 
                     <select
                         name="par_page"
-                        class="border rounded-xl px-4 py-3"
-                    >
+                        class="tk-input">
 
                         @foreach([10,25,50,100] as $nb)
 
@@ -124,36 +128,26 @@
 
                     </select>
 
-
-                    <!-- Filtrer -->
-
-                    <button
-                        type="submit"
-                        class="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold"
-                    >
-                        Filtrer
-                    </button>
-
-
-                    <!-- Réinitialiser -->
-
-                    <a
-                        href="/admin/abonnements"
-                        class="bg-slate-600 hover:bg-slate-700 text-white rounded-xl flex items-center justify-center font-semibold"
-                    >
-                        Réinitialiser
-                    </a>
-
                 </div>
 
+            </div>
 
-                <!-- Total -->
 
-                <div class="mt-5 text-gray-600">
+            {{-- Informations et boutons --}}
+
+            <div
+                class="
+                    mt-6 flex flex-col gap-3
+                    sm:flex-row sm:items-center
+                    sm:justify-between
+                "
+            >
+
+                <div class="text-sm text-slate-500">
 
                     Total :
 
-                    <span class="font-bold text-orange-600">
+                    <span class="font-bold text-brand">
                         {{ $abonnements->total() }}
                     </span>
 
@@ -161,46 +155,74 @@
 
                 </div>
 
-            </form>
 
-        </div>
+                <div class="flex gap-3">
+
+                    <a
+                        href="/admin/abonnements"
+                        class="tk-btn-ghost"
+                    >
+                        Réinitialiser
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="tk-btn-accent"
+                    >
+                        Filtrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
 
 
-        <!-- Tableau -->
+    {{-- Tableau des abonnements --}}
 
-        <div class="bg-white rounded-xl shadow overflow-x-auto">
+    <div class="tk-card overflow-hidden">
 
-            <table class="w-full min-w-[1100px]">
+        <div class="overflow-x-auto">
 
-                <thead class="bg-slate-100">
+            <table
+                class="tk-table"
+                style="min-width:1100px;"
+            >
+
+                {{-- EN-TÊTE --}}
+
+                <thead>
 
                     <tr>
 
-                        <th class="p-4 text-left whitespace-nowrap">
+                        <th class="text-left whitespace-nowrap">
                             Agence
                         </th>
 
-                        <th class="p-4 text-left whitespace-nowrap">
+                        <th class="text-left whitespace-nowrap">
                             Type
                         </th>
 
-                        <th class="p-4 text-left whitespace-nowrap">
+                        <th class="text-left whitespace-nowrap">
                             Montant
                         </th>
 
-                        <th class="p-4 text-center whitespace-nowrap">
+                        <th class="text-center whitespace-nowrap">
                             Début
                         </th>
 
-                        <th class="p-4 text-center whitespace-nowrap">
+                        <th class="text-center whitespace-nowrap">
                             Fin
                         </th>
 
-                        <th class="p-4 text-center whitespace-nowrap">
+                        <th class="text-center whitespace-nowrap">
                             Statut
                         </th>
 
-                        <th class="p-4 text-center whitespace-nowrap">
+                        <th class="text-center whitespace-nowrap">
                             Actions
                         </th>
 
@@ -209,15 +231,17 @@
                 </thead>
 
 
+                {{-- CORPS DU TABLEAU --}}
+
                 <tbody>
 
                     @forelse($abonnements as $abonnement)
 
-                        <tr class="border-t hover:bg-orange-50 transition duration-200">
+                        <tr>
 
                             {{-- AGENCE --}}
 
-                            <td class="p-4 font-semibold text-slate-800 whitespace-nowrap">
+                            <td class="font-semibold whitespace-nowrap">
 
                                 {{ $abonnement->agence->nom_agence ?? 'Agence inconnue' }}
 
@@ -226,9 +250,9 @@
 
                             {{-- TYPE --}}
 
-                            <td class="p-4 whitespace-nowrap">
+                            <td class="whitespace-nowrap">
 
-                                <span class="inline-flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap">
+                                <span class="tk-badge tk-badge-navy">
 
                                     {{ $abonnement->type }}
 
@@ -239,7 +263,7 @@
 
                             {{-- MONTANT --}}
 
-                            <td class="p-4 font-semibold text-green-600 whitespace-nowrap">
+                            <td class="font-semibold text-emerald-600 whitespace-nowrap">
 
                                 @if($abonnement->montant !== null)
 
@@ -256,7 +280,7 @@
 
                             {{-- DÉBUT --}}
 
-                            <td class="p-4 text-center whitespace-nowrap">
+                            <td class="text-center whitespace-nowrap">
 
                                 @if($abonnement->date_debut)
 
@@ -273,7 +297,7 @@
 
                             {{-- FIN --}}
 
-                            <td class="p-4 text-center whitespace-nowrap">
+                            <td class="text-center whitespace-nowrap">
 
                                 @if($abonnement->date_fin)
 
@@ -290,29 +314,35 @@
 
                             {{-- STATUT --}}
 
-                            <td class="p-4 text-center whitespace-nowrap">
+                            <td class="text-center whitespace-nowrap">
 
                                 @if($abonnement->statut == 'Actif')
 
-                                    <span class="inline-flex items-center whitespace-nowrap bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
+                                    <span class="tk-badge tk-badge-green">
 
-                                        ✅ Actif
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Actif
 
                                     </span>
 
                                 @elseif($abonnement->statut == 'En attente')
 
-                                    <span class="inline-flex items-center whitespace-nowrap bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-semibold">
+                                    <span class="tk-badge tk-badge-orange">
 
-                                        ⏳ En attente
+                                        <i class="fa-solid fa-hourglass-half"></i>
+
+                                        En attente
 
                                     </span>
 
                                 @else
 
-                                    <span class="inline-flex items-center whitespace-nowrap bg-red-100 text-red-700 px-3 py-1 rounded-full font-semibold">
+                                    <span class="tk-badge tk-badge-red">
 
-                                        ❌ Expiré
+                                        <i class="fa-solid fa-xmark"></i>
+
+                                        Expiré
 
                                     </span>
 
@@ -323,7 +353,7 @@
 
                             {{-- ACTIONS --}}
 
-                            <td class="p-4 text-center whitespace-nowrap">
+                            <td class="text-center whitespace-nowrap">
 
                                 @if($abonnement->id)
 
@@ -334,9 +364,11 @@
                                         <a
                                             href="{{ route('admin.abonnements.show', $abonnement->id) }}"
                                             title="Voir"
-                                            class="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-600 hover:bg-slate-700 text-white"
+                                            class="tk-icon-btn tk-icon-btn-navy"
                                         >
-                                            👁️
+
+                                            <i class="fa-solid fa-eye"></i>
+
                                         </a>
 
 
@@ -345,9 +377,11 @@
                                         <a
                                             href="{{ route('admin.abonnements.edit', $abonnement->id) }}"
                                             title="Modifier"
-                                            class="w-10 h-10 flex items-center justify-center rounded-lg bg-orange-500 hover:bg-orange-600 text-white"
+                                            class="tk-icon-btn tk-icon-btn-brand"
                                         >
-                                            ✏️
+
+                                            <i class="fa-solid fa-pen"></i>
+
                                         </a>
 
 
@@ -366,10 +400,12 @@
                                             <button
                                                 type="submit"
                                                 title="Supprimer"
-                                                onclick="return confirm('Supprimer cet abonnement ?')"
-                                                class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                                                onclick="event.preventDefault(); tkConfirm('Supprimer cet abonnement ?', () => this.form.submit())"
+                                                class="tk-icon-btn tk-icon-btn-red"
                                             >
-                                                🗑️
+
+                                                <i class="fa-solid fa-trash"></i>
+
                                             </button>
 
                                         </form>
@@ -378,7 +414,7 @@
 
                                 @else
 
-                                    <span class="text-gray-400 text-sm whitespace-nowrap">
+                                    <span class="text-slate-400 text-sm whitespace-nowrap">
 
                                         Aucun abonnement créé
 
@@ -390,24 +426,23 @@
 
                         </tr>
 
+
                     @empty
 
                         <tr>
 
                             <td
                                 colspan="7"
-                                class="text-center py-12 text-gray-500"
+                                class="tk-empty"
                             >
 
-                                <div class="text-5xl mb-3">
-                                    💼
-                                </div>
+                                <i class="fa-solid fa-clipboard-list mb-3 block text-4xl mx-auto"></i>
 
-                                <p class="text-lg font-semibold">
+                                <p class="text-lg font-semibold text-slate-500">
                                     Aucun abonnement trouvé.
                                 </p>
 
-                                <p class="text-sm text-gray-400 mt-2">
+                                <p class="mt-2 text-sm text-slate-400">
                                     Essayez de modifier les filtres de recherche.
                                 </p>
 
@@ -424,11 +459,17 @@
         </div>
 
 
-        <!-- Pagination -->
+        {{-- PAGINATION --}}
 
-        <div class="bg-white rounded-xl shadow mt-4 p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div
+            class="
+                border-t border-slate-200 px-6 py-4
+                flex flex-col md:flex-row
+                justify-between items-center gap-4
+            "
+        >
 
-            <div class="text-gray-600">
+            <div class="text-sm text-slate-500">
 
                 Affichage de
 
@@ -444,7 +485,7 @@
 
                 sur
 
-                <span class="font-bold text-orange-600">
+                <span class="font-bold text-brand">
                     {{ $abonnements->total() }}
                 </span>
 

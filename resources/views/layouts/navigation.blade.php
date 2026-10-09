@@ -25,6 +25,16 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
 
+                <!-- Theme clair / sombre -->
+                <button type="button"
+                        data-theme-toggle
+                        onclick="tkToggleTheme()"
+                        aria-label="Passer en mode sombre"
+                        title="Mode sombre"
+                        class="inline-flex items-center justify-center p-2 me-1 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none transition">
+                    <i data-theme-icon class="fa-solid fa-moon"></i>
+                </button>
+
                 <x-dropdown align="right" width="48">
 
                     <x-slot name="trigger">
@@ -67,6 +77,17 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
+
+                <!-- Theme clair / sombre -->
+                <button type="button"
+                        data-theme-toggle
+                        onclick="tkToggleTheme()"
+                        aria-label="Passer en mode sombre"
+                        title="Mode sombre"
+                        class="inline-flex items-center justify-center p-2 me-1 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none transition">
+                    <i data-theme-icon class="fa-solid fa-moon"></i>
+                </button>
+
                 <button @click="open = ! open"
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:bg-gray-100">
 

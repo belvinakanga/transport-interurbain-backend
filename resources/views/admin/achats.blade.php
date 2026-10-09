@@ -13,569 +13,570 @@
     :header="$pageTitle"
 >
 
-    <div class="py-10">
+<div class="tk-page">
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- =========================================================
+         TITRE
+    ========================================================== --}}
 
-            {{-- =========================================================
-                 TITRE
-            ========================================================== --}}
+    <div class="tk-page-head">
 
-            <div class="mb-6">
+        <h1 class="tk-page-title">
 
-                <h1 class="text-3xl font-bold text-[#0A2A66]">
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-credit-card"></i>
+            </span>
 
-                    @if(auth()->user()->role === 'agent')
-                        💳 Achats de mon agence
-                    @else
-                        💳 Gestion des achats
-                    @endif
-
-                </h1>
-
-
-                @if(auth()->user()->role === 'agent')
-
-                    <p class="mt-2 text-gray-500">
-
-                        Agence :
-
-                        <strong class="text-[#0A2A66]">
-                            {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
-                        </strong>
-
-                    </p>
-
-                @else
-
-                    <p class="mt-2 text-gray-500">
-                        Consultez l'ensemble des achats effectués sur la plateforme.
-                    </p>
-
-                @endif
-
-            </div>
-
-
-            {{-- =========================================================
-                 MESSAGE
-            ========================================================== --}}
-
-            @if(session('success'))
-
-                <div class="mb-6 bg-green-100 border border-green-200 text-green-700 px-5 py-4 rounded-xl">
-
-                    {{ session('success') }}
-
-                </div>
-
+            @if(auth()->user()->role === 'agent')
+                Achats de mon agence
+            @else
+                Gestion des achats
             @endif
 
-
-            {{-- =========================================================
-                 TABLEAU
-            ========================================================== --}}
-
-            <div class="bg-white rounded-2xl shadow overflow-hidden">
-
-                <div class="overflow-x-auto">
-
-                    <table
-    class="w-max min-w-full"
-    style="table-layout: auto; width: max-content; min-width: 100%; white-space: nowrap; word-break: normal; overflow-wrap: normal;"
->
-
-                        <thead class="bg-[#F8F9FB] border-b">
-
-                            <tr>
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Voyageur
-                                </th>
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Agence
-                                </th>
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Trajet
-                                </th>
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Date
-                                </th>
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Siège
-                                </th>
-
-                                <th class="p-4 text-right whitespace-nowrap min-w-[150px]">
-    Montant payé
-</th>
-
-<th class="p-4 text-right whitespace-nowrap min-w-[140px]">
-    Part agence
-</th>
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Référence billet
-                                </th>
-
-                                <th class="p-4 text-left whitespace-nowrap">
-                                    Référence achat
-                                </th>
-
-                                <th class="p-4 text-center whitespace-nowrap">
-                                    Statut
-                                </th>
-
-                            </tr>
-
-                        </thead>
+        </h1>
 
 
-                        <tbody>
+        @if(auth()->user()->role === 'agent')
 
-                            @forelse($achats as $achat)
+            <p class="mt-2 text-sm text-slate-500">
 
-                                @php
+                Agence :
 
-                                    /*
-                                    |--------------------------------------------------------------------------
-                                    | TRAJET
-                                    |--------------------------------------------------------------------------
-                                    */
+                <strong class="text-navy">
+                    {{ auth()->user()->agence->nom_agence ?? 'Aucune agence' }}
+                </strong>
 
-                                    $trajet =
-                                        $achat->trajet
-                                        ?? $achat->reservation?->trajet;
+            </p>
 
+        @else
 
-                                    /*
-                                    |--------------------------------------------------------------------------
-                                    | AGENCE
-                                    |--------------------------------------------------------------------------
-                                    */
+            <p class="mt-2 text-sm text-slate-500">
+                Consultez l'ensemble des achats effectués sur la plateforme.
+            </p>
 
-                                    $agence =
-                                        $trajet?->agence;
+        @endif
+
+    </div>
 
 
-                                    /*
-                                    |--------------------------------------------------------------------------
-                                    | BILLETS
-                                    |--------------------------------------------------------------------------
-                                    */
+    {{-- =========================================================
+         TABLEAU
+    ========================================================== --}}
 
-                                    $billets =
-                                        $achat->reservation?->billets
-                                        ?? collect();
+    <div class="tk-card overflow-hidden">
 
+        <div class="overflow-x-auto">
 
-                                    /*
-                                    |--------------------------------------------------------------------------
-                                    | SIÈGES
-                                    |--------------------------------------------------------------------------
-                                    */
+            <table
+                class="tk-table"
+                style="table-layout: auto; width: max-content; min-width: 100%; white-space: nowrap; word-break: normal; overflow-wrap: normal;"
+            >
 
-                                    $sieges =
-                                        $achat->reservation?->sieges
-                                        ?? collect();
+                <thead>
 
-                                @endphp
+                    <tr>
 
+                        <th class="text-left whitespace-nowrap">
+                            Voyageur
+                        </th>
 
-                                <tr class="border-b hover:bg-[#FFF8F3] transition">
+                        <th class="text-left whitespace-nowrap">
+                            Agence
+                        </th>
 
+                        <th class="text-left whitespace-nowrap">
+                            Trajet
+                        </th>
 
-                                    {{-- =================================================
-                                         VOYAGEUR
-                                    ================================================== --}}
+                        <th class="text-center whitespace-nowrap">
+                            Date
+                        </th>
 
-                                    <td class="p-4 whitespace-nowrap min-w-max break-normal">
+                        <th class="text-center whitespace-nowrap">
+                            Siège
+                        </th>
 
-                                        @if($billets->isNotEmpty())
+                        <th class="text-right whitespace-nowrap min-w-[150px]">
+                            Montant payé
+                        </th>
 
-                                            @foreach($billets as $billet)
+                        <th class="text-right whitespace-nowrap min-w-[140px]">
+                            Part agence
+                        </th>
 
-                                                @php
+                        <th class="text-left whitespace-nowrap">
+                            Référence billet
+                        </th>
 
-                                                    $voyageur =
-                                                        $billet->voyageur;
+                        <th class="text-left whitespace-nowrap">
+                            Référence achat
+                        </th>
 
-                                                @endphp
+                        <th class="text-center whitespace-nowrap">
+                            Statut
+                        </th>
 
+                    </tr>
 
-                                                <div class="mb-4 last:mb-0">
-
-                                                    @if($voyageur)
-
-                                                        <div class="font-semibold text-[#0A2A66] whitespace-nowrap">
-                                                         {{ $voyageur->prenom }} {{ $voyageur->nom }}
-                                                        </div>
-
-                                                        @if(!empty($voyageur->email))
-
-                                                            <div class="text-sm text-gray-500 mt-1">
-
-                                                                {{ $voyageur->email }}
-
-                                                            </div>
-
-                                                        @endif
+                </thead>
 
 
-                                                        @if(!empty($voyageur->telephone))
+                <tbody>
 
-                                                            <div class="text-sm text-gray-600 mt-1 whitespace-nowrap">
-                                                             📞 {{ $voyageur->telephone }}
-                                                           </div>
+                    @forelse($achats as $achat)
 
-                                                        @endif
+                        @php
 
-                                                    @else
+                            /*
+                            |--------------------------------------------------------------------------
+                            | TRAJET
+                            |--------------------------------------------------------------------------
+                            */
 
-                                                        <div class="font-semibold text-gray-500">
+                            $trajet =
+                                $achat->trajet
+                                ?? $achat->reservation?->trajet;
 
-                                                            Voyageur introuvable
 
-                                                        </div>
+                            /*
+                            |--------------------------------------------------------------------------
+                            | AGENCE
+                            |--------------------------------------------------------------------------
+                            */
 
-                                                    @endif
+                            $agence =
+                                $trajet?->agence;
 
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | BILLETS
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $billets =
+                                $achat->reservation?->billets
+                                ?? collect();
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | SIÈGES
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $sieges =
+                                $achat->reservation?->sieges
+                                ?? collect();
+
+                        @endphp
+
+
+                        <tr>
+
+
+                            {{-- =================================================
+                                 VOYAGEUR
+                            ================================================== --}}
+
+                            <td class="whitespace-nowrap min-w-max break-normal">
+
+                                @if($billets->isNotEmpty())
+
+                                    @foreach($billets as $billet)
+
+                                        @php
+
+                                            $voyageur =
+                                                $billet->voyageur;
+
+                                        @endphp
+
+
+                                        <div class="mb-4 last:mb-0">
+
+                                            @if($voyageur)
+
+                                                <div class="font-semibold text-navy whitespace-nowrap">
+                                                    {{ $voyageur->prenom }} {{ $voyageur->nom }}
                                                 </div>
 
-                                            @endforeach
+                                                @if(!empty($voyageur->email))
 
-                                        @else
+                                                    <div class="text-sm text-slate-500 mt-1">
 
-                                            {{-- Compatibilité avec les anciens achats --}}
+                                                        {{ $voyageur->email }}
 
-                                            <div class="font-semibold text-[#0A2A66]">
+                                                    </div>
 
-                                                {{ $achat->user->name ?? 'Utilisateur supprimé' }}
-
-                                            </div>
+                                                @endif
 
 
-                                            @if($achat->user)
+                                                @if(!empty($voyageur->telephone))
 
-                                                <div class="text-sm text-gray-500 mt-1">
+                                                    <div class="text-sm text-slate-600 mt-1 whitespace-nowrap">
 
-                                                    {{ $achat->user->email }}
+                                                        <i class="fa-solid fa-phone text-slate-400"></i>
+
+                                                        {{ $voyageur->telephone }}
+
+                                                    </div>
+
+                                                @endif
+
+                                            @else
+
+                                                <div class="font-semibold text-slate-500">
+
+                                                    Voyageur introuvable
 
                                                 </div>
 
                                             @endif
 
-                                        @endif
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         AGENCE
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap min-w-max break-normal">
-
-                                        <span class="font-medium whitespace-nowrap">
-                                         {{ $agence->nom_agence ?? '-' }}
-                                        </span>
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         TRAJET
-                                    ================================================== --}}
-
-                                    <td class="p-4 font-medium whitespace-nowrap min-w-max break-normal">
-
-    @if($trajet)
-
-        <span class="whitespace-nowrap">
-            {{ $trajet->depart }} → {{ $trajet->arrivee }}
-        </span>
-
-    @else
-
-        -
-
-    @endif
-
-</td>
-
-
-                                    {{-- =================================================
-                                         DATE
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        {{ optional($achat->created_at)->format('d/m/Y') }}
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         SIÈGE
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        @if($billets->isNotEmpty())
-
-                                            @foreach($billets as $billet)
-
-                                                @php
-
-                                                    $voyageur =
-                                                        $billet->voyageur;
-
-                                                    $siege =
-                                                        $voyageur
-                                                            ? $sieges->firstWhere(
-                                                                'voyageur_id',
-                                                                $voyageur->id
-                                                            )
-                                                            : null;
-
-                                                @endphp
-
-
-                                                <div class="mb-4 last:mb-0">
-
-                                                    @if($siege)
-
-                                                        <span class="font-semibold">
-
-                                                            {{ $siege->numero_siege }}
-
-                                                        </span>
-
-                                                    @else
-
-                                                        <span class="text-gray-400">
-
-                                                            —
-
-                                                        </span>
-
-                                                    @endif
-
-                                                </div>
-
-                                            @endforeach
-
-                                        @elseif($sieges->isNotEmpty())
-
-                                            {{ $sieges->pluck('numero_siege')->implode(', ') }}
-
-                                        @else
-
-                                            -
-
-                                        @endif
-
-                                    </td>
- {{-- =================================================
-     MONTANT PAYÉ
-================================================== --}}
-
-<td class="p-4 text-right whitespace-nowrap min-w-max break-normal">
-
-    <span class="font-bold text-[#FF6B00]">
-        {{ number_format(
-            $achat->montant,
-            0,
-            ',',
-            ' '
-        ) }}
-        FCFA
-    </span>
-
-</td>
-
-
-{{-- =================================================
-     PART AGENCE
-================================================== --}}
-
-<td class="p-4 text-right whitespace-nowrap min-w-max break-normal">
-
-    <span class="font-bold text-green-600">
-        {{ number_format(
-            ($achat->montant_base ?? 0) + ($achat->part_agence ?? 0),
-            0,
-            ',',
-            ' '
-        ) }}
-        FCFA
-    </span>
-
-</td>
-
-
-                                    {{-- =================================================
-                                         RÉFÉRENCE BILLET
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap min-w-max">
-
-                                        @if($billets->isNotEmpty())
-
-                                            @foreach($billets as $billet)
-
-                                                <div class="mb-4 last:mb-0">
-
-                                                    <span class="font-mono font-bold text-blue-700 whitespace-nowrap">
-                                                    {{ $billet->numero_billet }}
-                                                   </span>
-
-                                                </div>
-
-                                            @endforeach
-
-                                        @else
-
-                                            <span class="text-gray-400">
-                                                —
-                                            </span>
-
-                                        @endif
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         RÉFÉRENCE ACHAT
-                                    ================================================== --}}
-
-                                    <td class="p-4 whitespace-nowrap min-w-max">
-
-                                        <span class="font-mono text-sm text-gray-600 whitespace-nowrap">
-                                         {{ $achat->reference ?? '-' }}
-                                        </span>
-
-                                    </td>
-
-
-                                    {{-- =================================================
-                                         STATUT
-                                    ================================================== --}}
-
-                                    <td class="p-4 text-center whitespace-nowrap">
-
-                                        @if(
-                                            strtolower((string) $achat->statut)
-                                            === 'payé'
-                                        )
-
-                                            <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700">
-
-                                                ✓ Payé
-
-                                            </span>
-
-                                        @elseif(
-                                            strtolower((string) $achat->statut)
-                                            === 'en attente'
-                                        )
-
-                                            <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-700">
-
-                                                En attente
-
-                                            </span>
-
-                                        @elseif(
-                                            strtolower((string) $achat->statut)
-                                            === 'annulé'
-                                            ||
-                                            strtolower((string) $achat->statut)
-                                            === 'annulée'
-                                        )
-
-                                            <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold bg-red-100 text-red-700">
-
-                                                Annulé
-
-                                            </span>
-
-                                        @else
-
-                                            <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-700">
-
-                                                {{ ucfirst($achat->statut ?? '-') }}
-
-                                            </span>
-
-                                        @endif
-
-                                    </td>
-
-                                </tr>
-
-
-                            @empty
-
-                                <tr>
-
-                                    <td
-                                        colspan="10"
-                                        class="py-12 text-center text-gray-500"
-                                    >
-
-                                        <div class="text-4xl mb-3">
-                                            💳
                                         </div>
 
-                                        <p class="font-semibold text-lg">
-                                            Aucun achat trouvé
-                                        </p>
+                                    @endforeach
 
-                                        @if(auth()->user()->role === 'agent')
+                                @else
 
-                                            <p class="mt-2 text-sm">
+                                    {{-- Compatibilité avec les anciens achats --}}
 
-                                                Aucun achat n'a encore été effectué
-                                                sur les trajets de votre agence.
+                                    <div class="font-semibold text-navy">
 
-                                            </p>
+                                        {{ $achat->user->name ?? 'Utilisateur supprimé' }}
 
-                                        @endif
-
-                                    </td>
-
-                                </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                                    </div>
 
 
-                {{-- =========================================================
-                     PAGINATION
-                ========================================================== --}}
+                                    @if($achat->user)
 
-                @if(method_exists($achats, 'links'))
+                                        <div class="text-sm text-slate-500 mt-1">
 
-                    <div class="p-6 border-t">
+                                            {{ $achat->user->email }}
 
-                        {{ $achats->links() }}
+                                        </div>
 
-                    </div>
+                                    @endif
 
-                @endif
+                                @endif
 
-            </div>
+                            </td>
+
+
+                            {{-- =================================================
+                                 AGENCE
+                            ================================================== --}}
+
+                            <td class="whitespace-nowrap min-w-max break-normal">
+
+                                <span class="font-medium whitespace-nowrap">
+                                    {{ $agence->nom_agence ?? '-' }}
+                                </span>
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 TRAJET
+                            ================================================== --}}
+
+                            <td class="font-medium whitespace-nowrap min-w-max break-normal">
+
+                                @if($trajet)
+
+                                    <span class="whitespace-nowrap">
+                                        {{ $trajet->depart }} → {{ $trajet->arrivee }}
+                                    </span>
+
+                                @else
+
+                                    -
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 DATE
+                            ================================================== --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                {{ optional($achat->created_at)->format('d/m/Y') }}
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 SIÈGE
+                            ================================================== --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                @if($billets->isNotEmpty())
+
+                                    @foreach($billets as $billet)
+
+                                        @php
+
+                                            $voyageur =
+                                                $billet->voyageur;
+
+                                            $siege =
+                                                $voyageur
+                                                    ? $sieges->firstWhere(
+                                                        'voyageur_id',
+                                                        $voyageur->id
+                                                    )
+                                                    : null;
+
+                                        @endphp
+
+
+                                        <div class="mb-4 last:mb-0">
+
+                                            @if($siege)
+
+                                                <span class="font-semibold">
+
+                                                    {{ $siege->numero_siege }}
+
+                                                </span>
+
+                                            @else
+
+                                                <span class="text-slate-400">
+
+                                                    —
+
+                                                </span>
+
+                                            @endif
+
+                                        </div>
+
+                                    @endforeach
+
+                                @elseif($sieges->isNotEmpty())
+
+                                    {{ $sieges->pluck('numero_siege')->implode(', ') }}
+
+                                @else
+
+                                    -
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 MONTANT PAYÉ
+                            ================================================== --}}
+
+                            <td class="text-right whitespace-nowrap min-w-max break-normal">
+
+                                <span class="font-bold text-brand">
+                                    {{ number_format(
+                                        $achat->montant,
+                                        0,
+                                        ',',
+                                        ' '
+                                    ) }}
+                                    FCFA
+                                </span>
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 PART AGENCE
+                            ================================================== --}}
+
+                            <td class="text-right whitespace-nowrap min-w-max break-normal">
+
+                                <span class="font-bold text-emerald-600">
+                                    {{ number_format(
+                                        ($achat->montant_base ?? 0) + ($achat->part_agence ?? 0),
+                                        0,
+                                        ',',
+                                        ' '
+                                    ) }}
+                                    FCFA
+                                </span>
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 RÉFÉRENCE BILLET
+                            ================================================== --}}
+
+                            <td class="whitespace-nowrap min-w-max">
+
+                                @if($billets->isNotEmpty())
+
+                                    @foreach($billets as $billet)
+
+                                        <div class="mb-4 last:mb-0">
+
+                                            <span class="font-mono font-bold text-navy whitespace-nowrap">
+                                                {{ $billet->numero_billet }}
+                                            </span>
+
+                                        </div>
+
+                                    @endforeach
+
+                                @else
+
+                                    <span class="text-slate-400">
+                                        —
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 RÉFÉRENCE ACHAT
+                            ================================================== --}}
+
+                            <td class="whitespace-nowrap min-w-max">
+
+                                <span class="font-mono text-sm text-slate-600 whitespace-nowrap">
+                                    {{ $achat->reference ?? '-' }}
+                                </span>
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 STATUT
+                            ================================================== --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                @if(
+                                    strtolower((string) $achat->statut)
+                                    === 'payé'
+                                )
+
+                                    <span class="tk-badge tk-badge-green">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        Payé
+
+                                    </span>
+
+                                @elseif(
+                                    strtolower((string) $achat->statut)
+                                    === 'en attente'
+                                )
+
+                                    <span class="tk-badge tk-badge-orange">
+
+                                        <i class="fa-solid fa-hourglass-half"></i>
+
+                                        En attente
+
+                                    </span>
+
+                                @elseif(
+                                    strtolower((string) $achat->statut)
+                                    === 'annulé'
+                                    ||
+                                    strtolower((string) $achat->statut)
+                                    === 'annulée'
+                                )
+
+                                    <span class="tk-badge tk-badge-red">
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                        Annulé
+
+                                    </span>
+
+                                @else
+
+                                    <span class="tk-badge tk-badge-slate">
+
+                                        {{ ucfirst($achat->statut ?? '-') }}
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="tk-empty"
+                            >
+
+                                <p class="font-semibold text-lg">
+                                    Aucun achat trouvé
+                                </p>
+
+                                @if(auth()->user()->role === 'agent')
+
+                                    <p class="mt-2 text-sm">
+
+                                        Aucun achat n'a encore été effectué
+                                        sur les trajets de votre agence.
+
+                                    </p>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
 
         </div>
 
+
+        {{-- =========================================================
+             PAGINATION
+        ========================================================== --}}
+
+        @if(method_exists($achats, 'links'))
+
+            <div class="border-t border-slate-200 px-6 py-4">
+
+                {{ $achats->links() }}
+
+            </div>
+
+        @endif
+
     </div>
+
+</div>
 
 </x-dynamic-component>

@@ -226,30 +226,37 @@ class PaiementAgenceController extends Controller
 
 
     /**
-     * Page de confirmation de paiement pour l'agent.
+     * Page de confirmation de paiement pour l'agent ou l'admin.
      */
     public function paymentForm($id)
     {
         $user = auth()->user();
 
-        if ($user->role !== 'agent') {
+        if (!in_array($user->role, ['agent', 'admin'])) {
             abort(403, 'Accès refusé.');
         }
 
-        if (!$user->agence_id) {
+        if (
+            $user->role === 'agent'
+            && !$user->agence_id
+        ) {
             abort(
                 403,
                 'Votre compte agent n’est lié à aucune agence.'
             );
         }
 
-        $paiement = PaiementAgence::with([
+        $query = PaiementAgence::with([
             'agence',
             'abonnement',
         ])
-            ->where('id', $id)
-            ->where('agence_id', $user->agence_id)
-            ->firstOrFail();
+            ->where('id', $id);
+
+        if ($user->role === 'agent') {
+            $query->where('agence_id', $user->agence_id);
+        }
+
+        $paiement = $query->firstOrFail();
 
         if ($paiement->statut === 'payé') {
             return redirect()
@@ -276,26 +283,30 @@ class PaiementAgenceController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->role !== 'agent') {
+        if (!in_array($user->role, ['agent', 'admin'])) {
             abort(403, 'Accès refusé.');
         }
 
-        if (!$user->agence_id) {
+        if (
+            $user->role === 'agent'
+            && !$user->agence_id
+        ) {
             abort(
                 403,
                 'Votre compte agent n’est lié à aucune agence.'
             );
         }
 
-        $paiement = PaiementAgence::where(
+        $query = PaiementAgence::where(
             'id',
             $id
-        )
-            ->where(
-                'agence_id',
-                $user->agence_id
-            )
-            ->firstOrFail();
+        );
+
+        if ($user->role === 'agent') {
+            $query->where('agence_id', $user->agence_id);
+        }
+
+        $paiement = $query->firstOrFail();
 
         if ($paiement->statut === 'payé') {
             return redirect()

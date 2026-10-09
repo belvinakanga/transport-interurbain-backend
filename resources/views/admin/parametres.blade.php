@@ -1,18 +1,40 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Paramètres'">
 
-<div class="p-8">
+<div class="tk-page">
 
-    <h1 class="text-4xl font-bold mb-8">
-        ⚙️ Paramètres
-    </h1>
+    {{-- En-tête --}}
 
-    <div class="bg-white rounded-xl shadow-lg p-8">
+    <div class="tk-page-head">
 
-        <h2 class="text-2xl font-semibold mb-4">
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-gear"></i>
+            </span>
+
+            Paramètres
+
+        </h1>
+
+    </div>
+
+
+    {{-- Contenu --}}
+
+    <div class="tk-card p-6">
+
+        <h2 class="text-lg font-bold text-navy">
             Paramètres de l'application
         </h2>
 
-        <p class="text-gray-600">
+        <p class="mt-3 text-sm text-slate-600">
             Cette page permettra de gérer les paramètres généraux de la plateforme TOKENDE.
         </p>
 

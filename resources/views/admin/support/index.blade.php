@@ -1,369 +1,217 @@
-<x-layouts.admin> 
+<x-layouts.admin :header="'Support'">
 
-@section('content')
-<div class="container-fluid py-4">
+<div class="tk-page">
 
     {{-- En-tête --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
+
         <div>
-            <h2 class="fw-bold mb-1">
+
+            <h1 class="tk-page-title">
+
+                <span
+                    class="
+                        flex h-11 w-11 shrink-0
+                        items-center justify-center
+                        rounded-lg bg-orange-50
+                        text-lg text-brand
+                    "
+                >
+                    <i class="fa-solid fa-headset"></i>
+                </span>
+
                 Support
-            </h2>
-            <p class="text-muted mb-0">
+
+            </h1>
+
+            <p class="mt-2 text-sm text-slate-500">
                 Gérez les conversations avec les voyageurs.
             </p>
+
         </div>
 
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-primary rounded-pill px-3 py-2">
-                {{ $conversations->total() }}
-                {{ $conversations->total() > 1 ? 'conversations' : 'conversation' }}
-            </span>
-        </div>
+
+        {{-- Nombre de conversations --}}
+
+        <span class="tk-badge tk-badge-navy shrink-0">
+
+            {{ $conversations->total() }}
+            {{ $conversations->total() > 1 ? 'conversations' : 'conversation' }}
+
+        </span>
+
     </div>
 
-    {{-- Messages de session --}}
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Fermer"></button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Fermer"></button>
-        </div>
-    @endif
 
     {{-- Liste des conversations --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-0">
+
+    <div class="tk-card overflow-hidden">
+
+        <div>
 
             @forelse($conversations as $conversation)
 
-    @php
-        $lastMessage = $conversation->messages->first();
-        $isUnread = $conversation->unread_messages_count > 0;
-    @endphp
+                @php
+                    $lastMessage = $conversation->messages->first();
+                    $isUnread = $conversation->unread_messages_count > 0;
+                @endphp
 
-    <a href="{{ route('admin.support.show', $conversation->id) }}"
-       class="text-decoration-none text-dark">
 
-        <div class="support-card
-                    {{ $isUnread ? 'support-card-unread' : '' }}">
+                <a
+                    href="{{ route('admin.support.show', $conversation->id) }}"
+                    class="
+                        flex items-center gap-4
+                        px-6 py-5
+                        border-b border-slate-100
+                        last:border-b-0
+                        transition-colors hover:bg-slate-50
+                        {{ $isUnread ? 'bg-orange-50' : '' }}
+                    "
+                >
 
-            {{-- Petite barre orange --}}
-            <div class="support-accent"></div>
+                    {{-- AVATAR --}}
 
-            <div class="support-card-content">
+                    <span
+                        class="
+                            flex h-11 w-11 shrink-0
+                            items-center justify-center
+                            rounded-lg bg-[#EEF4FF]
+                            text-lg text-navy
+                        "
+                    >
+                        <i class="fa-solid fa-user"></i>
+                    </span>
 
-                {{-- Avatar --}}
-                <div class="support-avatar">
-                    <i class="bi bi-person-fill"></i>
-                </div>
 
-                {{-- Contenu --}}
-                <div class="support-main">
+                    {{-- CONTENU --}}
 
-                    <div class="support-top">
+                    <div class="min-w-0 flex-1">
 
-                        <div>
-                            <h5 class="support-name">
-                                {{ $conversation->user->name ?? 'Voyageur' }}
-                            </h5>
+                        <div
+                            class="
+                                flex items-start
+                                justify-between gap-4
+                            "
+                        >
 
-                            <div class="support-email">
-                                {{ $conversation->user->email ?? 'Email inconnu' }}
+                            <div class="min-w-0">
+
+                                <p class="truncate text-sm font-bold text-navy">
+                                    {{ $conversation->user->name ?? 'Voyageur' }}
+                                </p>
+
+                                <p class="mt-0.5 truncate text-xs text-slate-500">
+                                    {{ $conversation->user->email ?? 'Email inconnu' }}
+                                </p>
+
                             </div>
+
+
+                            <div
+                                class="
+                                    flex shrink-0 flex-col
+                                    items-end gap-1.5
+                                "
+                            >
+
+                                <span class="text-xs text-slate-400 tabular-nums">
+                                    {{ $conversation->updated_at->format('d/m/Y à H:i') }}
+                                </span>
+
+                                @if($conversation->unread_messages_count > 0)
+
+                                    <span class="tk-badge tk-badge-orange">
+
+                                        <i class="fa-solid fa-comment"></i>
+
+                                        {{ $conversation->unread_messages_count }}
+                                        nouveau{{ $conversation->unread_messages_count > 1 ? 'x' : '' }}
+                                        message{{ $conversation->unread_messages_count > 1 ? 's' : '' }}
+
+                                    </span>
+
+                                @endif
+
+                            </div>
+
                         </div>
 
-                        <div class="support-meta">
 
-                            <div class="support-date">
-                                {{ $conversation->updated_at->format('d/m/Y à H:i') }}
-                            </div>
+                        {{-- SUJET --}}
 
-                            @if($conversation->unread_messages_count > 0)
+                        <p class="mt-2 truncate text-sm font-semibold text-slate-800">
+                            {{ $conversation->subject }}
+                        </p>
 
-                                <span class="support-unread">
-                                    <i class="bi bi-chat-fill me-1"></i>
-                                    {{ $conversation->unread_messages_count }}
-                                    nouveau{{ $conversation->unread_messages_count > 1 ? 'x' : '' }}
-                                    message{{ $conversation->unread_messages_count > 1 ? 's' : '' }}
-                                </span>
+
+                        {{-- DERNIER MESSAGE --}}
+
+                        <p class="mt-1 truncate text-xs text-slate-500">
+
+                            @if($lastMessage)
+
+                                {{ $lastMessage->message }}
+
+                            @else
+
+                                Aucun message.
 
                             @endif
 
-                        </div>
+                        </p>
 
                     </div>
 
 
-                    {{-- Sujet --}}
-                    <div class="support-subject">
-                        {{ $conversation->subject }}
-                    </div>
+                    {{-- FLÈCHE --}}
 
+                    <i class="fa-solid fa-chevron-right shrink-0 text-slate-300"></i>
 
-                    {{-- Dernier message --}}
-                    @if($lastMessage)
+                </a>
 
-                        <div class="support-last-message">
-                            {{ $lastMessage->message }}
-                        </div>
+            @empty
 
-                    @else
+                <div class="tk-empty">
 
-                        <div class="support-last-message">
-                            Aucun message.
-                        </div>
+                    <i class="fa-solid fa-inbox mb-3 block text-3xl text-slate-300"></i>
 
-                    @endif
+                    <h5 class="text-sm font-bold text-navy">
+                        Aucune conversation
+                    </h5>
+
+                    <p class="mt-1">
+                        Les conversations envoyées par les voyageurs apparaîtront ici.
+                    </p>
 
                 </div>
 
+            @endforelse
 
-                {{-- Flèche --}}
-                <div class="support-arrow">
-                    <i class="bi bi-chevron-right"></i>
-                </div>
+        </div>
+
+
+        {{-- PAGINATION --}}
+
+        @if($conversations->hasPages())
+
+            <div class="border-t border-slate-200 px-6 py-4">
+
+                {{ $conversations->links() }}
 
             </div>
 
-        </div>
-
-    </a>
-
-@empty
-
-    <div class="support-empty">
-
-        <div class="support-empty-icon">
-            <i class="bi bi-chat-square-text"></i>
-        </div>
-
-        <h5>
-            Aucune conversation
-        </h5>
-
-        <p>
-            Les conversations envoyées par les voyageurs apparaîtront ici.
-        </p>
+        @endif
 
     </div>
-
-@endforelse
-
-        </div>
-    </div>
-
-    {{-- Pagination --}}
-    @if($conversations->hasPages())
-        <div class="mt-4 d-flex justify-content-center">
-            {{ $conversations->links() }}
-        </div>
-    @endif
 
 </div>
 
-<style>
-    .support-conversation {
-        transition: background-color 0.2s ease;
-    }
-
-    .support-conversation:hover {
-        background-color: #f8f9fa;
-    }
-</style>
-
-<style>
-
-    .support-card {
-        position: relative;
-        display: flex;
-        margin: 14px 20px;
-        background: #FFFFFF;
-        border: 1px solid #D9E4F5;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 14px rgba(10, 42, 102, 0.06);
-        transition: all .2s ease;
-    }
-
-    .support-card:hover {
-        border-color: #0A2A66;
-        box-shadow: 0 8px 22px rgba(10, 42, 102, 0.12);
-        transform: translateY(-2px);
-    }
-
-    .support-card-unread {
-        border-color: #0A2A66;
-        box-shadow: 0 5px 18px rgba(10, 42, 102, 0.10);
-    }
-
-    .support-accent {
-        width: 5px;
-        background: #FF6B00;
-        flex-shrink: 0;
-    }
-
-    .support-card-content {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 20px 22px;
-    }
-
-    .support-avatar {
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-        border-radius: 50%;
-        background: #EAF2FF;
-        color: #0A2A66;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 21px;
-    }
-
-    .support-main {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .support-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-
-    .support-name {
-        margin: 0;
-        color: #0A2A66;
-        font-size: 17px;
-        font-weight: 800;
-    }
-
-    .support-email {
-        margin-top: 3px;
-        color: #6B7280;
-        font-size: 13px;
-    }
-
-    .support-meta {
-        text-align: right;
-        flex-shrink: 0;
-    }
-
-    .support-date {
-        color: #9CA3AF;
-        font-size: 12px;
-        margin-bottom: 6px;
-    }
-
-    .support-unread {
-        display: inline-flex;
-        align-items: center;
-        background: #FFF1E8;
-        color: #FF6B00;
-        border-radius: 20px;
-        padding: 5px 10px;
-        font-size: 11px;
-        font-weight: 700;
-    }
-
-    .support-subject {
-        margin-top: 13px;
-        color: #1F2937;
-        font-size: 15px;
-        font-weight: 800;
-    }
-
-    .support-last-message {
-        margin-top: 5px;
-        color: #6B7280;
-        font-size: 13px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 750px;
-    }
-
-    .support-arrow {
-        display: flex;
-        align-items: center;
-        color: #0A2A66;
-        font-size: 18px;
-        padding-left: 10px;
-    }
-
-    .support-empty {
-        text-align: center;
-        padding: 70px 20px;
-    }
-
-    .support-empty-icon {
-        width: 70px;
-        height: 70px;
-        margin: 0 auto 18px;
-        border-radius: 50%;
-        background: #EAF2FF;
-        color: #0A2A66;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-    }
-
-    .support-empty h5 {
-        color: #0A2A66;
-        font-weight: 800;
-    }
-
-    .support-empty p {
-        color: #6B7280;
-    }
-
-    @media (max-width: 768px) {
-
-        .support-card {
-            margin: 10px;
-        }
-
-        .support-card-content {
-            padding: 16px;
-        }
-
-        .support-top {
-            display: block;
-        }
-
-        .support-meta {
-            text-align: left;
-            margin-top: 6px;
-        }
-
-        .support-last-message {
-            max-width: 100%;
-        }
-
-        .support-avatar {
-            width: 44px;
-            height: 44px;
-            min-width: 44px;
-        }
-
-    }
-
-</style>
 </x-layouts.admin>

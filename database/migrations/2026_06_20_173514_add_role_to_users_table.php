@@ -1,20 +1,24 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
+return new class extends Migration
 {
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role'
-    ];
-
-    public function reservations()
+    public function up(): void
     {
-        return $this->hasMany(Reservation::class);
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('role')
+                  ->default('user')
+                  ->after('password');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
+        });
+    }
+};

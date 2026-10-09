@@ -1,94 +1,224 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Détails du trajet'">
 
-<div class="py-12">
+<div class="tk-page">
 
-    <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    {{-- En-tête --}}
 
-        <div class="bg-white rounded-xl shadow p-8">
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-            <h1 class="text-3xl font-bold mb-8">
-                👁️ Détails du trajet
-            </h1>
+        <h1 class="tk-page-title">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-eye"></i>
+            </span>
 
-                <div>
-                    <p class="text-gray-500">Agence</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->agence->nom_agence ?? '-' }}
-                    </p>
-                </div>
+            Détails du trajet
 
-                <div>
-                    <p class="text-gray-500">Départ</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->depart }}
-                    </p>
-                </div>
+        </h1>
 
-                <div>
-                    <p class="text-gray-500">Arrivée</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->arrivee }}
-                    </p>
-                </div>
+        <div class="flex flex-wrap gap-3">
 
-                <div>
-                    <p class="text-gray-500">Date de départ</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->date_depart }}
-                    </p>
-                </div>
+            <a
+                href="/admin/trajets/{{ $trajet->id }}/edit"
+                class="tk-btn-accent shrink-0"
+            >
 
-                <div>
-                    <p class="text-gray-500">Heure de départ</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->heure_depart }}
-                    </p>
-                </div>
+                <i class="fa-solid fa-pen"></i>
 
-                <div>
-                    <p class="text-gray-500">Prix</p>
-                    <p class="font-semibold text-lg">
-                        {{ number_format($trajet->prix,0,',',' ') }} FCFA
-                    </p>
-                </div>
+                Modifier
 
-                <div>
-                    <p class="text-gray-500">Places disponibles</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->places_disponibles }}
-                    </p>
-                </div>
+            </a>
 
-                <div>
-                    <p class="text-gray-500">Places totales</p>
-                    <p class="font-semibold text-lg">
-                        {{ $trajet->places_totales }}
-                    </p>
-                </div>
+            <a
+                href="/admin/trajets"
+                class="tk-btn-ghost shrink-0"
+            >
 
-            </div>
+                <i class="fa-solid fa-arrow-left"></i>
 
-            <div class="mt-8 flex gap-4">
+                Retour
 
-                <a
-                    href="/admin/trajets/{{ $trajet->id }}/edit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl">
+            </a>
 
-                    ✏️ Modifier
+        </div>
 
-                </a>
+    </div>
 
-                <a
-                    href="/admin/trajets"
-                    class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl">
 
-                    ← Retour
+    {{-- Informations --}}
 
-                </a>
+    <div class="tk-card p-6">
 
-            </div>
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Agence
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->agence->nom_agence ?? '-' }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Départ
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->depart }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Arrivée
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->arrivee }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Date de départ
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->date_depart }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Heure de départ
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->heure_depart }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Prix
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ number_format($trajet->prix,0,',',' ') }} FCFA
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Places disponibles
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->places_disponibles }}
+            </span>
+
+        </div>
+
+
+        <div
+            class="
+                flex items-center justify-between
+                gap-4 border-b border-slate-100
+                py-3 last:border-b-0
+                text-sm
+            "
+        >
+
+            <span class="font-semibold text-navy">
+                Places totales
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $trajet->places_totales }}
+            </span>
 
         </div>
 

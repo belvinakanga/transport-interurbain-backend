@@ -1,56 +1,153 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Détails de l\'avis'">
 
-<div class="max-w-3xl mx-auto">
+<div class="tk-page">
 
-    <div class="bg-white rounded-xl shadow p-8">
+    {{-- En-tête --}}
 
-        <h1 class="text-3xl font-bold mb-8">
-            ⭐ Détails de l'avis
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
+
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-star"></i>
+            </span>
+
+            Détails de l'avis
+
         </h1>
 
-        <div class="space-y-6">
+        <a
+            href="{{ url('/admin/avis') }}"
+            class="tk-btn-ghost shrink-0"
+        >
 
-            <div>
-                <h3 class="font-bold text-lg">👤 Voyageur</h3>
-                <p>{{ $avis->user?->name ?? 'Utilisateur supprimé' }}</p>
-            </div>
+            <i class="fa-solid fa-arrow-left"></i>
 
-            <div>
-                <h3 class="font-bold text-lg">⭐ Note</h3>
+            <span>Retour</span>
 
-                <p class="text-yellow-500 text-2xl">
-                    @for($i = 1; $i <= $avis->note; $i++)
-                        ⭐
-                    @endfor
-                </p>
-            </div>
+        </a>
 
-            <div>
-                <h3 class="font-bold text-lg">💬 Commentaire</h3>
-                <p>{{ $avis->commentaire }}</p>
-            </div>
+    </div>
 
-            <div>
-                <h3 class="font-bold text-lg">📅 Date</h3>
-                <p>{{ $avis->created_at->format('d/m/Y') }}</p>
-            </div>
+
+    {{-- Informations --}}
+
+    <div class="tk-card p-6">
+
+        {{-- VOYAGEUR --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+
+                <i class="fa-solid fa-user text-brand"></i>
+
+                Voyageur
+
+            </span>
+
+            <span class="text-slate-600 text-right">
+
+                {{ $avis->user?->name ?? 'Utilisateur supprimé' }}
+
+            </span>
 
         </div>
 
-        <div class="mt-10 flex gap-4">
 
-            <a href="{{ url('/admin/avis') }}"
-               class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg">
+        {{-- NOTE --}}
 
-                ⬅ Retour
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
 
-            </a>
+            <span class="font-semibold text-navy">
+
+                <i class="fa-solid fa-star text-brand"></i>
+
+                Note
+
+            </span>
+
+            <span class="flex items-center justify-end gap-1 text-brand">
+
+                @for($i = 1; $i <= $avis->note; $i++)
+
+                    <i class="fa-solid fa-star"></i>
+
+                @endfor
+
+            </span>
+
+        </div>
+
+
+        {{-- COMMENTAIRE --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+
+                <i class="fa-solid fa-comment text-brand"></i>
+
+                Commentaire
+
+            </span>
+
+            <span class="text-slate-600 text-right">
+
+                {{ $avis->commentaire }}
+
+            </span>
+
+        </div>
+
+
+        {{-- DATE --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+
+                <i class="fa-solid fa-calendar text-brand"></i>
+
+                Date
+
+            </span>
+
+            <span class="text-slate-600 text-right tabular-nums">
+
+                {{ $avis->created_at->format('d/m/Y') }}
+
+            </span>
+
+        </div>
+
+
+        {{-- ACTIONS --}}
+
+        <div class="mt-6 flex gap-3">
 
             <button
                 onclick="window.print()"
-                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg">
+                class="tk-btn-accent"
+            >
 
-                🖨 Imprimer
+                <i class="fa-solid fa-print"></i>
+
+                Imprimer
 
             </button>
 

@@ -34,7 +34,7 @@
 
                     <div class="flex items-center gap-5">
                         <div class="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-3xl shadow-lg">
-                            🎫
+                            <i class="fa-solid fa-ticket"></i>
                         </div>
 
                         <div>
@@ -50,7 +50,7 @@
 
                     <div class="flex items-center gap-5">
                         <div class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center text-3xl shadow-lg">
-                            💳
+                            <i class="fa-solid fa-credit-card"></i>
                         </div>
 
                         <div>
@@ -66,7 +66,7 @@
 
                     <div class="flex items-center gap-5">
                         <div class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-3xl shadow-lg">
-                            🚌
+                            <i class="fa-solid fa-bus"></i>
                         </div>
 
                         <div>
@@ -101,9 +101,6 @@
 
                 </div>
 
-                <x-auth-session-status
-                    class="mb-4 text-white"
-                    :status="session('status')" />
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
 
@@ -126,9 +123,6 @@
                             required
                             autofocus />
 
-                        <x-input-error
-                            :messages="$errors->get('email')"
-                            class="mt-2" />
 
                     </div>
 
@@ -152,17 +146,15 @@
                             <button
                                 type="button"
                                 id="togglePassword"
+                                aria-label="Afficher le mot de passe"
                                 class="absolute inset-y-0 right-0 px-4 text-xl text-gray-600 hover:text-orange-500">
 
-                                👁️
+                                <i class="fa-solid fa-eye"></i>
 
                             </button>
 
                         </div>
 
-                        <x-input-error
-                            :messages="$errors->get('password')"
-                            class="mt-2" />
 
                     </div>
 
@@ -195,9 +187,11 @@
 
                     <button
                         type="submit"
-                        class="w-full py-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-105 duration-300 text-white text-xl font-bold shadow-xl">
+                        class="w-full py-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-105 duration-300 text-white text-xl font-bold shadow-xl flex items-center justify-center gap-3">
 
-                        Se connecter →
+                        Se connecter
+
+                        <i class="fa-solid fa-arrow-right"></i>
 
                     </button>
 
@@ -228,10 +222,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (password.type === 'password') {
             password.type = 'text';
-            toggle.innerHTML = '🙈';
+            toggle.querySelector('i').className = 'fa-solid fa-eye-slash';
         } else {
             password.type = 'password';
-            toggle.innerHTML = '👁️';
+            toggle.querySelector('i').className = 'fa-solid fa-eye';
         }
 
     });

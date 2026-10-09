@@ -1,98 +1,178 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Détails de l\'agence'">
 
-    <div class="py-12">
+<div class="tk-page">
 
-        <div class="max-w-4xl mx-auto">
+    {{-- En-tête --}}
 
-            <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div
+        class="
+            tk-page-head
+            flex flex-col gap-4
+            md:flex-row md:items-center
+            md:justify-between
+        "
+    >
 
-                <div class="flex justify-between items-center mb-8">
+        <h1 class="tk-page-title">
 
-                    <h1 class="text-3xl font-bold text-slate-800">
-                        👁️ Détails de l'agence
-                    </h1>
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-eye"></i>
+            </span>
 
-                    <a href="/admin/agences"
-                       class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-3 rounded-xl">
+            Détails de l'agence
 
-                        ← Retour
+        </h1>
 
-                    </a>
+        <a
+            href="/admin/agences"
+            class="tk-btn-ghost shrink-0"
+        >
 
-                </div>
+            <i class="fa-solid fa-arrow-left"></i>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <span>Retour</span>
 
-                    <div>
-    <p class="text-gray-500 text-sm">Agent(s) de l'agence</p>
+        </a>
 
-    @forelse($agence->agents as $agent)
+    </div>
 
-        <p class="text-xl font-bold">
-            {{ $agent->name }}
-        </p>
 
-    @empty
+    {{-- Informations --}}
 
-        <p class="text-gray-400">
-            Aucun agent affecté
-        </p>
+    <div class="tk-card p-6">
 
-    @endforelse
-</div>
+        {{-- AGENTS --}}
 
-                    <div>
-                        <p class="text-gray-500 text-sm">Nom de l'agence</p>
-                        <p class="text-xl font-bold">{{ $agence->nom_agence }}</p>
-                    </div>
+        <div class="flex items-start justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
 
-                    <div>
-                        <p class="text-gray-500 text-sm">Ville</p>
-                        <p class="text-xl">{{ $agence->ville }}</p>
-                    </div>
+            <span class="font-semibold text-navy">
+                Agent(s) de l'agence
+            </span>
 
-                    <div>
-                        <p class="text-gray-500 text-sm">Téléphone</p>
-                        <p class="text-xl">{{ $agence->telephone }}</p>
-                    </div>
+            <div class="text-slate-600 text-right">
 
-                    <div class="md:col-span-2">
-                        <p class="text-gray-500 text-sm">Adresse</p>
-                        <p class="text-xl">{{ $agence->adresse }}</p>
-                    </div>
+                @forelse($agence->agents as $agent)
 
-                </div>
+                    <p>{{ $agent->name }}</p>
 
-                <div class="flex gap-4 mt-10">
+                @empty
 
-                    <a href="/admin/agences/{{ $agence->id }}/edit"
-                       class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl">
+                    <p class="text-slate-400">
+                        Aucun agent affecté
+                    </p>
 
-                        ✏️ Modifier
-
-                    </a>
-
-                    <form action="/admin/agences/{{ $agence->id }}" method="POST">
-
-                        @csrf
-                        @method('DELETE')
-
-                        <button
-                            onclick="return confirm('Supprimer cette agence ?')"
-                            class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl">
-
-                            🗑️ Supprimer
-
-                        </button>
-
-                    </form>
-
-                </div>
+                @endforelse
 
             </div>
 
         </div>
 
+
+        {{-- NOM --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+                Nom de l'agence
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $agence->nom_agence }}
+            </span>
+
+        </div>
+
+
+        {{-- VILLE --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+                Ville
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $agence->ville }}
+            </span>
+
+        </div>
+
+
+        {{-- TÉLÉPHONE --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+                Téléphone
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $agence->telephone }}
+            </span>
+
+        </div>
+
+
+        {{-- ADRESSE --}}
+
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-3 last:border-b-0 text-sm">
+
+            <span class="font-semibold text-navy">
+                Adresse
+            </span>
+
+            <span class="text-slate-600 text-right">
+                {{ $agence->adresse }}
+            </span>
+
+        </div>
+
+
+        {{-- ACTIONS --}}
+
+        <div class="mt-6 flex gap-3">
+
+            <a
+                href="/admin/agences/{{ $agence->id }}/edit"
+                class="tk-btn-accent"
+            >
+
+                <i class="fa-solid fa-pen"></i>
+
+                Modifier
+
+            </a>
+
+            <form action="/admin/agences/{{ $agence->id }}" method="POST">
+
+                @csrf
+
+                @method('DELETE')
+
+                <button
+                    onclick="event.preventDefault(); tkConfirm('Supprimer cette agence ?', () => this.form.submit())"
+                    class="tk-btn bg-red-600 text-white hover:bg-red-700"
+                >
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Supprimer
+
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
+
+</div>
 
 </x-layouts.admin>

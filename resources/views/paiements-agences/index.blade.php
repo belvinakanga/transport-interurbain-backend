@@ -80,10 +80,9 @@
 @endphp
 
 
-
 {{-- =========================================================
      ESPACE AGENT
-========================================================= --}}
+======================================================== --}}
 
 @if($isAgent)
 
@@ -91,37 +90,33 @@
         :header="'Mes paiements'"
     >
 
-        <div class="space-y-6">
+        <div class="tk-page">
 
 
             {{-- =====================================================
                  TITRE
             ====================================================== --}}
 
-            <div>
+            <div class="tk-page-head">
 
-                <h1
-                    class="
-                        text-3xl
-                        md:text-4xl
-                        font-bold
-                        flex
-                        items-center
-                        gap-3
-                    "
-                    style="color:#0A2A66;"
-                >
+                <h1 class="tk-page-title">
 
-                    💰
-
-                    <span>
-                        Mes paiements
+                    <span
+                        class="
+                            flex h-11 w-11 shrink-0
+                            items-center justify-center
+                            rounded-lg bg-orange-50
+                            text-lg text-brand
+                        "
+                    >
+                        <i class="fa-solid fa-money-bill-wave"></i>
                     </span>
+
+                    Mes paiements
 
                 </h1>
 
-
-                <p class="mt-2 text-gray-500">
+                <p class="mt-2 text-sm text-slate-500">
 
                     Consultez les paiements de votre agence
                     à TOKENDE.
@@ -131,50 +126,13 @@
             </div>
 
 
-
-            {{-- =====================================================
-                 MESSAGE SUCCÈS
-            ====================================================== --}}
-
-            @if(session('success'))
-
-                <div
-                    class="rounded-xl p-4"
-                    style="
-                        background:#DCFCE7;
-                        color:#15803D;
-                    "
-                >
-
-                    ✅
-                    {{ session('success') }}
-
-                </div>
-
-            @endif
-
-
-
             {{-- =====================================================
                  AGENCE
             ====================================================== --}}
 
-            <div
-                class="
-                    rounded-2xl
-                    shadow-md
-                    px-6
-                    py-5
-                "
-                style="
-                    background:#0A2A66;
-                "
-            >
+            <div class="tk-stat-navy">
 
-                <p
-                    class="text-sm"
-                    style="color:#DCE8FF;"
-                >
+                <p class="text-sm text-[#DCE8FF]">
                     Mon agence
                 </p>
 
@@ -183,9 +141,9 @@
                     class="
                         text-2xl
                         font-bold
+                        text-white
                         mt-1
                     "
-                    style="color:#FFFFFF;"
                 >
 
                     {{ $user->agence->nom_agence ?? 'Aucune agence' }}
@@ -196,14 +154,14 @@
                 <div
                     class="
                         text-sm
+                        text-[#DCE8FF]
                         mt-2
                     "
-                    style="color:#DCE8FF;"
                 >
 
                     Agent :
 
-                    <strong style="color:#FFFFFF;">
+                    <strong class="text-white">
 
                         {{ $user->name }}
 
@@ -212,7 +170,6 @@
                 </div>
 
             </div>
-
 
 
             {{-- =====================================================
@@ -242,27 +199,25 @@
 
                 <div
                     class="
-                        bg-white
-                        rounded-2xl
-                        shadow-sm
+                        rounded-xl
                         border
+                        bg-white
                         overflow-hidden
-                    "
-                    style="
-                        border-color:
                         {{ $estEnRetard
-                            ? '#FCA5A5'
-                            : '#FFD7B8' }};
+                            ? 'border-red-300'
+                            : 'border-[#FFD7B8]'
+                        }}
                     "
                 >
 
                     <div
-                        class="px-6 py-5"
-                        style="
-                            background:
+                        class="
+                            px-6
+                            py-5
                             {{ $estEnRetard
-                                ? '#FEF2F2'
-                                : '#FFF3E8' }};
+                                ? 'bg-red-50'
+                                : 'bg-[#FFF3E8]'
+                            }}
                         "
                     >
 
@@ -281,20 +236,29 @@
 
                                 <p
                                     class="
+                                        flex
+                                        items-center
+                                        gap-2
                                         text-sm
                                         font-semibold
-                                    "
-                                    style="
-                                        color:
                                         {{ $estEnRetard
-                                            ? '#DC2626'
-                                            : '#FF6B00' }};
+                                            ? 'text-red-600'
+                                            : 'text-brand'
+                                        }}
                                     "
                                 >
 
-                                    {{ $estEnRetard
-                                        ? '🔴 Paiement en retard'
-                                        : '⏳ Paiement à effectuer'
+                                    <i
+                                        class="fa-solid {{ $estEnRetard
+                                            ? 'fa-triangle-exclamation'
+                                            : 'fa-hourglass-half'
+                                        }}"
+                                    ></i>
+
+                                    {{
+                                        $estEnRetard
+                                            ? 'Paiement en retard'
+                                            : 'Paiement à effectuer'
                                     }}
 
                                 </p>
@@ -304,9 +268,9 @@
                                     class="
                                         text-2xl
                                         font-bold
+                                        text-navy
                                         mt-2
                                     "
-                                    style="color:#0A2A66;"
                                 >
 
                                     {{ number_format(
@@ -324,7 +288,7 @@
                                 <p
                                     class="
                                         text-sm
-                                        text-gray-600
+                                        text-slate-600
                                         mt-2
                                     "
                                 >
@@ -348,7 +312,7 @@
                                     <p
                                         class="
                                             text-sm
-                                            text-gray-500
+                                            text-slate-500
                                             mt-1
                                         "
                                     >
@@ -375,28 +339,12 @@
                                     'paiements-agences.pay.form',
                                     $prochainPaiement->id
                                 ) }}"
-                                class="
-                                    inline-flex
-                                    items-center
-                                    justify-center
-                                    px-6
-                                    py-3
-                                    rounded-xl
-                                    text-white
-                                    font-bold
-                                    shadow-md
-                                    transition
-                                "
-                                style="
-                                    background:#FF6B00;
-                                "
+                                class="tk-btn-accent shrink-0"
                             >
 
-                                💳
+                                <i class="fa-solid fa-credit-card"></i>
 
-                                &nbsp;
-
-                                Payer maintenant
+                                <span>Payer maintenant</span>
 
                             </a>
 
@@ -410,15 +358,13 @@
                         <p
                             class="
                                 text-sm
-                                text-gray-500
+                                text-slate-500
                             "
                         >
 
                             Référence :
 
-                            <strong
-                                style="color:#0A2A66;"
-                            >
+                            <strong class="text-navy">
 
                                 {{ $prochainPaiement->reference }}
 
@@ -431,7 +377,6 @@
                 </div>
 
             @endif
-
 
 
             {{-- =====================================================
@@ -451,22 +396,14 @@
 
                 {{-- TOTAL PAYÉ --}}
 
-                <div
-                    class="
-                        bg-white
-                        rounded-2xl
-                        shadow-sm
-                        border
-                        border-gray-100
-                        p-6
-                    "
-                >
+                <div class="tk-kpi">
 
                     <div
                         class="
                             flex
-                            items-center
+                            items-start
                             justify-between
+                            gap-3
                         "
                     >
 
@@ -475,7 +412,8 @@
                             <p
                                 class="
                                     text-sm
-                                    text-gray-500
+                                    font-medium
+                                    text-slate-500
                                 "
                             >
                                 Total payé
@@ -484,11 +422,10 @@
 
                             <p
                                 class="
-                                    text-3xl
-                                    font-bold
-                                    mt-2
+                                    tk-kpi-value
+                                    mt-3
+                                    text-emerald-600
                                 "
-                                style="color:#16A34A;"
                             >
 
                                 {{ number_format(
@@ -505,47 +442,33 @@
                         </div>
 
 
-                        <div
+                        <span
                             class="
-                                w-14
-                                h-14
-                                rounded-full
-                                flex
-                                items-center
-                                justify-center
-                                text-2xl
+                                tk-kpi-icon
+                                bg-emerald-50
+                                text-emerald-600
                             "
-                            style="background:#DCFCE7;"
                         >
 
-                            ✅
+                            <i class="fa-solid fa-circle-check"></i>
 
-                        </div>
+                        </span>
 
                     </div>
 
                 </div>
 
 
-
                 {{-- EN ATTENTE --}}
 
-                <div
-                    class="
-                        bg-white
-                        rounded-2xl
-                        shadow-sm
-                        border
-                        border-gray-100
-                        p-6
-                    "
-                >
+                <div class="tk-kpi">
 
                     <div
                         class="
                             flex
-                            items-center
+                            items-start
                             justify-between
+                            gap-3
                         "
                     >
 
@@ -554,7 +477,8 @@
                             <p
                                 class="
                                     text-sm
-                                    text-gray-500
+                                    font-medium
+                                    text-slate-500
                                 "
                             >
                                 À payer
@@ -563,11 +487,10 @@
 
                             <p
                                 class="
-                                    text-3xl
-                                    font-bold
-                                    mt-2
+                                    tk-kpi-value
+                                    mt-3
+                                    text-brand
                                 "
-                                style="color:#FF6B00;"
                             >
 
                                 {{ number_format(
@@ -584,47 +507,33 @@
                         </div>
 
 
-                        <div
+                        <span
                             class="
-                                w-14
-                                h-14
-                                rounded-full
-                                flex
-                                items-center
-                                justify-center
-                                text-2xl
+                                tk-kpi-icon
+                                bg-orange-50
+                                text-brand
                             "
-                            style="background:#FFF3E8;"
                         >
 
-                            ⏳
+                            <i class="fa-solid fa-hourglass-half"></i>
 
-                        </div>
+                        </span>
 
                     </div>
 
                 </div>
 
 
-
                 {{-- PROCHAIN --}}
 
-                <div
-                    class="
-                        bg-white
-                        rounded-2xl
-                        shadow-sm
-                        border
-                        border-gray-100
-                        p-6
-                    "
-                >
+                <div class="tk-kpi">
 
                     <div
                         class="
                             flex
-                            items-center
+                            items-start
                             justify-between
+                            gap-3
                         "
                     >
 
@@ -633,7 +542,8 @@
                             <p
                                 class="
                                     text-sm
-                                    text-gray-500
+                                    font-medium
+                                    text-slate-500
                                 "
                             >
                                 Prochaine échéance
@@ -644,11 +554,9 @@
 
                                 <p
                                     class="
-                                        text-2xl
-                                        font-bold
-                                        mt-2
+                                        tk-kpi-value
+                                        mt-3
                                     "
-                                    style="color:#0A2A66;"
                                 >
 
                                     {{ $prochainPaiement->date_prevue
@@ -663,10 +571,10 @@
                                 <p
                                     class="
                                         text-xl
-                                        font-bold
+                                        font-extrabold
+                                        text-navy
                                         mt-2
                                     "
-                                    style="color:#0A2A66;"
                                 >
                                     Aucune
                                 </p>
@@ -676,20 +584,15 @@
                         </div>
 
 
-                        <div
+                        <span
                             class="
-                                w-14
-                                h-14
-                                rounded-full
-                                flex
-                                items-center
-                                justify-center
-                                text-2xl
+                                tk-kpi-icon
+                                bg-[#EEF4FF]
+                                text-navy
                             "
-                            style="background:#EEF4FF;"
                         >
-                            📅
-                        </div>
+                            <i class="fa-solid fa-calendar"></i>
+                        </span>
 
                     </div>
 
@@ -698,40 +601,28 @@
             </div>
 
 
-
             {{-- =====================================================
                  HISTORIQUE
             ====================================================== --}}
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    shadow-sm
-                    border
-                    border-gray-100
-                    overflow-hidden
-                "
-            >
+            <div class="tk-card overflow-hidden">
 
-                <div
-                    class="
-                        px-6
-                        py-5
-                        border-b
-                    "
-                    style="background:#F6F8FC;"
-                >
+                <div class="border-b border-slate-200 px-6 py-5">
 
                     <h2
                         class="
+                            flex
+                            items-center
+                            gap-2
                             text-xl
                             font-bold
+                            text-navy
                         "
-                        style="color:#0A2A66;"
                     >
 
-                        📋 Historique des paiements
+                        <i class="fa-solid fa-list"></i>
+
+                        Historique des paiements
 
                     </h2>
 
@@ -739,7 +630,7 @@
                     <p
                         class="
                             text-sm
-                            text-gray-500
+                            text-slate-500
                             mt-1
                         "
                     >
@@ -754,35 +645,33 @@
 
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <table class="tk-table">
 
-                        <thead
-                            style="background:#EEF4FF;"
-                        >
+                        <thead>
 
                             <tr>
 
-                                <th class="p-4 text-left">
+                                <th class="text-left whitespace-nowrap">
                                     Référence
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Date prévue
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Date paiement
                                 </th>
 
-                                <th class="p-4 text-right">
+                                <th class="text-right whitespace-nowrap">
                                     Montant
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Statut
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Action
                                 </th>
 
@@ -827,26 +716,19 @@
                                 @endphp
 
 
-                                <tr
-                                    class="
-                                        border-t
-                                        border-gray-100
-                                        hover:bg-gray-50
-                                        transition
-                                    "
-                                >
+                                <tr>
 
                                     {{-- RÉFÉRENCE --}}
 
-                                    <td class="p-4">
+                                    <td class="whitespace-nowrap">
 
                                         <span
                                             class="
                                                 font-mono
                                                 text-sm
                                                 font-semibold
+                                                text-navy
                                             "
-                                            style="color:#0A2A66;"
                                         >
 
                                             {{ $paiement->reference ?? '-' }}
@@ -860,8 +742,9 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
+                                            tabular-nums
                                         "
                                     >
 
@@ -877,8 +760,9 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
+                                            tabular-nums
                                         "
                                     >
 
@@ -894,11 +778,12 @@
 
                                     <td
                                         class="
-                                            p-4
+                                            whitespace-nowrap
                                             text-right
                                             font-bold
+                                            tabular-nums
+                                            text-brand
                                         "
-                                        style="color:#FF6B00;"
                                     >
 
                                         {{ number_format(
@@ -917,8 +802,8 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
                                         "
                                     >
 
@@ -926,57 +811,34 @@
 
                                             <span
                                                 class="
-                                                    inline-flex
-                                                    items-center
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#DCFCE7;
-                                                    color:#15803D;
+                                                    tk-badge
+                                                    tk-badge-green
                                                 "
                                             >
-                                                ✅ Payé
+                                                <i class="fa-solid fa-circle-check"></i>
+
+                                                Payé
                                             </span>
 
                                         @elseif($affichageStatut === 'en retard')
 
                                             <span
                                                 class="
-                                                    inline-flex
-                                                    items-center
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#FEE2E2;
-                                                    color:#DC2626;
+                                                    tk-badge
+                                                    tk-badge-red
                                                 "
                                             >
-                                                🔴 En retard
+                                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                                En retard
                                             </span>
 
                                         @elseif($affichageStatut === 'annulé')
 
                                             <span
                                                 class="
-                                                    inline-flex
-                                                    items-center
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#F3F4F6;
-                                                    color:#6B7280;
+                                                    tk-badge
+                                                    tk-badge-slate
                                                 "
                                             >
                                                 Annulé
@@ -986,20 +848,13 @@
 
                                             <span
                                                 class="
-                                                    inline-flex
-                                                    items-center
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#FFF3E8;
-                                                    color:#FF6B00;
+                                                    tk-badge
+                                                    tk-badge-orange
                                                 "
                                             >
-                                                ⏳ En attente
+                                                <i class="fa-solid fa-hourglass-half"></i>
+
+                                                En attente
                                             </span>
 
                                         @endif
@@ -1011,8 +866,8 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
                                         "
                                     >
 
@@ -1027,23 +882,12 @@
                                                     'paiements-agences.pay.form',
                                                     $paiement->id
                                                 ) }}"
-                                                class="
-                                                    inline-flex
-                                                    items-center
-                                                    justify-center
-                                                    px-3
-                                                    py-2
-                                                    rounded-lg
-                                                    text-white
-                                                    text-sm
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#FF6B00;
-                                                "
+                                                class="tk-btn-accent"
                                             >
 
-                                                💳 Payer
+                                                <i class="fa-solid fa-credit-card"></i>
+
+                                                <span>Payer</span>
 
                                             </a>
 
@@ -1053,7 +897,7 @@
                                                 class="
                                                     text-sm
                                                     font-semibold
-                                                    text-gray-400
+                                                    text-slate-400
                                                 "
                                             >
                                                 -
@@ -1073,26 +917,17 @@
 
                                     <td
                                         colspan="6"
-                                        class="
-                                            text-center
-                                            py-14
-                                            text-gray-500
-                                        "
+                                        class="tk-empty"
                                     >
 
-                                        <div
-                                            class="
-                                                text-5xl
-                                                mb-4
-                                            "
-                                        >
-                                            💰
+                                        <div class="mb-4 block text-4xl text-slate-300">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
                                         </div>
 
                                         <p
                                             class="
                                                 font-semibold
-                                                text-gray-700
+                                                text-slate-600
                                             "
                                         >
                                             Aucun paiement enregistré
@@ -1124,13 +959,7 @@
 
                 @if($paiements->hasPages())
 
-                    <div
-                        class="
-                            p-5
-                            border-t
-                            border-gray-100
-                        "
-                    >
+                    <div class="border-t border-slate-200 px-6 py-4">
 
                         {{ $paiements->links() }}
 
@@ -1145,7 +974,7 @@
                 class="
                     text-center
                     text-sm
-                    text-gray-400
+                    text-slate-400
                     pb-4
                 "
             >
@@ -1161,7 +990,7 @@
 
 {{-- =========================================================
      ESPACE ADMIN
-========================================================= --}}
+======================================================== --}}
 
 @else
 
@@ -1169,33 +998,40 @@
         :header="'Règlements des agences'"
     >
 
-        <div class="space-y-6">
+        <div class="tk-page">
 
             <div
                 class="
+                    tk-page-head
                     flex
                     flex-col
+                    gap-4
                     md:flex-row
                     md:items-center
                     md:justify-between
-                    gap-4
                 "
             >
 
                 <div>
 
-                    <h1
-                        class="
-                            text-3xl
-                            md:text-4xl
-                            font-bold
-                        "
-                        style="color:#0A2A66;"
-                    >
-                        💰 Paiements des agences
+                    <h1 class="tk-page-title">
+
+                        <span
+                            class="
+                                flex h-11 w-11 shrink-0
+                                items-center justify-center
+                                rounded-lg bg-orange-50
+                                text-lg text-brand
+                            "
+                        >
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                        </span>
+
+                        Paiements des agences
+
                     </h1>
 
-                    <p class="text-gray-500 mt-2">
+                    <p class="mt-2 text-sm text-slate-500">
                         Suivez les paiements des agences vers TOKENDE.
                     </p>
 
@@ -1206,52 +1042,19 @@
                     href="{{ route(
                         'paiements-agences.create'
                     ) }}"
-                    class="
-                        inline-flex
-                        items-center
-                        justify-center
-                        px-5
-                        py-3
-                        rounded-xl
-                        text-white
-                        font-bold
-                        shadow-md
-                    "
-                    style="background:#FF6B00;"
+                    class="tk-btn-accent shrink-0"
                 >
-                    ➕ Créer une échéance
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    <span>Créer une échéance</span>
+
                 </a>
 
             </div>
 
 
-            @if(session('success'))
-
-                <div
-                    class="rounded-xl p-4"
-                    style="
-                        background:#DCFCE7;
-                        color:#15803D;
-                    "
-                >
-
-                    ✅ {{ session('success') }}
-
-                </div>
-
-            @endif
-
-
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    shadow-sm
-                    border
-                    border-gray-100
-                    p-6
-                "
-            >
+            <div class="tk-card p-6">
 
                 <form
                     method="GET"
@@ -1268,13 +1071,7 @@
 
                     <select
                         name="agence"
-                        class="
-                            border
-                            border-gray-200
-                            rounded-xl
-                            px-4
-                            py-3
-                        "
+                        class="tk-input"
                     >
 
                         <option value="">
@@ -1302,13 +1099,7 @@
 
                     <select
                         name="statut"
-                        class="
-                            border
-                            border-gray-200
-                            rounded-xl
-                            px-4
-                            py-3
-                        "
+                        class="tk-input"
                     >
 
                         <option value="">
@@ -1362,26 +1153,13 @@
                         type="date"
                         name="date"
                         value="{{ request('date') }}"
-                        class="
-                            border
-                            border-gray-200
-                            rounded-xl
-                            px-4
-                            py-3
-                        "
+                        class="tk-input"
                     >
 
 
                     <button
                         type="submit"
-                        class="
-                            rounded-xl
-                            text-white
-                            font-bold
-                            px-4
-                            py-3
-                        "
-                        style="background:#0A2A66;"
+                        class="tk-btn-accent"
                     >
                         Filtrer
                     </button>
@@ -1391,52 +1169,41 @@
             </div>
 
 
-            <div
-                class="
-                    bg-white
-                    rounded-2xl
-                    shadow-sm
-                    border
-                    border-gray-100
-                    overflow-hidden
-                "
-            >
+            <div class="tk-card overflow-hidden">
 
                 <div class="overflow-x-auto">
 
-                    <table class="min-w-full">
+                    <table class="tk-table">
 
-                        <thead
-                            style="background:#EEF4FF;"
-                        >
+                        <thead>
 
                             <tr>
 
-                                <th class="p-4 text-left">
+                                <th class="text-left whitespace-nowrap">
                                     Agence
                                 </th>
 
-                                <th class="p-4 text-left">
+                                <th class="text-left whitespace-nowrap">
                                     Référence
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Date prévue
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Date paiement
                                 </th>
 
-                                <th class="p-4 text-right">
+                                <th class="text-right whitespace-nowrap">
                                     Montant
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Statut
                                 </th>
 
-                                <th class="p-4 text-center">
+                                <th class="text-center whitespace-nowrap">
                                     Actions
                                 </th>
 
@@ -1473,22 +1240,15 @@
                                 @endphp
 
 
-                                <tr
-                                    class="
-                                        border-t
-                                        border-gray-100
-                                        hover:bg-gray-50
-                                        transition
-                                    "
-                                >
+                                <tr>
 
-                                    <td class="p-4">
+                                    <td class="whitespace-nowrap">
 
                                         <span
                                             class="
                                                 font-semibold
+                                                text-navy
                                             "
-                                            style="color:#0A2A66;"
                                         >
 
                                             {{ $paiement->agence->nom_agence ?? '-' }}
@@ -1498,7 +1258,7 @@
                                     </td>
 
 
-                                    <td class="p-4">
+                                    <td class="whitespace-nowrap">
 
                                         <span
                                             class="font-mono text-sm"
@@ -1511,7 +1271,13 @@
                                     </td>
 
 
-                                    <td class="p-4 text-center">
+                                    <td
+                                        class="
+                                            text-center
+                                            whitespace-nowrap
+                                            tabular-nums
+                                        "
+                                    >
 
                                         {{ $paiement->date_prevue
                                             ? $paiement->date_prevue->format('d/m/Y')
@@ -1521,7 +1287,13 @@
                                     </td>
 
 
-                                    <td class="p-4 text-center">
+                                    <td
+                                        class="
+                                            text-center
+                                            whitespace-nowrap
+                                            tabular-nums
+                                        "
+                                    >
 
                                         {{ $paiement->date_paiement
                                             ? $paiement->date_paiement->format('d/m/Y')
@@ -1533,11 +1305,12 @@
 
                                     <td
                                         class="
-                                            p-4
+                                            whitespace-nowrap
                                             text-right
                                             font-bold
+                                            tabular-nums
+                                            text-brand
                                         "
-                                        style="color:#FF6B00;"
                                     >
 
                                         {{ number_format(
@@ -1554,8 +1327,8 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
                                         "
                                     >
 
@@ -1563,51 +1336,34 @@
 
                                             <span
                                                 class="
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#DCFCE7;
-                                                    color:#15803D;
+                                                    tk-badge
+                                                    tk-badge-green
                                                 "
                                             >
-                                                ✅ Payé
+                                                <i class="fa-solid fa-circle-check"></i>
+
+                                                Payé
                                             </span>
 
                                         @elseif($statut === 'en retard')
 
                                             <span
                                                 class="
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#FEE2E2;
-                                                    color:#DC2626;
+                                                    tk-badge
+                                                    tk-badge-red
                                                 "
                                             >
-                                                🔴 En retard
+                                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                                En retard
                                             </span>
 
                                         @elseif($statut === 'annulé')
 
                                             <span
                                                 class="
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#F3F4F6;
-                                                    color:#6B7280;
+                                                    tk-badge
+                                                    tk-badge-slate
                                                 "
                                             >
                                                 Annulé
@@ -1617,18 +1373,13 @@
 
                                             <span
                                                 class="
-                                                    px-3
-                                                    py-1
-                                                    rounded-full
-                                                    text-xs
-                                                    font-bold
-                                                "
-                                                style="
-                                                    background:#FFF3E8;
-                                                    color:#FF6B00;
+                                                    tk-badge
+                                                    tk-badge-orange
                                                 "
                                             >
-                                                ⏳ En attente
+                                                <i class="fa-solid fa-hourglass-half"></i>
+
+                                                En attente
                                             </span>
 
                                         @endif
@@ -1638,12 +1389,33 @@
 
                                     <td
                                         class="
-                                            p-4
                                             text-center
+                                            whitespace-nowrap
                                         "
                                     >
 
                                         @if($statut !== 'payé')
+
+                                            <div
+                                                class="
+                                                    flex flex-wrap
+                                                    items-center
+                                                    justify-center
+                                                    gap-2
+                                                "
+                                            >
+
+                                                <a
+                                                    href="{{ route(
+                                                        'paiements-agences.pay.form',
+                                                        $paiement->id
+                                                    ) }}"
+                                                    class="tk-btn-ghost"
+                                                >
+                                                    <i class="fa-solid fa-credit-card"></i>
+
+                                                    <span>Payer</span>
+                                                </a>
 
                                             <form
                                                 method="POST"
@@ -1651,11 +1423,7 @@
                                                     'paiements-agences.paid',
                                                     $paiement->id
                                                 ) }}"
-                                                onsubmit="
-                                                    return confirm(
-                                                        'Marquer ce paiement comme payé ?'
-                                                    )
-                                                "
+                                                onsubmit="event.preventDefault(); tkConfirm('Marquer ce paiement comme payé ?', () => this.submit())"
                                             >
 
                                                 @csrf
@@ -1665,20 +1433,20 @@
                                                 <button
                                                     type="submit"
                                                     class="
-                                                        px-3
-                                                        py-2
-                                                        rounded-lg
+                                                        tk-btn
+                                                        bg-emerald-600
                                                         text-white
-                                                        font-semibold
-                                                    "
-                                                    style="
-                                                        background:#16A34A;
+                                                        hover:bg-emerald-700
                                                     "
                                                 >
-                                                    ✓ Valider paiement
+                                                    <i class="fa-solid fa-check"></i>
+
+                                                    <span>Valider paiement</span>
                                                 </button>
 
                                             </form>
+
+                                            </div>
 
                                         @else
 
@@ -1686,7 +1454,7 @@
                                                 class="
                                                     text-sm
                                                     font-semibold
-                                                    text-gray-400
+                                                    text-slate-400
                                                 "
                                             >
                                                 Terminé
@@ -1704,20 +1472,11 @@
 
                                     <td
                                         colspan="7"
-                                        class="
-                                            text-center
-                                            py-12
-                                            text-gray-500
-                                        "
+                                        class="tk-empty"
                                     >
 
-                                        <div
-                                            class="
-                                                text-5xl
-                                                mb-3
-                                            "
-                                        >
-                                            💰
+                                        <div class="mb-3 block text-4xl text-slate-300">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
                                         </div>
 
                                         Aucun paiement enregistré.
@@ -1737,13 +1496,7 @@
 
                 @if($paiements->hasPages())
 
-                    <div
-                        class="
-                            p-5
-                            border-t
-                            border-gray-100
-                        "
-                    >
+                    <div class="border-t border-slate-200 px-6 py-4">
 
                         {{ $paiements->links() }}
 

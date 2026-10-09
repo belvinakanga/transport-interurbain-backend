@@ -1,71 +1,469 @@
-<x-layouts.admin>
+<x-layouts.admin :header="'Rapports & Statistiques'">
 
-<div class="p-8">
+<div class="tk-page">
 
-    <h1 class="text-4xl font-bold mb-8">
-        📊 Rapports & Statistiques
-    </h1>
+    {{-- En-tête --}}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="tk-page-head">
 
-        <!-- Utilisateurs -->
-        <div class="bg-blue-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">👥 Utilisateurs</h2>
-            <p class="text-4xl font-bold mt-4">{{ $users }}</p>
+        <h1 class="tk-page-title">
+
+            <span
+                class="
+                    flex h-11 w-11 shrink-0
+                    items-center justify-center
+                    rounded-lg bg-orange-50
+                    text-lg text-brand
+                "
+            >
+                <i class="fa-solid fa-chart-simple"></i>
+            </span>
+
+            Rapports & Statistiques
+
+        </h1>
+
+    </div>
+
+
+    {{-- Statistiques --}}
+
+    <div
+        class="
+            grid grid-cols-1
+            sm:grid-cols-2
+            xl:grid-cols-4 gap-4
+        "
+    >
+
+
+        {{-- Utilisateurs --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Utilisateurs
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $users }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-orange-50 text-brand
+                    "
+                >
+                    <i class="fa-solid fa-users"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Agences -->
-        <div class="bg-green-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🏢 Agences</h2>
-            <p class="text-4xl font-bold mt-4">{{ $agences }}</p>
+
+        {{-- Agences --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Agences
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $agences }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-[#EEF4FF] text-navy
+                    "
+                >
+                    <i class="fa-solid fa-building"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Trajets -->
-        <div class="bg-yellow-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🚌 Trajets</h2>
-            <p class="text-4xl font-bold mt-4">{{ $trajets }}</p>
+
+        {{-- Trajets --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Trajets
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $trajets }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-orange-50 text-brand
+                    "
+                >
+                    <i class="fa-solid fa-bus"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Voyageurs -->
-        <div class="bg-purple-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🧍 Voyageurs</h2>
-            <p class="text-4xl font-bold mt-4">{{ $voyageurs }}</p>
+
+        {{-- Voyageurs --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Voyageurs
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $voyageurs }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-[#EEF4FF] text-navy
+                    "
+                >
+                    <i class="fa-solid fa-user"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Réservations -->
-        <div class="bg-red-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🎫 Réservations</h2>
-            <p class="text-4xl font-bold mt-4">{{ $reservations }}</p>
+
+        {{-- Réservations --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Réservations
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $reservations }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-orange-50 text-brand
+                    "
+                >
+                    <i class="fa-solid fa-ticket"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Billets -->
-        <div class="bg-indigo-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🎟️ Billets</h2>
-            <p class="text-4xl font-bold mt-4">{{ $billets }}</p>
+
+        {{-- Billets --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Billets
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $billets }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-[#EEF4FF] text-navy
+                    "
+                >
+                    <i class="fa-solid fa-receipt"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Paiements -->
-        <div class="bg-pink-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">💳 Paiements</h2>
-            <p class="text-4xl font-bold mt-4">{{ $paiements }}</p>
+
+        {{-- Paiements --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Paiements
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $paiements }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-orange-50 text-brand
+                    "
+                >
+                    <i class="fa-solid fa-credit-card"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Avis -->
-        <div class="bg-orange-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">⭐ Avis</h2>
-            <p class="text-4xl font-bold mt-4">{{ $avis }}</p>
+
+        {{-- Avis --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Avis
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $avis }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-[#EEF4FF] text-navy
+                    "
+                >
+                    <i class="fa-solid fa-star"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Achats -->
-        <div class="bg-teal-500 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">🛒 Achats</h2>
-            <p class="text-4xl font-bold mt-4">{{ $achats }}</p>
+
+        {{-- Achats --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Achats
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $achats }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-orange-50 text-brand
+                    "
+                >
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </span>
+
+            </div>
+
         </div>
 
-        <!-- Abonnements -->
-        <div class="bg-gray-700 text-white rounded-xl shadow-lg p-6">
-            <h2 class="text-lg font-semibold">💼 Abonnements</h2>
-            <p class="text-4xl font-bold mt-4">{{ $abonnements }}</p>
+
+        {{-- Abonnements --}}
+
+        <div class="tk-kpi">
+
+            <div
+                class="
+                    flex items-start
+                    justify-between gap-3
+                "
+            >
+
+                <div>
+
+                    <p
+                        class="
+                            text-sm font-medium
+                            text-slate-500
+                        "
+                    >
+                        Abonnements
+                    </p>
+
+                    <p class="tk-kpi-value mt-3">
+                        {{ $abonnements }}
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="
+                        tk-kpi-icon
+                        bg-[#EEF4FF] text-navy
+                    "
+                >
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </span>
+
+            </div>
+
         </div>
 
     </div>

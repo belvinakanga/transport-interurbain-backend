@@ -18,9 +18,9 @@
 
             <label
                 for="name"
-                class="block text-sm font-semibold text-gray-700 mb-2">
+                class="tk-form-label">
 
-                <i class="fas fa-user text-yellow-500 mr-2"></i>
+                <i class="fa-solid fa-user text-brand mr-1.5"></i>
 
                 Nom complet
 
@@ -34,11 +34,8 @@
                 required
                 autofocus
                 autocomplete="name"
-                class="w-full rounded-xl border-gray-300 focus:border-yellow-500 focus:ring-yellow-500">
+                class="tk-input">
 
-            <x-input-error
-                :messages="$errors->get('name')"
-                class="mt-2"/>
 
         </div>
 
@@ -48,9 +45,9 @@
 
             <label
                 for="email"
-                class="block text-sm font-semibold text-gray-700 mb-2">
+                class="tk-form-label">
 
-                <i class="fas fa-envelope text-yellow-500 mr-2"></i>
+                <i class="fa-solid fa-envelope text-brand mr-1.5"></i>
 
                 Adresse e-mail
 
@@ -63,11 +60,8 @@
                 value="{{ old('email', $user->email) }}"
                 required
                 autocomplete="username"
-                class="w-full rounded-xl border-gray-300 focus:border-yellow-500 focus:ring-yellow-500">
+                class="tk-input">
 
-            <x-input-error
-                :messages="$errors->get('email')"
-                class="mt-2"/>
 
         </div>
 
@@ -75,35 +69,26 @@
 
     @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
 
-        <div class="rounded-xl bg-yellow-50 border border-yellow-300 p-4">
+        <div class="rounded-xl border border-[#FFD7B8] bg-[#FFF3E8] p-4">
 
             <div class="flex items-center justify-between flex-wrap gap-4">
 
                 <div>
 
-                    <p class="font-semibold text-yellow-700">
+                    <p class="font-semibold text-[#9A3412]">
 
                         Adresse e-mail non vérifiée.
 
                     </p>
 
-                    @if (session('status') === 'verification-link-sent')
-
-                        <p class="text-green-600 text-sm mt-1">
-
-                            ✔ Un nouveau lien de vérification a été envoyé.
-
-                        </p>
-
-                    @endif
 
                 </div>
 
                 <button
                     form="send-verification"
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition">
+                    class="tk-btn-accent">
 
-                    <i class="fas fa-paper-plane mr-2"></i>
+                    <i class="fa-solid fa-paper-plane"></i>
 
                     Vérifier
 
@@ -120,7 +105,7 @@
         <button
             type="button"
             @click="profileModal=false"
-            class="px-5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition">
+            class="tk-btn-ghost">
 
             Annuler
 
@@ -128,9 +113,9 @@
 
         <button
             type="submit"
-            class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-xl font-semibold transition">
+            class="tk-btn-accent">
 
-            <i class="fas fa-floppy-disk mr-2"></i>
+            <i class="fa-solid fa-floppy-disk"></i>
 
             Enregistrer
 
@@ -138,19 +123,5 @@
 
     </div>
 
-    @if (session('status') === 'profile-updated')
-
-        <div
-            x-data="{show:true}"
-            x-show="show"
-            x-transition
-            x-init="setTimeout(()=>show=false,2500)"
-            class="mt-4 rounded-xl bg-green-100 text-green-700 px-4 py-3">
-
-            ✔ Vos informations ont été mises à jour avec succès.
-
-        </div>
-
-    @endif
 
 </form>
