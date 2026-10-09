@@ -294,3 +294,20 @@ Route::middleware('auth:sanctum')->group(function () {
     );
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| OPENPAY - PAIEMENT MOBILE MONEY
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Api\PaymentOpenPayController;
+use App\Http\Controllers\Webhook\OpenPayWebhookController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/openpay/initiate', [PaymentOpenPayController::class, 'initiate']);
+    Route::get('/openpay/status/{reference}', [PaymentOpenPayController::class, 'status']);
+});
+
+// Webhook public (callback OpenPay)
+Route::post('/webhooks/openpay', [OpenPayWebhookController::class, 'handle'])->name('webhooks.openpay');

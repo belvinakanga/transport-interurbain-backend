@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'openpay' => [
+        'api_key' => env('OPENPAY_API_KEY'),
+        'base_url' => env('OPENPAY_BASE_URL', 'https://api.openpay-cg.com/v1'),
+        'callback_url' => env('OPENPAY_CALLBACK_URL'),
+    ],
+
 ];
