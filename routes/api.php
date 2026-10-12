@@ -347,15 +347,26 @@ Route::middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 | OPENPAY - PAIEMENT MOBILE MONEY
 |--------------------------------------------------------------------------
+|
+| Désactivé pendant les tests fonctionnels : l'achat est alors validé
+| directement par AchatController, sans paiement réel.
+|
+| Rien n'est supprimé — les contrôleurs et le service restent en place.
+| Pour rebrancher le paiement en ligne : OPENPAY_ACTIF=true dans .env,
+| puis `php artisan config:clear`.
+|
 */
 
 use App\Http\Controllers\Api\PaymentOpenPayController;
 use App\Http\Controllers\Webhook\OpenPayWebhookController;
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/openpay/initiate', [PaymentOpenPayController::class, 'initiate']);
-    Route::get('/openpay/status/{reference}', [PaymentOpenPayController::class, 'status']);
-});
+if (config('services.openpay.actif')) {
 
-// Webhook public (callback OpenPay)
-Route::post('/webhooks/openpay', [OpenPayWebhookController::class, 'handle'])->name('webhooks.openpay');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/openpay/initiate', [PaymentOpenPayController::class, 'initiate']);
+        Route::get('/openpay/status/{reference}', [PaymentOpenPayController::class, 'status']);
+    });
+
+    // Webhook public (callback OpenPay)
+    Route::post('/webhooks/openpay', [OpenPayWebhookController::class, 'handle'])->name('webhooks.openpay');
+}

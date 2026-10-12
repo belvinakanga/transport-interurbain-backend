@@ -36,6 +36,21 @@ return [
     ],
 
     'openpay' => [
+        /*
+         * Interrupteur du paiement en ligne.
+         *
+         * À faux, les routes OpenPay et son webhook ne sont pas déclarés :
+         * l'achat est validé directement, sans paiement réel. C'est le
+         * mode attendu pendant les tests fonctionnels.
+         *
+         * Le code OpenPay reste en place ; repasser OPENPAY_ACTIF à true
+         * suffit à le rebrancher.
+         */
+        'actif' => filter_var(
+            env('OPENPAY_ACTIF', false),
+            FILTER_VALIDATE_BOOLEAN
+        ),
+
         'api_key' => env('OPENPAY_API_KEY'),
         'base_url' => env('OPENPAY_BASE_URL', 'https://api.openpay-cg.com/v1'),
         'callback_url' => env('OPENPAY_CALLBACK_URL'),
