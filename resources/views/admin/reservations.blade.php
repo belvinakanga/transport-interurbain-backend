@@ -101,26 +101,25 @@
                         Tous les statuts
                     </option>
 
-                    <option
-                        value="confirmée"
-                        {{ request('statut') == 'confirmée' ? 'selected' : '' }}
-                    >
-                        Confirmée
-                    </option>
+                    @php
+                        $statutActif = mb_strtolower(trim((string) request('statut')));
+                    @endphp
 
-                    <option
-                        value="en attente"
-                        {{ request('statut') == 'en attente' ? 'selected' : '' }}
-                    >
-                        En attente
-                    </option>
+                    @foreach ([
+                        'payée'      => 'Payée',
+                        'confirmée'  => 'Confirmée',
+                        'en attente' => 'En attente',
+                        'annulée'    => 'Annulée',
+                    ] as $valeur => $libelle)
 
-                    <option
-                        value="annulée"
-                        {{ request('statut') == 'annulée' ? 'selected' : '' }}
-                    >
-                        Annulée
-                    </option>
+                        <option
+                            value="{{ $valeur }}"
+                            {{ $statutActif === $valeur ? 'selected' : '' }}
+                        >
+                            {{ $libelle }}
+                        </option>
+
+                    @endforeach
 
                 </select>
 
@@ -398,7 +397,21 @@
 
                             <td class="text-center whitespace-nowrap">
 
-                                @if($reservation->statut == 'confirmée')
+                                @php
+                                    $statutReservation = mb_strtolower(trim((string) $reservation->statut));
+                                @endphp
+
+                                @if($statutReservation === 'payée')
+
+                                    <span class="tk-badge tk-badge-green">
+
+                                        <i class="fa-solid fa-money-bill-wave"></i>
+
+                                        Payée
+
+                                    </span>
+
+                                @elseif($statutReservation === 'confirmée')
 
                                     <span class="tk-badge tk-badge-green">
 
@@ -408,7 +421,7 @@
 
                                     </span>
 
-                                @elseif($reservation->statut == 'en attente')
+                                @elseif($statutReservation === 'en attente')
 
                                     <span class="tk-badge tk-badge-orange">
 
@@ -418,7 +431,7 @@
 
                                     </span>
 
-                                @elseif($reservation->statut == 'annulée')
+                                @elseif($statutReservation === 'annulée')
 
                                     <span class="tk-badge tk-badge-red">
 
@@ -447,7 +460,7 @@
                         <tr>
 
                             <td
-                                colspan="8"
+                                colspan="9"
                                 class="tk-empty"
                             >
 

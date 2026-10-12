@@ -13,9 +13,12 @@ use App\Models\Billet;
 use App\Models\Reservation;
 use App\Models\Achat;
 use App\Models\Trajet;
+use App\Http\Controllers\Concerns\RestreintAuProprietaire;
 
 class PaiementController extends Controller
 {
+    use RestreintAuProprietaire;
+
     /*
     |--------------------------------------------------------------------------
     | Liste des paiements
@@ -28,7 +31,18 @@ class PaiementController extends Controller
             'reservation.trajet',
             'reservation.voyageurs',
             'reservation.billets',
-        ])->latest()->get();
+        ])
+            // Un paiement porte le montant et le numéro de téléphone du
+            // payeur : un client ne voit que les siens. Le back-office
+            // voit tout.
+            ->when(
+                ! $this->consulteToutLeMonde(),
+                fn ($requete) => $requete->whereHas(
+                    'reservation',
+                    fn ($reservation) => $reservation->where('user_id', auth()->id())
+                )
+            )
+            ->latest()->get();
 
         return response()->json($paiements);
     }
@@ -605,6 +619,14 @@ class PaiementController extends Controller
             'reservation.voyageurs',
             'reservation.billets',
         ])->findOrFail($id);
+
+        // Sans ce contrôle, changer l'identifiant dans l'URL donnait accès
+        // au paiement d'un autre client. Un paiement sans réservation
+        // rattachée n'appartient à personne : il est refusé par défaut.
+        if (! $this->consulteToutLeMonde()
+            && $paiement->reservation?->user_id !== auth()->id()) {
+            abort(403, "Ce paiement ne vous appartient pas.");
+        }
 
         return response()->json($paiement);
     }

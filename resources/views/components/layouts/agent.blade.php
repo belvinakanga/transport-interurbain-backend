@@ -116,14 +116,13 @@
 
             <div class="flex items-center gap-3">
 
-                <div
-                    class="
-                        flex h-10 w-10 shrink-0 items-center
-                        justify-center rounded-xl
-                        bg-navy text-white text-lg
-                    "
-                >
-                    <i class="fa-solid fa-bus"></i>
+                {{-- Le logo remplace l'icône générique : garder les deux
+                     ferait deux symboles de bus côte à côte. --}}
+                <div class="tk-logo-tuile">
+                    <img
+                        src="{{ asset('transparent-logo.png') }}"
+                        alt="Tokende"
+                    >
                 </div>
 
 

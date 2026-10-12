@@ -349,6 +349,23 @@
 
                                 {{ $agence->nom_agence }}
 
+                                {{-- Le statut se lit sous le nom plutôt que
+                                     dans sa propre colonne : le tableau
+                                     déborde déjà en largeur. --}}
+                                @unless ($agence->actif)
+                                    <div class="mt-1">
+                                        <span
+                                            class="tk-badge tk-badge-slate"
+                                            @if ($agence->motif_desactivation)
+                                                title="{{ $agence->motif_desactivation }}"
+                                            @endif
+                                        >
+                                            <i class="fa-solid fa-circle-pause"></i>
+                                            Désactivée
+                                        </span>
+                                    </div>
+                                @endunless
+
                             </td>
 
 
@@ -454,6 +471,46 @@
                                         <i class="fa-solid fa-pen"></i>
 
                                     </a>
+
+
+                                    {{-- ACTIVER / DÉSACTIVER --}}
+
+                                    @if ($agence->actif)
+                                        <form
+                                            action="{{ route('admin.agences.desactiver', $agence->id) }}"
+                                            method="POST"
+                                            class="m-0"
+                                        >
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <button
+                                                type="submit"
+                                                title="Désactiver"
+                                                onclick="event.preventDefault(); tkConfirm('Désactiver « {{ $agence->nom_agence }} » ? Ses trajets ne seront plus proposés aux voyageurs.', () => this.form.submit())"
+                                                class="tk-icon-btn tk-icon-btn-slate"
+                                            >
+                                                <i class="fa-solid fa-pause"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form
+                                            action="{{ route('admin.agences.activer', $agence->id) }}"
+                                            method="POST"
+                                            class="m-0"
+                                        >
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <button
+                                                type="submit"
+                                                title="Réactiver"
+                                                class="tk-icon-btn tk-icon-btn-green"
+                                            >
+                                                <i class="fa-solid fa-play"></i>
+                                            </button>
+                                        </form>
+                                    @endif
 
 
                                     {{-- SUPPRIMER --}}

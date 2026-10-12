@@ -54,7 +54,32 @@ Route::get('/dashboard', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| AGENCE SUSPENDUE
+|--------------------------------------------------------------------------
+|
+| Page d'information affichée aux agents dont l'agence est désactivée.
+| Elle reste accessible pendant la suspension, sinon l'agent n'aurait
+| aucun moyen de comprendre ni de se déconnecter.
+|
+*/
+
+Route::get('/agence-suspendue', function () {
+    $user = auth()->user();
+
+    // Un agent dont l'agence est de nouveau active n'a rien à faire ici.
+    if ($user?->role !== 'agent' || $user->agence?->actif !== false) {
+        return redirect('/admin');
+    }
+
+    return view('agence-suspendue');
+})
+    ->middleware('auth')
+    ->name('agence.suspendue');
+
+
+Route::middleware(['auth', 'agence.active'])->group(function () {
     /*
 |--------------------------------------------------------------------------
 | ESPACE AGENT
@@ -178,6 +203,26 @@ Route::post(
         '/admin/agences/{id}',
         [AdminController::class, 'destroyAgence']
     );
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN - ACTIVATION DES AGENCES
+    |--------------------------------------------------------------------------
+    |
+    | Suspendre une agence la retire de la vente sans toucher à son
+    | historique. Réservé à l'administrateur.
+    |
+    */
+
+    Route::patch(
+        '/admin/agences/{id}/desactiver',
+        [AdminController::class, 'desactiverAgence']
+    )->name('admin.agences.desactiver');
+
+    Route::patch(
+        '/admin/agences/{id}/activer',
+        [AdminController::class, 'activerAgence']
+    )->name('admin.agences.activer');
 
 
     /*

@@ -79,35 +79,19 @@
 
             </div>
 
-            <div class="mb-5">
+            <x-ville-select
+                name="depart"
+                label="Ville de départ"
+                :villes="$villes"
+                :selected="$trajet->depart"
+            />
 
-                <label class="tk-form-label">
-                    Départ
-                </label>
-
-                <input
-                    type="text"
-                    name="depart"
-                    value="{{ old('depart', $trajet->depart) }}"
-                    class="tk-input"
-                    required>
-
-            </div>
-
-            <div class="mb-5">
-
-                <label class="tk-form-label">
-                    Arrivée
-                </label>
-
-                <input
-                    type="text"
-                    name="arrivee"
-                    value="{{ old('arrivee', $trajet->arrivee) }}"
-                    class="tk-input"
-                    required>
-
-            </div>
+            <x-ville-select
+                name="arrivee"
+                label="Ville d'arrivée"
+                :villes="$villes"
+                :selected="$trajet->arrivee"
+            />
 
             <div class="mb-5">
 
@@ -185,3 +169,4 @@
 </div>
 
 </x-layouts.admin>
+

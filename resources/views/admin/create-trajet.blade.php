@@ -143,45 +143,20 @@
 
             </div>
 
+            <x-ville-select
+                name="depart"
+                label="Ville de départ"
+                :villes="$villes"
+                :selected="null"
+            />
 
-            {{-- DÉPART --}}
+            <x-ville-select
+                name="arrivee"
+                label="Ville d'arrivée"
+                :villes="$villes"
+                :selected="null"
+            />
 
-            <div class="mb-5">
-
-                <label class="tk-form-label">
-                    Ville de départ
-                </label>
-
-                <input
-                    type="text"
-                    name="depart"
-                    value="{{ old('depart') }}"
-                    placeholder="Exemple : Brazzaville"
-                    required
-                    class="tk-input"
-                >
-
-            </div>
-
-
-            {{-- ARRIVÉE --}}
-
-            <div class="mb-5">
-
-                <label class="tk-form-label">
-                    Ville d'arrivée
-                </label>
-
-                <input
-                    type="text"
-                    name="arrivee"
-                    value="{{ old('arrivee') }}"
-                    placeholder="Exemple : Pointe-Noire"
-                    required
-                    class="tk-input"
-                >
-
-            </div>
 
 
             {{-- DATE --}}

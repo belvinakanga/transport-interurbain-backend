@@ -102,6 +102,48 @@
                 </div>
 
 
+                <!-- Message de confirmation -->
+                @if (session('status'))
+
+                    <div class="mb-6 rounded-xl border border-green-400/40 bg-green-500/20 px-5 py-4 text-white">
+
+                        <div class="flex items-center gap-3 font-semibold">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            {{ session('status') }}
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+                <!-- Erreurs -->
+                @if ($errors->any())
+
+                    <div class="mb-6 rounded-xl border border-red-400/40 bg-red-500/20 px-5 py-4 text-white">
+
+                        <div class="flex items-center gap-3 font-semibold">
+
+                            <i class="fa-solid fa-circle-exclamation"></i>
+
+                            Connexion impossible
+
+                        </div>
+
+                        <ul class="mt-2 list-disc space-y-1 pl-9 text-sm text-red-100">
+
+                            @foreach ($errors->all() as $message)
+                                <li>{{ $message }}</li>
+                            @endforeach
+
+                        </ul>
+
+                    </div>
+
+                @endif
+
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
 
                     @csrf
