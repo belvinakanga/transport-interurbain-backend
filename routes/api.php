@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\VilleController;
 use App\Http\Controllers\AgenceController;
 use App\Http\Controllers\AchatController;
 use App\Http\Controllers\AvisController;
@@ -114,30 +116,44 @@ Route::get(
 
 /*
 |--------------------------------------------------------------------------
-| BILLETS - LECTURE
+| VILLES - RÉFÉRENTIEL
 |--------------------------------------------------------------------------
+|
+| Donnée de référence publique, comme les trajets et les agences :
+| l'application mobile en a besoin pour son sélecteur de ville.
+|
 */
 
 Route::get(
-    '/billets',
-    [BilletController::class, 'index']
+    '/villes',
+    [VilleController::class, 'index']
 );
 
 
 /*
 |--------------------------------------------------------------------------
-| PAIEMENTS - LECTURE
+| MOT DE PASSE OUBLIÉ
 |--------------------------------------------------------------------------
+|
+| Publiques par nécessité : l'utilisateur ne peut pas être authentifié
+| puisqu'il a perdu son mot de passe. La protection repose sur le code
+| envoyé par e-mail et sur la limitation du nombre de tentatives.
+|
 */
 
-Route::get(
-    '/paiements',
-    [PaiementController::class, 'index']
+Route::post(
+    '/forgot-password',
+    [PasswordResetController::class, 'demanderCode']
 );
 
-Route::get(
-    '/paiements/{id}',
-    [PaiementController::class, 'show']
+Route::post(
+    '/verify-reset-code',
+    [PasswordResetController::class, 'verifierCode']
+);
+
+Route::post(
+    '/reset-password',
+    [PasswordResetController::class, 'reinitialiser']
 );
 
 
@@ -286,11 +302,43 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     | BILLETS
     |--------------------------------------------------------------------------
+    |
+    | La lecture est authentifiée : un billet porte le nom et l'adresse
+    | e-mail de son titulaire. Le contrôleur restreint en plus la liste au
+    | demandeur — voir BilletController::index().
+    |
     */
+
+    Route::get(
+        '/billets',
+        [BilletController::class, 'index']
+    );
 
     Route::post(
         '/billets',
         [BilletController::class, 'store']
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAIEMENTS - LECTURE
+    |--------------------------------------------------------------------------
+    |
+    | Un paiement porte le montant et le numéro de téléphone du payeur :
+    | ces routes ne peuvent pas être publiques. Le contrôleur restreint en
+    | plus au demandeur.
+    |
+    */
+
+    Route::get(
+        '/paiements',
+        [PaiementController::class, 'index']
+    );
+
+    Route::get(
+        '/paiements/{id}',
+        [PaiementController::class, 'show']
     );
 
 });

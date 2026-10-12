@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Agence;
 use App\Models\Trajet;
+use App\Models\Ville;
 use App\Models\Reservation;
 use App\Models\Paiement;
 use App\Models\Billet;
@@ -456,7 +457,10 @@ class AdminController extends Controller
 
         return view(
             'admin.create-trajet',
-            compact('agences')
+            [
+                'agences' => $agences,
+                'villes' => Ville::noms(),
+            ]
         );
     }
 
@@ -466,6 +470,27 @@ class AdminController extends Controller
     | ENREGISTRER TRAJET
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Remplace les champs `depart` et `arrivee` par la ville retenue.
+     *
+     * Chaque champ arrive sous deux formes : la valeur choisie dans la
+     * liste, et une saisie libre utilisée lorsque l'agent a sélectionné
+     * « Autre ville ». Une ville inconnue rejoint le référentiel.
+     */
+    private function resoudreVilles(Request $request): void
+    {
+        foreach (['depart', 'arrivee'] as $champ) {
+            $choix = trim((string) $request->input($champ, ''));
+            $libre = trim((string) $request->input($champ . '_autre', ''));
+
+            $nom = $choix === '__autre__' ? $libre : $choix;
+
+            $request->merge([
+                $champ => Ville::trouverOuCreer($nom) ?? '',
+            ]);
+        }
+    }
 
     public function storeTrajet(Request $request)
     {
@@ -481,6 +506,11 @@ class AdminController extends Controller
         | VALIDATION
         |--------------------------------------------------------------------------
         */
+
+        // Le formulaire propose une liste déroulante alimentée par le
+        // référentiel ; « Autre ville » révèle un champ libre dont la
+        // valeur rejoint le référentiel, donc l'application mobile.
+        $this->resoudreVilles($request);
 
         $request->validate([
             'agence_id' =>
@@ -554,6 +584,22 @@ class AdminController extends Controller
         */
 
         $agenceId = $request->agence_id;
+
+        // Une agence suspendue ne vend plus : refuser la création d'un
+        // trajet qui ne serait de toute façon pas proposé aux voyageurs.
+        $agenceCible = Agence::find($agenceId);
+
+        if ($agenceCible && !$agenceCible->actif) {
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Cette agence est désactivée : elle ne peut pas '
+                    . 'proposer de nouveaux trajets. Réactivez-la depuis '
+                    . 'la liste des agences.'
+                );
+        }
+
 
 
         if (
@@ -761,10 +807,11 @@ class AdminController extends Controller
 
         return view(
             'admin.edit-trajet',
-            compact(
-                'trajet',
-                'agences'
-            )
+            [
+                'trajet' => $trajet,
+                'agences' => $agences,
+                'villes' => Ville::noms(),
+            ]
         );
     }
 
@@ -792,6 +839,11 @@ class AdminController extends Controller
         | VALIDATION
         |--------------------------------------------------------------------------
         */
+
+        // Le formulaire propose une liste déroulante alimentée par le
+        // référentiel ; « Autre ville » révèle un champ libre dont la
+        // valeur rejoint le référentiel, donc l'application mobile.
+        $this->resoudreVilles($request);
 
         $request->validate([
             'agence_id' =>
@@ -1038,9 +1090,12 @@ class AdminController extends Controller
 
         if ($statut) {
 
-            $query->where(
-                'statut',
-                $statut
+            // Les statuts sont enregistrés avec des casses variables selon le
+            // code qui les écrit ('Confirmée', 'payée', 'en attente'...).
+            // On compare donc en minuscules pour ne rien perdre.
+            $query->whereRaw(
+                'LOWER(statut) = ?',
+                [mb_strtolower(trim($statut))]
             );
         }
 
@@ -1620,22 +1675,94 @@ public function updateAgence(
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * Suspend une agence.
+     *
+     * Ses trajets disparaissent de la recherche voyageur et ses agents ne
+     * peuvent plus en créer, mais l'historique reste intact.
+     */
+    public function desactiverAgence(Request $request, $id)
+    {
+        $this->exigerAdmin();
+
+        $agence = Agence::findOrFail($id);
+
+        $validated = $request->validate([
+            'motif' => ['nullable', 'string', 'max:255'],
+        ], [
+            'motif.max' => 'Le motif ne peut dépasser 255 caractères.',
+        ]);
+
+        $agence->desactiver($validated['motif'] ?? null);
+
+        return back()->with(
+            'success',
+            'Agence « ' . $agence->nom_agence . ' » désactivée. '
+            . 'Ses trajets ne sont plus proposés aux voyageurs.'
+        );
+    }
+
+    /** Remet une agence en service. */
+    public function activerAgence($id)
+    {
+        $this->exigerAdmin();
+
+        $agence = Agence::findOrFail($id);
+
+        $agence->reactiver();
+
+        return back()->with(
+            'success',
+            'Agence « ' . $agence->nom_agence . ' » réactivée.'
+        );
+    }
+
+    /**
+     * Supprime une agence, uniquement si rien n'y est rattaché.
+     *
+     * La base ne déclare aucune contrainte de clé étrangère : supprimer
+     * une agence qui porte des trajets ou des règlements laisserait des
+     * références orphelines sans la moindre erreur. On refuse donc, et
+     * on oriente vers la désactivation.
+     */
     public function destroyAgence($id)
     {
-        $agence =
-            Agence::findOrFail($id);
+        $this->exigerAdmin();
 
+        $agence = Agence::findOrFail($id);
+
+        $attaches = $agence->attachesBloquantes();
+
+        if ($attaches !== []) {
+            $details = collect($attaches)
+                ->map(fn ($n, $libelle) =>
+                    $n . ' ' . $libelle . ($n > 1 ? 's' : ''))
+                ->implode(', ');
+
+            return back()->with(
+                'error',
+                'Suppression impossible : cette agence porte encore '
+                . $details . '. Désactivez-la pour la retirer de la vente '
+                . 'sans perdre son historique.'
+            );
+        }
+
+        $nom = $agence->nom_agence;
 
         $agence->delete();
 
-
-        return redirect(
-            '/admin/agences'
-        )
-        ->with(
+        return redirect('/admin/agences')->with(
             'success',
-            'Agence supprimée avec succès.'
+            'Agence « ' . $nom . ' » supprimée.'
         );
+    }
+
+    /** Réserve une action à l'administrateur. */
+    private function exigerAdmin(): void
+    {
+        if (auth()->user()?->role !== 'admin') {
+            abort(403, 'Action réservée à l’administrateur.');
+        }
     }
 
 

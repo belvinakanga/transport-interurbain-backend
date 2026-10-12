@@ -16,9 +16,16 @@ class TrajetController extends Controller
 
     public function index()
     {
-        return response()->json(
-            Trajet::with('agence')->get()
-        );
+        // Une agence suspendue ne doit plus apparaître dans la recherche
+        // voyageur : ses trajets existent toujours pour l'historique,
+        // mais ne sont plus vendables.
+        $trajets = Trajet::with('agence')
+            ->whereHas('agence', function ($q) {
+                $q->where('actif', true);
+            })
+            ->get();
+
+        return response()->json($trajets);
     }
 
 

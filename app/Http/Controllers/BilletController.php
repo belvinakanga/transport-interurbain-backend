@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Billet;
+use App\Http\Controllers\Concerns\RestreintAuProprietaire;
 
 class BilletController extends Controller
 {
+    use RestreintAuProprietaire;
+
     /*
     |--------------------------------------------------------------------------
     | Liste de tous les billets (API)
@@ -18,7 +21,17 @@ class BilletController extends Controller
     'voyageur',
     'reservation.user',
     'reservation.trajet.agence'
-])->latest()->get();
+])
+        // Un billet porte le nom et l'adresse e-mail de son titulaire :
+        // un client ne voit que les siens. Le back-office voit tout.
+        ->when(
+            ! $this->consulteToutLeMonde(),
+            fn ($requete) => $requete->whereHas(
+                'reservation',
+                fn ($reservation) => $reservation->where('user_id', auth()->id())
+            )
+        )
+        ->latest()->get();
 
         return response()->json($billets);
     }
