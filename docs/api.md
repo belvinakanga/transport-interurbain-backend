@@ -99,12 +99,17 @@ La règle est dans le trait
 |---|---|
 | `POST` | `/avis` |
 
-### Paiement mobile money
+### Paiement mobile money — **désactivé**
 
 | Méthode | Chemin | Rôle |
 |---|---|---|
 | `POST` | `/openpay/initiate` | lancer un paiement |
 | `GET` | `/openpay/status/{reference}` | consulter l'état |
+
+> **Ces routes ne sont pas déclarées** tant que `OPENPAY_ACTIF=false` :
+> elles répondent `404`, ainsi que le webhook `/webhooks/openpay`. L'achat
+> passe alors par `POST /achats`, validé sans paiement réel. Voir
+> [paiements.md](paiements.md).
 
 ### Support
 

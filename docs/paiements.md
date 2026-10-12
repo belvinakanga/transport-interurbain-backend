@@ -12,6 +12,34 @@ Trois flux d'argent distincts, à ne pas confondre.
 
 ## 1. Paiement d'un billet
 
+> ### ⚠ OpenPay est désactivé
+>
+> **`OPENPAY_ACTIF=false` dans `.env`.** Les routes OpenPay et son webhook
+> **ne sont pas déclarés** : ils répondent `404`. Un achat est validé
+> directement par `AchatController@store`, qui pose `statut => 'payé'`
+> **sans paiement réel**. C'est le mode voulu pendant les tests
+> fonctionnels.
+>
+> Rien n'a été supprimé — `OpenPayService`, `PaymentOpenPayController` et
+> `OpenPayWebhookController` sont intacts.
+>
+> **Pour rebrancher le paiement en ligne :**
+>
+> ```bash
+> # backend : .env
+> OPENPAY_ACTIF=true
+> php artisan config:clear
+> ```
+>
+> ```dart
+> // mobile : lib/config/app_config.dart
+> static const bool paiementEnLigneActif = true;
+> ```
+>
+> **Les deux drapeaux doivent rester accordés.** Si le mobile croit
+> OpenPay actif alors que le backend ne déclare plus les routes, l'achat
+> en mobile money échoue sur un `404`.
+
 ### Mobile money via OpenPay
 
 `app/Services/OpenPayService.php` appelle une passerelle externe.
@@ -51,6 +79,9 @@ Flutter                  Laravel                      OpenPay
 | `POST` | `/api/webhooks/openpay` | **publique** |
 
 Le webhook est forcément public — c'est OpenPay qui appelle.
+
+> Ces trois routes ne sont déclarées que si `OPENPAY_ACTIF=true`. En mode
+> test, elles répondent `404`.
 
 ### Table `paiements`
 

@@ -123,7 +123,15 @@ Toutes les clés attendues sont dans `.env.example`. Les plus structurantes :
 | `APP_LOCALE` | langue des messages de validation |
 | `DB_CONNECTION` | `sqlite` par défaut |
 | `MAIL_MAILER` | transport des e-mails |
+| `OPENPAY_ACTIF` | **branche ou débranche le paiement en ligne** |
 | `OPENPAY_API_KEY`, `OPENPAY_BASE_URL`, `OPENPAY_CALLBACK_URL` | passerelle de paiement |
+
+### Mode test : achat validé sans paiement
+
+`OPENPAY_ACTIF=false` (valeur actuelle) retire les routes OpenPay et son
+webhook. Un achat est alors validé directement, sans paiement réel. Le
+drapeau mobile `AppConfig.paiementEnLigneActif` doit rester accordé. Voir
+[paiements.md](paiements.md).
 
 ### Valeurs actuelles qui poseront problème en production
 
