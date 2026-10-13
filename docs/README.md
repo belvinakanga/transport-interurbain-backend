@@ -25,6 +25,7 @@ République du Congo.
 | Référentiel de villes | [villes.md](villes.md) |
 | Trajets et sièges | [trajets.md](trajets.md) |
 | Réservations, achats et billets | [reservations-billets.md](reservations-billets.md) |
+| Frais de service et commission | [frais-de-service.md](frais-de-service.md) |
 | Paiements, abonnements, commissions | [paiements.md](paiements.md) |
 | Support et conversations | [support.md](support.md) |
 

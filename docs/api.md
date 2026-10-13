@@ -36,6 +36,7 @@ Aucun jeton requis.
 | `GET` | `/avis` | avis publiés |
 | `GET` | `/avis/{id}` | détail d'un avis |
 | `GET` | `/villes` | référentiel de villes |
+| `GET` | `/tarification` | frais de service par billet |
 | `POST` | `/forgot-password` | demander un code |
 | `POST` | `/verify-reset-code` | vérifier un code |
 | `POST` | `/reset-password` | changer le mot de passe |
@@ -127,6 +128,10 @@ mis en forme côté serveur :
 
 ```json
 {
+  "prix": 15000,
+  "frais_service": 100,
+  "prix_total": 15100,
+
   "depart_iso": "2026-10-20T08:00:00",
   "date_depart_libelle": "20 octobre 2026",
   "heure_depart_libelle": "08h00",
@@ -138,6 +143,10 @@ mis en forme côté serveur :
 
 Le client doit les préférer aux colonnes brutes : celles-ci contiennent des
 formats hétérogènes selon l'agence qui a saisi le trajet.
+
+`prix_total` est ce que le voyageur paiera réellement — `prix` seul est le
+tarif de l'agence, hors frais de service. Voir
+[frais-de-service.md](frais-de-service.md).
 
 ## Trajets masqués
 

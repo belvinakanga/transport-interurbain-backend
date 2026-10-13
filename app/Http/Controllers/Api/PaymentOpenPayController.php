@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\FraisService;
 use App\Models\Achat;
 use App\Models\Paiement;
 use App\Models\Reservation;
@@ -73,7 +74,11 @@ class PaymentOpenPayController extends Controller
             if (!$trajet) {
                 return response()->json(['message' => 'Trajet introuvable.'], 404);
             }
-            $montant = (float)$trajet->prix * (int)$reservation->nombre_places;
+            $ventilation = FraisService::ventiler(
+                (float) $trajet->prix,
+                (int) $reservation->nombre_places
+            );
+            $montant = $ventilation['montant'];
         } else {
             // Achat direct - recalcul minimal (on s'appuie sur logique AchatController si besoin ultérieur)
             // Ici on exige trajet_id et nombre_places pour initier
@@ -82,11 +87,15 @@ class PaymentOpenPayController extends Controller
             }
 
             $trajet = Trajet::findOrFail($validated['trajet_id']);
-            $montant = (float)$trajet->prix * (int)$validated['nombre_places'];
+            $ventilation = FraisService::ventiler(
+                (float) $trajet->prix,
+                (int) $validated['nombre_places']
+            );
+            $montant = $ventilation['montant'];
         }
 
         // Créer Paiement/Achat en pending (idempotence via transaction)
-        $result = DB::transaction(function () use ($validated, $reservation, $trajet, $montant, $user) {
+        $result = DB::transaction(function () use ($validated, $reservation, $trajet, $montant, $ventilation, $user) {
             // Créer/assurer achat en pending pour réservation si existe
             $achat = null;
             if ($reservation) {
@@ -98,10 +107,10 @@ class PaymentOpenPayController extends Controller
                         'reservation_id' => $reservation->id,
                         'trajet_id' => $reservation->trajet_id,
                         'montant' => $montant,
-                        'montant_base' => $montant,
-                        'frais_tokende' => 0,
-                        'commission_tokende' => 0,
-                        'part_agence' => 0,
+                        'montant_base' => $ventilation['montant_base'],
+                        'frais_tokende' => $ventilation['frais_tokende'],
+                        'commission_tokende' => $ventilation['commission_tokende'],
+                        'part_agence' => $ventilation['part_agence'],
                         'description' => 'Paiement OpenPay en attente',
                         'reference' => $referenceAchat,
                         'statut' => 'en attente',

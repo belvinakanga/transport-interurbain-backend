@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Webhook;
 
 use App\Http\Controllers\Controller;
+use App\Services\FraisService;
 use App\Models\Achat;
 use App\Models\Billet;
 use App\Models\Paiement;
@@ -120,6 +121,22 @@ class OpenPayWebhookController extends Controller
                 return;
             }
 
+            // Ventilation du montant encaissé : le prix revenant à l'agence
+            // d'un côté, les frais de service de l'autre. Sans cela, une
+            // vente confirmée par webhook ne portait aucune commission.
+            $montantEncaisse = $expected > 0 ? $expected : $amount;
+
+            $ventilationWebhook = FraisService::ventiler(
+                (float) ($trajet->prix ?? 0),
+                (int) $reservation->nombre_places
+            );
+
+            // Le webhook fait foi sur ce qui a réellement été encaissé.
+            if (abs($ventilationWebhook['montant'] - $montantEncaisse) > 1.0) {
+                $ventilationWebhook['montant_base'] =
+                    max(0, $montantEncaisse - $ventilationWebhook['frais_tokende']);
+            }
+
             // S'assurer Achat existe et marqué payé
             $achat = Achat::where('reservation_id', $reservation->id)->lockForUpdate()->first();
             if (!$achat) {
@@ -128,11 +145,13 @@ class OpenPayWebhookController extends Controller
                     'user_id' => $reservation->user_id,
                     'reservation_id' => $reservation->id,
                     'trajet_id' => $reservation->trajet_id,
-                    'montant' => $expected > 0 ? $expected : $amount,
-                    'montant_base' => $expected > 0 ? $expected : $amount,
-                    'frais_tokende' => 0,
-                    'commission_tokende' => 0,
-                    'part_agence' => 0,
+                    // Le montant encaissé inclut les frais de service : on les
+                    // isole pour que la commission soit comptabilisée.
+                    'montant' => $montantEncaisse,
+                    'montant_base' => $ventilationWebhook['montant_base'],
+                    'frais_tokende' => $ventilationWebhook['frais_tokende'],
+                    'commission_tokende' => $ventilationWebhook['commission_tokende'],
+                    'part_agence' => $ventilationWebhook['part_agence'],
                     'description' => 'Paiement OpenPay confirmé',
                     'reference' => $referenceAchat,
                     'statut' => 'payé',

@@ -134,6 +134,8 @@ Les agents voient les leurs via `/agent/paiements`.
 
 ## Commissions
 
+Le détail du calcul est dans [frais-de-service.md](frais-de-service.md).
+
 `GET /admin/commissions` (`AdminController@commissions`). Les champs de
 commission sont portés par la table `achats` (migration
 `2026_09_23_031118_add_commission_fields_to_achats_table.php`).
