@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonImmutable;
+use App\Services\FraisService;
 use Illuminate\Database\Eloquent\Model;
 
 class Trajet extends Model
@@ -34,7 +35,37 @@ class Trajet extends Model
         'arrivee_iso',
         'heure_arrivee_libelle',
         'duree_libelle',
+        'frais_service',
+        'prix_total',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | PRIX
+    |--------------------------------------------------------------------------
+    |
+    | Le voyageur paie le prix de l'agence plus des frais de service fixes.
+    | Les exposer ici permet à l'application d'afficher, avant l'achat, le
+    | montant qui sera réellement débité — elle n'affichait auparavant que
+    | le prix de l'agence, soit moins que la somme facturée.
+    |
+    | Seuls ces deux champs sont publics : la répartition des frais entre
+    | Tokende et l'agence reste interne.
+    |
+    */
+
+    /** Frais de service pour un billet. */
+    public function getFraisServiceAttribute(): float
+    {
+        return FraisService::parBillet();
+    }
+
+    /** Ce qu'un billet coûte réellement au voyageur. */
+    public function getPrixTotalAttribute(): float
+    {
+        return (float) $this->prix + FraisService::parBillet();
+    }
+
 
     /*
     |--------------------------------------------------------------------------

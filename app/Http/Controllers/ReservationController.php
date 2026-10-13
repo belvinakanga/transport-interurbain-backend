@@ -10,6 +10,7 @@ use App\Models\Voyageur;
 use App\Models\Siege;
 use App\Models\Achat;
 use App\Models\Billet;
+use App\Services\FraisService;
 use Carbon\Carbon;
 
 class ReservationController extends Controller
@@ -660,10 +661,15 @@ class ReservationController extends Controller
                     |--------------------------------------------------------------------------
                     */
 
-                    $montant =
-                        (float) $trajet->prix
-                        *
-                        (int) $reservation->nombre_places;
+                    // Mêmes frais que l'achat direct : avant, ce parcours
+                    // ne facturait que le prix de l'agence, donc une
+                    // réservation payée ne rapportait rien à Tokende.
+                    $ventilation = FraisService::ventiler(
+                        (float) $trajet->prix,
+                        (int) $reservation->nombre_places
+                    );
+
+                    $montant = $ventilation['montant'];
 
                     /*
                     |--------------------------------------------------------------------------
@@ -740,6 +746,11 @@ $achat = Achat::create([
     'trajet_id' => $reservation->trajet_id,
 
     'montant' => $montant,
+
+    'montant_base' => $ventilation['montant_base'],
+    'frais_tokende' => $ventilation['frais_tokende'],
+    'commission_tokende' => $ventilation['commission_tokende'],
+    'part_agence' => $ventilation['part_agence'],
 
     'description' =>
         'Achat de ' .

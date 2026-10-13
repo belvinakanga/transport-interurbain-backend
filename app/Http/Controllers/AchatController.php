@@ -11,6 +11,7 @@ use App\Models\Achat;
 use App\Models\Billet;
 use App\Models\Reservation;
 use App\Models\Trajet;
+use App\Services\FraisService;
 use App\Models\Siege;
 use App\Models\Voyageur;
 
@@ -848,19 +849,18 @@ try {
                     | MONTANT
                     |--------------------------------------------------------------------------
                     */
-                   $prixBaseParBillet = (float) $trajet->prix;
+                   // Tarif unique, partagé avec le parcours « réservation »
+                   // et avec ce que l'application affiche au voyageur.
+                   $ventilation = FraisService::ventiler(
+                       (float) $trajet->prix,
+                       (int) $nombrePlaces
+                   );
 
-$fraisTokendeParBillet = 100;
-$commissionTokendeParBillet = 80;
-$partAgenceParBillet = 20;
-
-$montantBase = $prixBaseParBillet * $nombrePlaces;
-
-$fraisTokende = $fraisTokendeParBillet * $nombrePlaces;
-$commissionTokende = $commissionTokendeParBillet * $nombrePlaces;
-$partAgence = $partAgenceParBillet * $nombrePlaces;
-
-$montant = $montantBase + $fraisTokende;
+                   $montantBase = $ventilation['montant_base'];
+                   $fraisTokende = $ventilation['frais_tokende'];
+                   $commissionTokende = $ventilation['commission_tokende'];
+                   $partAgence = $ventilation['part_agence'];
+                   $montant = $ventilation['montant'];
 /*
 |--------------------------------------------------------------------------
 | RÉFÉRENCE ACHAT

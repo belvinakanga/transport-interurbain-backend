@@ -36,6 +36,16 @@ Les agences saisissent librement : `08:00:00`, `07:30`, `4h30`, `240`,
 | `heure_arrivee_libelle` | `12h30` |
 | `duree_libelle` | `4 h 30` |
 
+Deux autres attributs portent le prix réellement payé :
+
+| Attribut | Exemple |
+|---|---|
+| `frais_service` | `100` |
+| `prix_total` | `15100` |
+
+`prix` est le tarif de l'agence ; `prix_total` ce que le voyageur débourse.
+Voir [frais-de-service.md](frais-de-service.md).
+
 Les clients doivent lire ces attributs, pas les colonnes brutes.
 
 ## Visibilité

@@ -25,6 +25,21 @@ class Achat extends Model
     'remboursable',
 ];
 
+    /**
+     * Masqué des réponses JSON.
+     *
+     * La répartition des frais entre Tokende et l'agence est une donnée
+     * interne : le voyageur paie des « frais de service » et n'a pas à
+     * savoir comment ils se partagent.
+     *
+     * Les vues du back-office lisent ces colonnes comme propriétés, ce que
+     * $hidden n'empêche pas — seule la sérialisation est concernée.
+     */
+    protected $hidden = [
+        'commission_tokende',
+        'part_agence',
+    ];
+
     // ==========================
     // Relations
     // ==========================

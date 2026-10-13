@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\TarificationController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\VilleController;
 use App\Http\Controllers\AgenceController;
@@ -127,6 +128,22 @@ Route::get(
 Route::get(
     '/villes',
     [VilleController::class, 'index']
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| TARIFICATION
+|--------------------------------------------------------------------------
+|
+| Publique : l'application doit pouvoir annoncer les frais de service
+| avant même qu'un compte soit connecté.
+|
+*/
+
+Route::get(
+    '/tarification',
+    [TarificationController::class, 'index']
 );
 
 
