@@ -528,6 +528,17 @@ class AdminController extends Controller
             'heure_depart' =>
                 'required',
 
+            // Heure d'arrivée : la durée s'en déduit, l'agence n'a donc
+            // qu'un champ à remplir. Une arrivée antérieure au départ est
+            // comprise comme le lendemain.
+            'heure_fin' =>
+                'nullable|string|max:20',
+
+            // Durée : complément facultatif, pour une annonce qui diffère
+            // du simple écart entre les deux horaires.
+            'duree' =>
+                'nullable|string|max:20',
+
             'prix' =>
                 'required',
 
@@ -664,6 +675,12 @@ class AdminController extends Controller
 
             'heure_depart' =>
                 $request->heure_depart,
+
+            'heure_fin' =>
+                $request->heure_fin ?: null,
+
+            'duree' =>
+                $request->duree ?: null,
 
             'prix' =>
                 str_replace(
@@ -861,6 +878,15 @@ class AdminController extends Controller
             'heure_depart' =>
                 'required',
 
+            // Heure d'arrivée : la durée s'en déduit. Une arrivée
+            // antérieure au départ est comprise comme le lendemain.
+            'heure_fin' =>
+                'nullable|string|max:20',
+
+            // Durée : complément facultatif.
+            'duree' =>
+                'nullable|string|max:20',
+
             'prix' =>
                 'required',
         ]);
@@ -963,6 +989,12 @@ class AdminController extends Controller
             'heure_depart' =>
                 $request->heure_depart,
 
+            'heure_fin' =>
+                $request->heure_fin ?: null,
+
+            'duree' =>
+                $request->duree ?: null,
+
             'prix' =>
                 str_replace(
                     [' ', '.'],
@@ -1026,7 +1058,12 @@ class AdminController extends Controller
     'user',
     'trajet.agence',
     'voyageurs',
-    'billets'
+    'billets',
+    // Sièges et achat : la liste affiche le numéro de place et la
+    // ventilation des frais, que l'agence doit pouvoir lire sans
+    // ouvrir chaque réservation.
+    'sieges',
+    'achat',
 ])
 ->where('type', 'reservation');
 

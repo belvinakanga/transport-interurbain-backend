@@ -36,6 +36,14 @@ Les agences saisissent librement : `08:00:00`, `07:30`, `4h30`, `240`,
 | `heure_arrivee_libelle` | `12h30` |
 | `duree_libelle` | `4 h 30` |
 
+`duree_libelle` se calcule dans cet ordre :
+
+1. la colonne `duree` si elle est renseignée ;
+2. sinon l'écart entre `heure_depart` et `heure_fin`.
+
+Les deux sens sont donc couverts : saisir l'heure d'arrivée suffit à
+obtenir la durée, et saisir la durée suffit à obtenir l'heure d'arrivée.
+
 Deux autres attributs portent le prix réellement payé :
 
 | Attribut | Exemple |
@@ -83,11 +91,27 @@ supprimer. Voir [agences.md](agences.md).
 
 ### Création et modification
 
+Le formulaire porte sept champs obligatoires — agence, villes de départ et
+d'arrivée, date, heure de départ, prix, places — et deux facultatifs :
+
+| Champ | Rôle |
+|---|---|
+| `heure_fin` | heure d'arrivée ; **la durée s'en déduit** |
+| `duree` | durée annoncée, à ne remplir que pour annoncer autre chose que l'écart entre les deux horaires |
+
+Une arrivée antérieure au départ est comprise comme **le lendemain** :
+`22h00 → 05h30` donne une durée de 7 h 30 et une arrivée datée du jour
+suivant.
+
 `storeTrajet()` et `updateTrajet()` appellent tous deux
 `resoudreVilles()` (référentiel de villes) avant validation.
 
 `storeTrajet()` refuse en plus la création si l'agence visée est
 suspendue.
+
+> Jusqu'à l'ajout de ces deux champs, le formulaire ne permettait pas de
+> saisir l'heure d'arrivée : tout trajet créé depuis l'interface affichait
+> « — » à l'arrivée et aucune durée dans l'application.
 
 ## Sièges
 

@@ -142,6 +142,29 @@ Frais de service  2 × 100 FCFA            200 FCFA
 Total à payer                          30 200 FCFA
 ```
 
+## Où les frais sont visibles
+
+### Voyageur (mobile)
+
+| Écran | Affichage |
+|---|---|
+| Recherche | prix total de chaque trajet, frais compris |
+| Récapitulatif | détail billets / frais / total |
+| Paiement | même détail |
+| Mes voyages — réservations | total, puis « 30 000 FCFA + 200 FCFA de frais » |
+| Mes voyages — achats | idem, depuis `montant_base` et `frais_tokende` |
+
+### Agence (back-office)
+
+| Écran | Affichage |
+|---|---|
+| Tableau de bord | recettes : billets, votre part des frais, commission Tokende, total encaissé |
+| Réservations | total, ventilation `base + frais`, puis `vous X · Tokende Y` |
+| Achats | part agence détaillée, colonne « Commission Tokende » |
+
+La répartition 80/20 est montrée **à l'agence**, jamais au voyageur : elle
+lui sert à vérifier ses comptes.
+
 ## Vérifications
 
 | Situation | Attendu | Obtenu |

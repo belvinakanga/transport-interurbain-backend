@@ -210,11 +210,16 @@
                         </th>
 
 
+                        {{-- Inutile pour un agent : c'est toujours la sienne --}}
+                        @if(auth()->user()->role === 'admin')
+
                         {{-- Agence --}}
 
                         <th class="text-left whitespace-nowrap">
                             Agence
                         </th>
+                        @endif
+
 
 
                         {{-- Trajet --}}
@@ -235,6 +240,13 @@
 
                         <th class="text-center whitespace-nowrap">
                             Places
+                        </th>
+
+
+                        {{-- Sièges --}}
+
+                        <th class="text-center whitespace-nowrap">
+                            Siège
                         </th>
 
 
@@ -329,6 +341,9 @@
                             </td>
 
 
+                        {{-- Masquée pour l'agent --}}
+                        @if(auth()->user()->role === 'admin')
+
                             {{-- AGENCE --}}
 
                             <td class="whitespace-nowrap">
@@ -336,6 +351,8 @@
                                 {{ $reservation->trajet->agence->nom_agence ?? '-' }}
 
                             </td>
+                        @endif
+
 
 
                             {{-- TRAJET --}}
@@ -369,20 +386,61 @@
                             </td>
 
 
+                            {{-- SIÈGES --}}
+
+                            <td class="text-center whitespace-nowrap">
+
+                                @if($reservation->sieges && $reservation->sieges->count())
+
+                                    <span class="font-semibold text-navy">
+                                        {{ $reservation->sieges->pluck('numero_siege')->sort()->implode(', ') }}
+                                    </span>
+
+                                @else
+
+                                    <span class="text-slate-400">—</span>
+
+                                @endif
+
+                            </td>
+
+
                             {{-- MONTANT --}}
 
-                            <td class="text-right font-semibold text-navy whitespace-nowrap tabular-nums">
+                            {{-- Le total inclut les frais de service ; la
+                                 ventilation dessous évite à l'agence de la
+                                 recalculer. --}}
+
+                            <td class="text-right whitespace-nowrap tabular-nums">
 
                                 @if($reservation->trajet)
 
-                                    {{ number_format(
-                                        $reservation->trajet->prix * $reservation->nombre_places,
-                                        0,
-                                        ',',
-                                        ' '
-                                    ) }}
+                                    @php
+                                        $ventilation = \App\Services\FraisService::ventiler(
+                                            (float) $reservation->trajet->prix,
+                                            (int) $reservation->nombre_places
+                                        );
+                                    @endphp
 
-                                    FCFA
+                                    <div class="font-semibold text-navy">
+                                        {{ number_format($ventilation['montant'], 0, ',', ' ') }}
+                                        FCFA
+                                    </div>
+
+                                    <div class="mt-0.5 text-[11px] text-slate-500">
+                                        {{ number_format($ventilation['montant_base'], 0, ',', ' ') }}
+                                        + {{ number_format($ventilation['frais_tokende'], 0, ',', ' ') }}
+                                        de frais
+                                    </div>
+
+                                    <div class="text-[11px]">
+                                        <span class="font-semibold text-emerald-600">
+                                            vous {{ number_format($ventilation['part_agence'], 0, ',', ' ') }}
+                                        </span>
+                                        <span class="text-slate-500">
+                                            · Tokende {{ number_format($ventilation['commission_tokende'], 0, ',', ' ') }}
+                                        </span>
+                                    </div>
 
                                 @else
 
@@ -460,7 +518,7 @@
                         <tr>
 
                             <td
-                                colspan="9"
+                                colspan="{{ auth()->user()->role === 'admin' ? 9 : 8 }}"
                                 class="tk-empty"
                             >
 

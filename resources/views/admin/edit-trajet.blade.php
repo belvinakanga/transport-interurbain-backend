@@ -123,6 +123,54 @@
 
             </div>
 
+                {{-- HEURE D'ARRIVÉE --}}
+
+                <div class="mb-5">
+
+                    <label class="tk-form-label">
+                        Heure d’arrivée
+                    </label>
+
+                    <input
+                        type="time"
+                        name="heure_fin"
+                        value="{{ old('heure_fin', $trajet->heure_fin) }}"
+                        class="tk-input"
+                    >
+
+                    <p class="mt-1 text-xs text-slate-500">
+                        La durée du trajet en est déduite. Une arrivée plus
+                        tôt que le départ signifie le lendemain.
+                    </p>
+
+                </div>
+
+
+                {{-- DURÉE (FACULTATIVE) --}}
+
+                <div class="mb-5">
+
+                    <label class="tk-form-label">
+                        Durée annoncée
+                        <span class="font-normal text-slate-400">— facultatif</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="duree"
+                        value="{{ old('duree', $trajet->duree) }}"
+                        placeholder="Ex. 8h30"
+                        class="tk-input"
+                    >
+
+                    <p class="mt-1 text-xs text-slate-500">
+                        À remplir seulement pour annoncer une durée
+                        différente de l’écart entre les deux horaires.
+                    </p>
+
+                </div>
+
+
             <div class="mb-5">
 
                 <label class="tk-form-label">
