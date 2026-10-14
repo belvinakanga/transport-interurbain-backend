@@ -22,6 +22,7 @@ République du Congo.
 | Comptes, rôles et connexion | [authentification.md](authentification.md) |
 | Mot de passe oublié | [reinitialisation-mot-de-passe.md](reinitialisation-mot-de-passe.md) |
 | Agences : création, suspension, suppression | [agences.md](agences.md) |
+| Espace agent | [agent.md](agent.md) |
 | Référentiel de villes | [villes.md](villes.md) |
 | Trajets et sièges | [trajets.md](trajets.md) |
 | Réservations, achats et billets | [reservations-billets.md](reservations-billets.md) |

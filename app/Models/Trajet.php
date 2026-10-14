@@ -232,7 +232,27 @@ class Trajet extends Model
         $valeur = trim((string) ($this->duree ?? ''));
 
         if ($valeur === '') {
-            return null;
+            // Pas de durée saisie : la déduire des horaires. Le formulaire
+            // ne demande que l'heure d'arrivée ; la durée n'est qu'un
+            // complément facultatif.
+            //
+            // On ne consulte momentArrivee() que si `heure_fin` est
+            // renseignée : sans cela, elle rappellerait cette méthode et
+            // la boucle serait infinie.
+            if (empty($this->heure_fin)) {
+                return null;
+            }
+
+            $depart = $this->momentDepart();
+            $arrivee = $this->momentArrivee();
+
+            if (!$depart || !$arrivee) {
+                return null;
+            }
+
+            $minutes = $depart->diffInMinutes($arrivee);
+
+            return $minutes > 0 ? (int) $minutes : null;
         }
 
         if (ctype_digit($valeur)) {

@@ -111,6 +111,13 @@
                             Part agence
                         </th>
 
+                        {{-- Commission Tokende --}}
+
+                        <th class="text-right whitespace-nowrap min-w-[130px]">
+                            Commission Tokende
+                        </th>
+
+
                         <th class="text-left whitespace-nowrap">
                             Référence billet
                         </th>
@@ -404,6 +411,8 @@
 
                             <td class="text-right whitespace-nowrap min-w-max break-normal">
 
+                                {{-- Ce que l'agence encaisse : le prix de ses
+                                     billets plus sa part des frais de service. --}}
                                 <span class="font-bold text-emerald-600">
                                     {{ number_format(
                                         ($achat->montant_base ?? 0) + ($achat->part_agence ?? 0),
@@ -413,6 +422,30 @@
                                     ) }}
                                     FCFA
                                 </span>
+
+                                <div class="mt-0.5 text-[11px] text-slate-500">
+                                    billets {{ number_format($achat->montant_base ?? 0, 0, ',', ' ') }}
+                                    · part frais {{ number_format($achat->part_agence ?? 0, 0, ',', ' ') }}
+                                </div>
+
+                            </td>
+
+
+                            {{-- =================================================
+                                 COMMISSION TOKENDE
+                            ================================================== --}}
+
+                            <td class="text-right whitespace-nowrap min-w-max break-normal">
+
+                                <span class="font-semibold text-slate-500">
+                                    {{ number_format($achat->commission_tokende ?? 0, 0, ',', ' ') }}
+                                    FCFA
+                                </span>
+
+                                <div class="mt-0.5 text-[11px] text-slate-500">
+                                    sur {{ number_format($achat->frais_tokende ?? 0, 0, ',', ' ') }}
+                                    de frais
+                                </div>
 
                             </td>
 
@@ -529,7 +562,7 @@
                         <tr>
 
                             <td
-                                colspan="10"
+                                colspan="11"
                                 class="tk-empty"
                             >
 

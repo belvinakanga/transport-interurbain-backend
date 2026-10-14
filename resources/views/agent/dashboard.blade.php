@@ -65,29 +65,6 @@
              STATISTIQUES AGENT
         ====================================================== --}}
 
-        @php
-
-            $nombreReservations = \App\Models\Reservation::whereHas(
-                'trajet',
-                function ($query) {
-                    $query->where(
-                        'agence_id',
-                        auth()->user()->agence_id
-                    );
-                }
-            )->count();
-
-            $nombreAchats = \App\Models\Achat::whereHas(
-                'trajet',
-                function ($query) {
-                    $query->where(
-                        'agence_id',
-                        auth()->user()->agence_id
-                    );
-                }
-            )->count();
-
-        @endphp
 
 
         <div class="grid gap-4 sm:grid-cols-3">
@@ -132,7 +109,7 @@
                 </div>
 
                 <div class="text-xs text-slate-500">
-                    Réservations de mes trajets
+                    Réservées en ligne, payées ou non
                 </div>
 
             </div>
@@ -155,7 +132,88 @@
                 </div>
 
                 <div class="text-xs text-brand">
-                    Billets achetés
+                    Achats directs au guichet
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             RECETTES
+             ------------------------------------------------------
+             Le détail évite à l'agence de refaire le calcul : ce que
+             rapportent les billets, et sa part des frais de service.
+        ====================================================== --}}
+
+        <div class="tk-card overflow-hidden">
+
+            <div class="border-b border-slate-200 px-5 py-4">
+
+                <div class="tk-label text-slate-500">
+                    Recettes des ventes payées
+                </div>
+
+                <div class="mt-1 text-xs text-slate-500">
+                    Le voyageur paie le prix du billet plus des frais de
+                    service, partagés entre Tokende et votre agence.
+                </div>
+
+            </div>
+
+            {{-- Les filets et les fonds viennent des variables du thème :
+                 les couleurs Tailwind brutes ne suivent pas le mode sombre,
+                 et « bg-slate-200 » n’y est pas surchargé. --}}
+            <div
+                class="grid gap-px sm:grid-cols-4"
+                style="background: var(--tk-border);"
+            >
+
+                <div class="p-5" style="background: var(--tk-surface);">
+                    <div class="tk-label text-slate-500">Billets</div>
+                    <div class="mt-1 text-2xl font-extrabold" style="color: var(--tk-heading);">
+                        {{ number_format($recettes['billets'], 0, ',', ' ') }}
+                        <span class="text-sm font-semibold">FCFA</span>
+                    </div>
+                    <div class="mt-1 text-xs text-slate-500">
+                        Revient à votre agence
+                    </div>
+                </div>
+
+                <div class="p-5" style="background: var(--tk-surface);">
+                    <div class="tk-label text-slate-500">Votre part des frais</div>
+                    <div class="mt-1 text-2xl font-extrabold" style="color: var(--tk-success-fg);">
+                        {{ number_format($recettes['part_agence'], 0, ',', ' ') }}
+                        <span class="text-sm font-semibold">FCFA</span>
+                    </div>
+                    <div class="mt-1 text-xs text-slate-500">
+                        {{ (int) config('tokende.frais_service.part_agence') }} FCFA
+                        par billet
+                    </div>
+                </div>
+
+                <div class="p-5" style="background: var(--tk-surface);">
+                    <div class="tk-label text-slate-500">Commission Tokende</div>
+                    <div class="mt-1 text-2xl font-extrabold" style="color: var(--tk-text-3);">
+                        {{ number_format($recettes['commission'], 0, ',', ' ') }}
+                        <span class="text-sm font-semibold">FCFA</span>
+                    </div>
+                    <div class="mt-1 text-xs text-slate-500">
+                        {{ (int) config('tokende.frais_service.commission') }} FCFA
+                        par billet
+                    </div>
+                </div>
+
+                <div class="p-5" style="background: var(--tk-surface);">
+                    <div class="tk-label text-slate-500">Total encaissé</div>
+                    <div class="mt-1 text-2xl font-extrabold" style="color: var(--tk-accent);">
+                        {{ number_format($recettes['encaisse'], 0, ',', ' ') }}
+                        <span class="text-sm font-semibold">FCFA</span>
+                    </div>
+                    <div class="mt-1 text-xs text-slate-500">
+                        Billets + frais de service
+                    </div>
                 </div>
 
             </div>
@@ -203,24 +261,19 @@
 
                         <tr>
 
+                            {{-- Une seule colonne pour les deux villes : à
+                                 430 px, cinq colonnes repoussaient le prix
+                                 hors de l'écran. --}}
                             <th class="text-left">
-                                Départ
-                            </th>
-
-                            <th class="text-left">
-                                Arrivée
+                                Trajet
                             </th>
 
                             <th class="text-center">
                                 Date
                             </th>
 
-                            <th class="text-center">
-                                Heure
-                            </th>
-
                             <th class="text-right">
-                                Prix
+                                Prix <span class="font-normal normal-case">(FCFA)</span>
                             </th>
 
                         </tr>
@@ -234,27 +287,50 @@
 
                             <tr>
 
+                                {{-- Un nom de ville ne se coupe pas :
+                                     « Pointe-Noire » devenait « te- / e ». --}}
+                                {{-- Le repli se fait entre les deux villes,
+                                     jamais à l'intérieur d'un nom. --}}
                                 <td class="font-semibold text-navy">
-                                    {{ $trajet->depart }}
+                                    <span class="whitespace-nowrap">{{ $trajet->depart }}</span>
+                                    <span class="px-1 text-slate-400">→</span>
+                                    <span class="whitespace-nowrap">{{ $trajet->arrivee }}</span>
                                 </td>
 
 
-                                <td>
-                                    {{ $trajet->arrivee }}
+
+
+
+                                {{-- Le libellé du modèle, déjà normalisé, sur une
+                                     seule ligne : « 2026-10-16 » se coupait en
+                                     deux sur un écran de téléphone. --}}
+                                {{-- Date et heure dans la même colonne : à
+                                     430 px, une colonne de plus repoussait le
+                                     prix hors de l'écran. --}}
+                                <td class="text-center text-slate-500 whitespace-nowrap">
+
+                                    <div>
+                                        {{ rescue(
+                                            fn () => \Illuminate\Support\Carbon::parse(
+                                                $trajet->date_depart
+                                            )->format('d/m/Y'),
+                                            $trajet->date_depart,
+                                            false
+                                        ) }}
+                                    </div>
+
+                                    <div class="text-xs">
+                                        {{ $trajet->heure_depart_libelle
+                                            ?? $trajet->heure_depart }}
+                                    </div>
+
                                 </td>
 
 
-                                <td class="text-center text-slate-500">
-                                    {{ $trajet->date_depart }}
-                                </td>
 
 
-                                <td class="text-center text-slate-500">
-                                    {{ $trajet->heure_depart }}
-                                </td>
 
-
-                                <td class="text-right font-bold text-brand">
+                                <td class="text-right font-bold text-brand whitespace-nowrap">
 
                                     {{ number_format(
                                         $trajet->prix,
@@ -263,7 +339,6 @@
                                         ' '
                                     ) }}
 
-                                    FCFA
 
                                 </td>
 
@@ -273,7 +348,7 @@
 
                             <tr>
 
-                                <td colspan="5">
+                                <td colspan="3">
                                     Aucun trajet enregistré.
                                 </td>
 
