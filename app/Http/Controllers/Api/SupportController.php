@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\Notificateur;
+use Illuminate\Support\Str;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -67,6 +70,14 @@ class SupportController extends Controller
         ]);
 
         $conversation->load('messages.user');
+
+        // Une conversation ouverte sans personne de prévenue reste
+        // sans réponse : l'équipe doit la voir arriver.
+        self::prevenirAdministrateurs(
+            $conversation,
+            $request->user()->name,
+            $validated['message']
+        );
 
         return response()->json([
             'success' => true,
@@ -141,11 +152,46 @@ class SupportController extends Controller
             'is_read' => false,
         ]);
 
+        $conversation->touch();
+
+        self::prevenirAdministrateurs(
+            $conversation,
+            $request->user()->name,
+            $validated['message']
+        );
+
         $message->load('user');
 
         return response()->json([
             'success' => true,
             'message' => $message,
         ], 201);
+    }
+
+    /**
+     * Prévient l'équipe d'assistance qu'un voyageur a écrit.
+     *
+     * Tous les administrateurs sont notifiés : il n'existe pas
+     * d'attribution de conversation à une personne précise.
+     */
+    private static function prevenirAdministrateurs(
+        Conversation $conversation,
+        string $auteur,
+        string $texte
+    ): void {
+        $administrateurs = User::where('role', 'admin')->pluck('id');
+
+        foreach ($administrateurs as $id) {
+            Notificateur::envoyer(
+                $id,
+                'message',
+                'Message de ' . $auteur,
+                Str::limit($texte, 120),
+                [
+                    'ecran' => 'conversation',
+                    'conversation_id' => (string) $conversation->id,
+                ]
+            );
+        }
     }
 }

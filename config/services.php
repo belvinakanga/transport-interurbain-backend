@@ -35,6 +35,17 @@ return [
         ],
     ],
 
+    'firebase' => [
+        /*
+         * Clé serveur Firebase Cloud Messaging.
+         *
+         * Absente, les notifications restent enregistrées en base et
+         * visibles dans l'application : seule l'alerte poussée hors
+         * application manque.
+         */
+        'cle_serveur' => env('FIREBASE_SERVER_KEY'),
+    ],
+
     'openpay' => [
         /*
          * Interrupteur du paiement en ligne.

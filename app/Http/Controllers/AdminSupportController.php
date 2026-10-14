@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Services\Notificateur;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
@@ -114,6 +115,19 @@ class AdminSupportController extends Controller
         ]);
 
         $conversation->touch();
+
+        // Prévenir le voyageur : sans cela, il ne saurait qu'on lui a
+        // répondu qu'en rouvrant la conversation de lui-même.
+        Notificateur::envoyer(
+            $conversation->user_id,
+            'message',
+            'Réponse de l’assistance',
+            \Illuminate\Support\Str::limit($validated['message'], 120),
+            [
+                'ecran' => 'conversation',
+                'conversation_id' => (string) $conversation->id,
+            ]
+        );
 
         return redirect()
             ->route(

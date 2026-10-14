@@ -475,10 +475,19 @@
                 </button>
 
 
-                {{-- NOTIFICATION --}}
+                {{-- NOTIFICATIONS --}}
 
-                <button
-                    type="button"
+                {{-- Le compteur est calculé ici plutôt que dans chaque
+                     contrôleur : la cloche est présente sur toutes les
+                     pages du back-office. --}}
+                @php
+                    $notificationsNonLues = \App\Models\Notification::where(
+                        'user_id', auth()->id()
+                    )->whereNull('lu_le')->count();
+                @endphp
+
+                <a
+                    href="{{ route('notifications.index') }}"
                     class="
                         relative flex h-10 w-10
                         items-center justify-center
@@ -487,20 +496,26 @@
                         transition-colors hover:bg-slate-50
                     "
                     aria-label="Notifications"
+                    title="{{ $notificationsNonLues }} notification(s) non lue(s)"
                 >
-
                     <i class="fa-solid fa-bell text-[15px]"></i>
 
-                    <span
-                        class="
-                            absolute right-2 top-2
-                            h-2 w-2 rounded-full
-                            bg-brand
-                            ring-2 ring-white
-                        "
-                    ></span>
-
-                </button>
+                    @if($notificationsNonLues > 0)
+                        <span
+                            class="
+                                absolute -right-1 -top-1
+                                flex h-[18px] min-w-[18px]
+                                items-center justify-center
+                                rounded-full px-1
+                                text-[10px] font-bold text-white
+                                ring-2 ring-white
+                            "
+                            style="background: var(--tk-danger-fg);"
+                        >
+                            {{ $notificationsNonLues > 9 ? '9+' : $notificationsNonLues }}
+                        </span>
+                    @endif
+                </a>
 
 
                 {{-- PROFIL ADMIN --}}

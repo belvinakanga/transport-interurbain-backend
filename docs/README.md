@@ -29,6 +29,7 @@ République du Congo.
 | Frais de service et commission | [frais-de-service.md](frais-de-service.md) |
 | Paiements, abonnements, commissions | [paiements.md](paiements.md) |
 | Support et conversations | [support.md](support.md) |
+| Notifications | [notifications.md](notifications.md) |
 
 ## Transversal
 
