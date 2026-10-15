@@ -81,6 +81,32 @@ Route::get('/agence-suspendue', function () {
 
 Route::middleware(['auth', 'agence.active'])->group(function () {
     /*
+    |--------------------------------------------------------------------------
+    | NOTIFICATIONS DU BACK-OFFICE
+    |--------------------------------------------------------------------------
+    |
+    | Mêmes notifications que côté mobile : un message de voyageur prévient
+    | l'équipe ici, et le voyageur dans son application.
+    |
+    */
+
+    Route::get(
+        '/notifications',
+        [\App\Http\Controllers\NotificationWebController::class, 'index']
+    )->name('notifications.index');
+
+    Route::get(
+        '/notifications/{id}/ouvrir',
+        [\App\Http\Controllers\NotificationWebController::class, 'ouvrir']
+    )->name('notifications.ouvrir');
+
+    Route::post(
+        '/notifications/tout-lu',
+        [\App\Http\Controllers\NotificationWebController::class, 'toutMarquerLu']
+    )->name('notifications.tout-lu');
+
+
+    /*
 |--------------------------------------------------------------------------
 | ESPACE AGENT
 |--------------------------------------------------------------------------

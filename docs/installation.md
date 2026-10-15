@@ -144,11 +144,64 @@ drapeau mobile `AppConfig.paiementEnLigneActif` doit rester accordé. Voir
 
 Ces quatre points sont connus et non corrigés.
 
-## Tâche planifiée
+## Tâches planifiées
 
-```bash
-php artisan reservations:expirer
+Deux commandes, déclarées dans `routes/console.php` :
+
+| Commande | Rythme | Rôle |
+|---|---|---|
+| `reservations:expirer` | chaque minute | libère les réservations non payées hors délai |
+| `notifications:rappels` | tous les quarts d'heure | rappels de voyage et relances de paiement |
+
+Les deux sont sans danger à relancer à la main : la première vérifie le
+statut avant d'agir, la seconde s'appuie sur la clé d'unicité des
+notifications.
+
+Il reste à brancher le planificateur lui-même, par une entrée cron :
+
+```cron
+* * * * * cd /chemin/du/projet && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Libère les réservations non payées dont le délai est dépassé. À brancher sur
-le planificateur de Laravel ou sur une tâche cron.
+Sans elle, aucune des deux ne s'exécute. En développement, `php artisan
+schedule:work` fait la même chose au premier plan.
+
+## Notifications push (Firebase)
+
+Le serveur envoie les alertes par l'API **FCM HTTP v1**, qui demande un
+compte de service — l'ancienne « clé serveur » ne fonctionne plus.
+
+1. Console Firebase → Paramètres du projet → **Comptes de service** →
+   « Générer une nouvelle clé privée ». Un fichier JSON est téléchargé.
+2. Le déposer hors de Git et restreindre ses droits :
+
+```bash
+mkdir -p storage/app/private/firebase
+mv ~/Téléchargements/tokende-*-firebase-adminsdk-*.json \
+   storage/app/private/firebase/compte-service.json
+chmod 600 storage/app/private/firebase/compte-service.json
+```
+
+3. Déclarer le chemin dans `.env` :
+
+```env
+FIREBASE_CREDENTIALS=storage/app/private/firebase/compte-service.json
+```
+
+4. `php artisan config:clear`
+5. Contrôler :
+
+```bash
+php artisan push:tester
+```
+
+La commande doit afficher l'identifiant du projet et confirmer que Google
+accorde un jeton d'accès.
+
+> Le fichier du compte de service vaut un mot de passe : il autorise l'envoi
+> de notifications au nom du projet. `storage/app/private` est déjà exclu de
+> Git ; il ne faut pas le déplacer ailleurs.
+
+Sans ce fichier, l'application reste utilisable : les notifications sont
+enregistrées en base et visibles dans l'application et le back-office, seule
+l'alerte quand l'application est fermée manque.

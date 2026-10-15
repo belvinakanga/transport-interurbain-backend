@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\TarificationController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\VilleController;
@@ -215,6 +216,47 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
         /*
+    |--------------------------------------------------------------------------
+    | NOTIFICATIONS
+    |--------------------------------------------------------------------------
+    |
+    | Enregistrées en base : une notification reste consultable même si le
+    | push n'est pas parti.
+    |
+    */
+
+    Route::get(
+        '/notifications',
+        [NotificationController::class, 'index']
+    );
+
+    Route::get(
+        '/notifications/compteur',
+        [NotificationController::class, 'compteur']
+    );
+
+    Route::patch(
+        '/notifications/{id}/lue',
+        [NotificationController::class, 'marquerLue']
+    );
+
+    Route::post(
+        '/notifications/tout-lu',
+        [NotificationController::class, 'toutMarquerLu']
+    );
+
+    Route::post(
+        '/appareils',
+        [NotificationController::class, 'enregistrerAppareil']
+    );
+
+    Route::delete(
+        '/appareils',
+        [NotificationController::class, 'oublierAppareil']
+    );
+
+
+    /*
     |--------------------------------------------------------------------------
     | SUPPORT - CONVERSATIONS
     |--------------------------------------------------------------------------

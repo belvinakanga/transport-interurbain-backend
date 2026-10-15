@@ -66,6 +66,10 @@ php artisan reservations:expirer
 Libère les réservations non payées hors délai et rend les sièges. À
 brancher sur le planificateur.
 
+Le voyageur est prévenu : relance le lendemain de sa réservation, dernier
+avertissement 24 heures avant la libération, puis message d'annulation quand
+les sièges repartent en vente. Voir `notifications.md`.
+
 ## Voyageurs
 
 Table `voyageurs` : les passagers d'une réservation, chacun relié à un
