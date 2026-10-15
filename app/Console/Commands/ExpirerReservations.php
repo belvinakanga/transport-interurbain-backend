@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Reservation;
 use App\Models\Trajet;
 use App\Models\Siege;
+use App\Services\Notificateur;
 
 use Carbon\Carbon;
 
@@ -220,6 +221,46 @@ class ExpirerReservations extends Command
                     );
                 });
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | PRÉVENIR LE VOYAGEUR
+                |--------------------------------------------------------------------------
+                |
+                | Hors transaction, et seulement si l'annulation a bien eu
+                | lieu : la fermeture ci-dessus renonce quand la réservation
+                | a été payée entre-temps.
+                |
+                | Sans ce message, les sièges disparaissent sans explication.
+                |
+                */
+
+                $reservation->refresh();
+
+                if ($reservation->statut === 'annulée') {
+
+                    Notificateur::envoyerUneFois(
+                        $reservation->user_id,
+                        'reservation-expiree-' . $reservation->id,
+                        'reservation_expiree',
+                        'Réservation annulée',
+                        'Réservation '
+                        . $reservation->reference_reservation
+                        . ' — ' . $trajet->depart
+                        . ' → ' . $trajet->arrivee
+                        . '. Faute de paiement, vos '
+                        . $reservation->nombre_places
+                        . ' place'
+                        . ($reservation->nombre_places > 1 ? 's ont' : ' a')
+                        . ' été remise'
+                        . ($reservation->nombre_places > 1 ? 's' : '')
+                        . ' en vente.',
+                        [
+                            'ecran' => 'voyages',
+                            'reservation_id' => $reservation->id,
+                        ]
+                    );
+                }
 
                 $nombreExpirees++;
             }

@@ -1,4 +1,12 @@
-<x-layouts.admin :header="'Notifications'">
+{{-- La page est la même pour les deux rôles, mais chacun doit garder son
+     menu : l'agent n'a rien à faire dans la navigation administrateur. --}}
+@php
+    $gabarit = auth()->user()?->role === 'agent'
+        ? 'layouts.agent'
+        : 'layouts.admin';
+@endphp
+
+<x-dynamic-component :component="$gabarit" :header="'Notifications'">
 
     <div class="tk-page">
 
@@ -35,17 +43,61 @@
                     @endunless
                 >
 
+                    @php
+                        // L'icône dit de quoi il s'agit, la couleur dit s'il
+                        // y a lieu de s'inquiéter. Les variables --tk-* sont
+                        // les seules à avoir une déclinaison en mode sombre.
+                        $icone = match ($notification->type) {
+                            'message' => 'fa-comment',
+                            'voyage_rappel' => 'fa-calendar-check',
+                            'voyage_imminent' => 'fa-bus',
+                            'billet_emis' => 'fa-ticket',
+                            'reservation_enregistree', 'reservation' => 'fa-bookmark',
+                            'reservation_attente' => 'fa-clock',
+                            'reservation_derniere_chance' => 'fa-triangle-exclamation',
+                            'reservation_expiree' => 'fa-calendar-xmark',
+                            'trajet_modifie' => 'fa-rotate',
+                            'trajet_supprime' => 'fa-ban',
+                            'vente_agence' => 'fa-arrow-trend-up',
+                            'paiement' => 'fa-money-bill-wave',
+                            default => 'fa-bell',
+                        };
+
+                        $teinte = match ($notification->type) {
+                            'billet_emis', 'vente_agence' => 'success',
+                            'reservation_attente',
+                            'reservation_derniere_chance',
+                            'trajet_modifie' => 'warning',
+                            'reservation_expiree', 'trajet_supprime' => 'danger',
+                            default => null,
+                        };
+                    @endphp
+
+                    @php
+                        // Fond pâle, icône saturée. La bordure est ce qui
+                        // détache la pastille du fond crème d'une ligne non
+                        // lue, qui est la même teinte qu'elle.
+                        $fond = $teinte
+                            ? "var(--tk-{$teinte}-bg)"
+                            : 'var(--tk-orange-tint-bg)';
+
+                        $bord = $teinte
+                            ? "var(--tk-{$teinte}-bd)"
+                            : 'var(--tk-orange-tint-bd)';
+
+                        $trait = $teinte
+                            ? "var(--tk-{$teinte}-fg)"
+                            : 'var(--tk-accent-text)';
+                    @endphp
+
                     <div
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                        style="background: var(--tk-stat-accent-bg);"
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
+                        style="background: {{ $fond }}; border-color: {{ $bord }};"
                     >
-                        <i class="fa-solid {{
-                            $notification->type === 'message'
-                                ? 'fa-comment'
-                                : ($notification->type === 'reservation'
-                                    ? 'fa-ticket'
-                                    : 'fa-bell')
-                        }} text-brand"></i>
+                        <i
+                            class="fa-solid {{ $icone }}"
+                            style="color: {{ $trait }};"
+                        ></i>
                     </div>
 
                     <div class="min-w-0 flex-1">
@@ -90,4 +142,4 @@
 
     </div>
 
-</x-layouts.admin>
+</x-dynamic-component>

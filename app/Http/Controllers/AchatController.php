@@ -14,6 +14,9 @@ use App\Models\Trajet;
 use App\Services\FraisService;
 use App\Models\Siege;
 use App\Models\Voyageur;
+use App\Models\User;
+use App\Services\Notificateur;
+use Illuminate\Support\Facades\Log;
 
 use Carbon\Carbon;
 
@@ -1190,6 +1193,18 @@ $billet->voyageur_id =
             | RÉPONSE
             |--------------------------------------------------------------------------
             */
+            /*
+            |--------------------------------------------------------------------------
+            | PRÉVENIR LE VOYAGEUR ET L'AGENCE
+            |--------------------------------------------------------------------------
+            |
+            | Hors transaction : un envoi de notification ne doit pas pouvoir
+            | annuler un achat déjà encaissé.
+            |
+            */
+
+            $this->notifierAchat($result['achat']);
+
             return response()->json([
                 'message' =>
                     'Achat créé avec succès.',
@@ -1406,5 +1421,107 @@ $billet->voyageur_id =
             'message' =>
                 'Achat supprimé avec succès.',
         ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFIER UN ACHAT DIRECT
+    |--------------------------------------------------------------------------
+    |
+    | Deux destinataires, deux usages :
+    |
+    | - le voyageur reçoit la confirmation de ses billets ;
+    | - l'agence apprend qu'une place vient d'être vendue, ce qui lui évite
+    |   d'avoir à rafraîchir son tableau de bord pour le savoir.
+    |
+    | Toute erreur est avalée : l'achat est acquis.
+    |
+    */
+
+    private function notifierAchat(Achat $achat): void
+    {
+        try {
+
+            $trajet = $achat->trajet
+                ?: ($achat->reservation ? $achat->reservation->trajet : null);
+
+            if (!$trajet) {
+                return;
+            }
+
+            $itineraire = $trajet->depart . ' → ' . $trajet->arrivee;
+
+            $jour = Carbon::parse($trajet->date_depart)->format('d/m/Y');
+
+            /*
+            |--------------------------------------------------------------------------
+            | LE VOYAGEUR
+            |--------------------------------------------------------------------------
+            */
+
+            $nombre = $achat->reservation
+                ? (int) $achat->reservation->nombre_places
+                : 1;
+
+            Notificateur::envoyerUneFois(
+                $achat->user_id,
+                'achat-billets-' . $achat->id,
+                'billet_emis',
+                $nombre > 1
+                    ? 'Vos billets sont prêts'
+                    : 'Votre billet est prêt',
+                $nombre
+                . ' billet' . ($nombre > 1 ? 's' : '')
+                . ' pour ' . $itineraire
+                . ' du ' . $jour
+                . '. Référence ' . $achat->reference . '.',
+                [
+                    'ecran' => 'billets',
+                    'achat_id' => $achat->id,
+                ]
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | L'AGENCE
+            |--------------------------------------------------------------------------
+            |
+            | Les agents rattachés à l'agence du trajet, et eux seuls.
+            |
+            */
+
+            if (!$trajet->agence_id) {
+                return;
+            }
+
+            $agents = User::where('role', 'agent')
+                ->where('agence_id', $trajet->agence_id)
+                ->pluck('id');
+
+            foreach ($agents as $agentId) {
+
+                Notificateur::envoyerUneFois(
+                    $agentId,
+                    'agence-vente-' . $achat->id . '-' . $agentId,
+                    'vente_agence',
+                    'Nouvelle vente',
+                    $nombre
+                    . ' place' . ($nombre > 1 ? 's' : '')
+                    . ' vendue' . ($nombre > 1 ? 's' : '')
+                    . ' sur ' . $itineraire
+                    . ' du ' . $jour . '.',
+                    [
+                        'ecran' => 'achats',
+                        'achat_id' => $achat->id,
+                    ]
+                );
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Notification d’achat non envoyée : ' . $e->getMessage()
+            );
+        }
     }
 }

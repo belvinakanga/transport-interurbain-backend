@@ -37,11 +37,26 @@ return [
 
     'firebase' => [
         /*
-         * Clé serveur Firebase Cloud Messaging.
+         * Compte de service Firebase, au format JSON téléchargé depuis la
+         * console (Paramètres du projet → Comptes de service).
          *
-         * Absente, les notifications restent enregistrées en base et
+         * C'est lui qui autorise l'API FCM HTTP v1. Le chemin est relatif
+         * à la racine du projet ; le fichier doit rester hors de Git —
+         * storage/app/private est déjà exclu.
+         *
+         * Absent, les notifications restent enregistrées en base et
          * visibles dans l'application : seule l'alerte poussée hors
          * application manque.
+         */
+        'compte_service' => env(
+            'FIREBASE_CREDENTIALS',
+            'storage/app/private/firebase/compte-service.json'
+        ),
+
+        /*
+         * Ancienne clé serveur, pour l'API « legacy » que Google a fermée.
+         * Conservée le temps que les installations existantes basculent sur
+         * le compte de service ci-dessus, qui a la priorité.
          */
         'cle_serveur' => env('FIREBASE_SERVER_KEY'),
     ],

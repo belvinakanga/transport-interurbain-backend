@@ -32,5 +32,9 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- Aucun push pendant les tests : sans cela, chaque
+             notification enregistrée partirait vers Google. -->
+        <env name="FIREBASE_CREDENTIALS" value=""/>
+        <env name="FIREBASE_SERVER_KEY" value=""/>
     </php>
 </phpunit>

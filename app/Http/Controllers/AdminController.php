@@ -15,6 +15,9 @@ use App\Models\Achat;
 use App\Models\Avis;
 use App\Models\Abonnement;
 use App\Models\PaiementAgence;
+use App\Services\Notificateur;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -972,6 +975,23 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        /*
+        |--------------------------------------------------------------------------
+        | HORAIRE AVANT MODIFICATION
+        |--------------------------------------------------------------------------
+        |
+        | Retenu avant l'enregistrement pour savoir s'il faut prévenir les
+        | voyageurs déjà inscrits. Seuls la date et l'heure de départ les
+        | concernent : un prix corrigé ne change rien à leur billet payé.
+        |
+        */
+
+        $ancienDepart = [
+            'date' => Carbon::parse($trajet->date_depart)->format('Y-m-d'),
+            'heure' => substr((string) $trajet->heure_depart, 0, 5),
+        ];
+
+
         $trajet->update([
 
             'agence_id' =>
@@ -1003,6 +1023,18 @@ class AdminController extends Controller
                 ),
 
         ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRÉVENIR LES VOYAGEURS SI L'HORAIRE A BOUGÉ
+        |--------------------------------------------------------------------------
+        */
+
+        $this->notifierHoraireModifie(
+            $trajet->fresh(),
+            $ancienDepart
+        );
 
 
         /*
@@ -2432,6 +2464,20 @@ return view(
             Trajet::findOrFail($id);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | PRÉVENIR LES VOYAGEURS
+        |--------------------------------------------------------------------------
+        |
+        | Avant la suppression, pendant que le trajet existe encore : après,
+        | il n'y aurait plus de quoi écrire le message. Sans cela, un
+        | voyageur perd son voyage sans jamais l'apprendre.
+        |
+        */
+
+        $this->notifierTrajetSupprime($trajet);
+
+
         $trajet->delete();
 
 
@@ -2585,4 +2631,148 @@ public function commissions()
         compact('commissions')
     );
 }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFIER UN CHANGEMENT D'HORAIRE
+    |--------------------------------------------------------------------------
+    |
+    | Les voyageurs dont la réservation est encore vivante — en attente,
+    | confirmée ou payée — apprennent que leur car ne part plus à la même
+    | heure. Les réservations annulées sont ignorées.
+    |
+    | La clé d'unicité contient le nouvel horaire : une deuxième
+    | modification donne bien un second message, mais réenregistrer le
+    | formulaire sans rien changer n'en envoie aucun.
+    |
+    | Toute erreur est avalée : la modification du trajet est acquise.
+    |
+    */
+
+    private function notifierHoraireModifie(
+        Trajet $trajet,
+        array $ancienDepart
+    ): void {
+        try {
+
+            $nouveau = [
+                'date' => Carbon::parse($trajet->date_depart)->format('Y-m-d'),
+                'heure' => substr((string) $trajet->heure_depart, 0, 5),
+            ];
+
+            if ($nouveau === $ancienDepart) {
+                return;
+            }
+
+            $reservations = Reservation::where('trajet_id', $trajet->id)
+                ->whereRaw(
+                    'lower(trim(statut)) in (?, ?, ?)',
+                    ['en attente', 'confirmée', 'payée']
+                )
+                ->get();
+
+            if ($reservations->isEmpty()) {
+                return;
+            }
+
+            $avant = Carbon::parse(
+                $ancienDepart['date'] . ' ' . ($ancienDepart['heure'] ?: '00:00')
+            );
+
+            $apres = Carbon::parse(
+                $nouveau['date'] . ' ' . ($nouveau['heure'] ?: '00:00')
+            );
+
+            $corps =
+                $trajet->depart . ' → ' . $trajet->arrivee
+                . '. Le départ passe du '
+                . $avant->format('d/m/Y à H:i')
+                . ' au '
+                . $apres->format('d/m/Y à H:i')
+                . '.';
+
+            $empreinte = $nouveau['date'] . 'T' . $nouveau['heure'];
+
+            foreach ($reservations as $reservation) {
+
+                Notificateur::envoyerUneFois(
+                    $reservation->user_id,
+                    'trajet-horaire-' . $reservation->id . '-' . $empreinte,
+                    'trajet_modifie',
+                    'Horaire de votre voyage modifié',
+                    $corps,
+                    [
+                        'ecran' => 'voyages',
+                        'reservation_id' => $reservation->id,
+                    ]
+                );
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Notification de changement d’horaire non envoyée : '
+                . $e->getMessage()
+            );
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFIER LA SUPPRESSION D'UN TRAJET
+    |--------------------------------------------------------------------------
+    |
+    | Les réservations ne sont pas supprimées avec le trajet : elles restent
+    | en base, mais sans trajet à afficher. Le message est donc la seule
+    | trace que le voyageur recevra.
+    |
+    | Toute erreur est avalée : elle ne doit pas empêcher la suppression.
+    |
+    */
+
+    private function notifierTrajetSupprime(Trajet $trajet): void
+    {
+        try {
+
+            $reservations = Reservation::where('trajet_id', $trajet->id)
+                ->whereRaw(
+                    'lower(trim(statut)) in (?, ?, ?)',
+                    ['en attente', 'confirmée', 'payée']
+                )
+                ->get();
+
+            if ($reservations->isEmpty()) {
+                return;
+            }
+
+            $corps =
+                $trajet->depart . ' → ' . $trajet->arrivee
+                . ' du '
+                . Carbon::parse($trajet->date_depart)->format('d/m/Y')
+                . ' n’est plus assuré. Rapprochez-vous de l’agence '
+                . 'pour connaître les suites.';
+
+            foreach ($reservations as $reservation) {
+
+                Notificateur::envoyerUneFois(
+                    $reservation->user_id,
+                    'trajet-supprime-' . $reservation->id,
+                    'trajet_supprime',
+                    'Voyage annulé',
+                    $corps,
+                    [
+                        'ecran' => 'voyages',
+                        'reservation_id' => $reservation->id,
+                    ]
+                );
+            }
+
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Notification de suppression de trajet non envoyée : '
+                . $e->getMessage()
+            );
+        }
+    }
 }

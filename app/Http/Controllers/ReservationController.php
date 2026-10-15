@@ -11,7 +11,9 @@ use App\Models\Siege;
 use App\Models\Achat;
 use App\Models\Billet;
 use App\Services\FraisService;
+use App\Services\Notificateur;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
@@ -434,6 +436,18 @@ class ReservationController extends Controller
                     ]);
                 }
             );
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRÉVENIR LE VOYAGEUR
+            |--------------------------------------------------------------------------
+            |
+            | Hors transaction. La réservation est enregistrée quoi qu'il
+            | arrive à la notification.
+            |
+            */
+
+            $this->notifierReservationEnregistree($result);
 
             return response()->json([
                 'message' =>
@@ -860,6 +874,18 @@ foreach ($reservation->voyageurs as $voyageur) {
                 }
             );
 
+            /*
+            |--------------------------------------------------------------------------
+            | PRÉVENIR LE VOYAGEUR
+            |--------------------------------------------------------------------------
+            |
+            | Hors transaction : un envoi de notification ne doit pas
+            | pouvoir annuler un paiement déjà encaissé.
+            |
+            */
+
+            $this->notifierBilletsEmis($result);
+
             return response()->json([
                 'message' =>
                     'Paiement de la réservation confirmé avec succès.',
@@ -1132,5 +1158,134 @@ foreach ($reservation->voyageurs as $voyageur) {
             'message' =>
                 'Réservation supprimée avec succès.',
         ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFIER L'ÉMISSION DES BILLETS
+    |--------------------------------------------------------------------------
+    |
+    | Appelée après le paiement, hors transaction. Toute erreur est avalée :
+    | le paiement est acquis, l'absence de notification ne doit pas le
+    | transformer en échec côté application.
+    |
+    */
+
+    private function notifierBilletsEmis(Achat $achat): void
+    {
+        try {
+
+            $reservation = $achat->reservation;
+
+            if (!$reservation) {
+                return;
+            }
+
+            $trajet = $reservation->trajet;
+
+            if (!$trajet) {
+                return;
+            }
+
+            $nombre = $reservation->billets->count()
+                ?: (int) $reservation->nombre_places;
+
+            Notificateur::envoyerUneFois(
+                $reservation->user_id,
+                'billets-emis-' . $reservation->id,
+                'billet_emis',
+                $nombre > 1
+                    ? 'Vos billets sont prêts'
+                    : 'Votre billet est prêt',
+                $nombre
+                . ' billet' . ($nombre > 1 ? 's' : '')
+                . ' pour ' . $trajet->depart
+                . ' → ' . $trajet->arrivee
+                . ' du ' . Carbon::parse($trajet->date_depart)->format('d/m/Y')
+                . '. Référence ' . $achat->reference . '.',
+                [
+                    'ecran' => 'billets',
+                    'reservation_id' => $reservation->id,
+                ]
+            );
+
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Notification de billet non envoyée : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOTIFIER L'ENREGISTREMENT D'UNE RÉSERVATION
+    |--------------------------------------------------------------------------
+    |
+    | Le voyageur repart avec la seule information qui compte : la date
+    | limite au-delà de laquelle ses sièges sont remis en vente. Elle est
+    | calculée, pas récitée, pour rester juste si la règle des 72 heures
+    | change un jour.
+    |
+    | Rien n'est envoyé pour un achat direct : le billet est déjà payé, et
+    | l'achat produit sa propre notification.
+    |
+    | Toute erreur est avalée : la réservation est acquise.
+    |
+    */
+
+    private function notifierReservationEnregistree(
+        Reservation $reservation
+    ): void {
+        try {
+
+            if ($reservation->type === 'achat_direct') {
+                return;
+            }
+
+            $trajet = $reservation->trajet;
+
+            if (!$trajet) {
+                return;
+            }
+
+            $depart = Carbon::parse(
+                Carbon::parse($trajet->date_depart)->format('Y-m-d')
+                . ' '
+                . ($trajet->heure_depart ?: '00:00')
+            );
+
+            // Même seuil que `reservations:expirer`.
+            $limite = $depart->copy()->subHours(72);
+
+            $corps =
+                $trajet->depart . ' → ' . $trajet->arrivee
+                . ' du ' . $depart->format('d/m/Y à H:i') . '. '
+                . $reservation->nombre_places
+                . ' place' . ($reservation->nombre_places > 1 ? 's' : '')
+                . ' tenue' . ($reservation->nombre_places > 1 ? 's' : '');
+
+            $corps .= $limite->isPast()
+                ? ' pour un paiement immédiat.'
+                : ' jusqu’au ' . $limite->format('d/m/Y à H:i') . '.';
+
+            Notificateur::envoyerUneFois(
+                $reservation->user_id,
+                'reservation-enregistree-' . $reservation->id,
+                'reservation_enregistree',
+                'Réservation enregistrée',
+                $corps,
+                [
+                    'ecran' => 'voyages',
+                    'reservation_id' => $reservation->id,
+                ]
+            );
+
+        } catch (\Throwable $e) {
+
+            Log::warning(
+                'Notification de réservation non envoyée : ' . $e->getMessage()
+            );
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appareil;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +35,8 @@ class Notificateur
         string $type,
         string $titre,
         string $corps,
-        array $donnees = []
+        array $donnees = [],
+        ?string $cle = null
     ): ?Notification {
         $userId = $destinataire instanceof User
             ? $destinataire->id
@@ -50,6 +52,7 @@ class Notificateur
             'titre' => $titre,
             'corps' => $corps,
             'donnees' => $donnees ?: null,
+            'cle' => $cle,
         ]);
 
         // Le push ne doit jamais faire échouer l'enregistrement.
@@ -62,20 +65,79 @@ class Notificateur
         return $notification;
     }
 
+    /**
+     * Notifie une seule fois pour un évènement donné.
+     *
+     * Les rappels sont produits par une tâche planifiée qui repasse
+     * régulièrement : sans garde-fou, le même rappel partirait à chaque
+     * passage. La clé décrit l'évènement — « voyage-rappel-veille-7 » — et
+     * l'index unique de la base refuse le doublon.
+     *
+     * Renvoie null si la notification existait déjà, ce qui permet à
+     * l'appelant de compter ce qu'il a réellement envoyé.
+     *
+     * @param array<string,mixed> $donnees ce que l'application doit ouvrir
+     */
+    public static function envoyerUneFois(
+        int|User $destinataire,
+        string $cle,
+        string $type,
+        string $titre,
+        string $corps,
+        array $donnees = []
+    ): ?Notification {
+        if (Notification::where('cle', $cle)->exists()) {
+            return null;
+        }
+
+        try {
+            $notification = self::envoyer(
+                $destinataire,
+                $type,
+                $titre,
+                $corps,
+                $donnees,
+                $cle
+            );
+        } catch (QueryException $e) {
+            // Deux exécutions simultanées : la base a tranché, tant mieux.
+            return null;
+        }
+
+        return $notification;
+    }
+
     /** Le push est-il configuré ? */
     public static function pushConfigure(): bool
     {
-        return (bool) config('services.firebase.cle_serveur');
+        return PushFirebase::configure()
+            || (bool) config('services.firebase.cle_serveur');
     }
 
     /**
      * Envoie la notification aux appareils de l'utilisateur.
      *
-     * Sans clé Firebase, la méthode ne fait rien : l'application reste
+     * Deux chemins possibles : l'API v1 via [PushFirebase] quand un compte
+     * de service est configuré, sinon l'ancienne clé serveur.
+     *
+     * Sans l'un ni l'autre, la méthode ne fait rien : l'application reste
      * fonctionnelle, seule l'alerte hors application manque.
      */
     private static function pousser(Notification $notification): void
     {
+        /*
+         * API FCM HTTP v1, dès qu'un compte de service est en place.
+         * C'est le seul chemin encore accepté par Google ; la suite de
+         * cette méthode n'existe que pour les installations restées sur
+         * l'ancienne clé serveur.
+         */
+        if (PushFirebase::configure()) {
+
+            PushFirebase::envoyer($notification);
+
+            return;
+        }
+
         if (!self::pushConfigure()) {
             return;
         }

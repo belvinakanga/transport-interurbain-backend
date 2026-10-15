@@ -508,6 +508,49 @@
                 </button>
 
 
+                {{-- NOTIFICATIONS --}}
+
+                {{-- L'agent est prévenu des ventes sur les trajets de son
+                     agence. Sans cette cloche, ces notifications
+                     n'auraient aucun endroit où s'afficher. --}}
+                @php
+                    $notificationsNonLues = \App\Models\Notification::where(
+                        'user_id', auth()->id()
+                    )->whereNull('lu_le')->count();
+                @endphp
+
+                <a
+                    href="{{ route('notifications.index') }}"
+                    class="
+                        relative flex h-10 w-10
+                        items-center justify-center
+                        rounded-lg border border-slate-200
+                        bg-white text-navy
+                        transition-colors hover:bg-slate-50
+                    "
+                    aria-label="Notifications"
+                    title="{{ $notificationsNonLues }} notification(s) non lue(s)"
+                >
+                    <i class="fa-solid fa-bell text-[15px]"></i>
+
+                    @if($notificationsNonLues > 0)
+                        <span
+                            class="
+                                absolute -right-1 -top-1
+                                flex h-[18px] min-w-[18px]
+                                items-center justify-center
+                                rounded-full px-1
+                                text-[10px] font-bold text-white
+                                ring-2 ring-white
+                            "
+                            style="background: var(--tk-danger-fg);"
+                        >
+                            {{ $notificationsNonLues > 9 ? '9+' : $notificationsNonLues }}
+                        </span>
+                    @endif
+                </a>
+
+
                 <div
                     class="relative"
                     x-data="{ avatarOpen: false }"
